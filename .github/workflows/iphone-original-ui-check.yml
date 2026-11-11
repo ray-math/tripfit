@@ -1,0 +1,109 @@
+name: Original TripFit UI preview check
+on:
+  push:
+    branches: [iphone-ui-preview]
+    paths:
+      - iphone_web_ui_demo.html
+      - web/**
+      - .github/workflows/iphone-original-ui-check.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Confirm original frontend is unchanged
+        run: git diff --exit-code cb7c7bdb9808f19e463290d566c4a1551cf62b97 HEAD -- web
+      - name: Install browser test runner
+        run: npm install --no-save --package-lock=false --ignore-scripts playwright@1.56.1
+      - name: Capture and exercise the original UI
+        shell: bash
+        run: |
+          mkdir -p preview-output
+          python3 -m http.server 8765 --bind 127.0.0.1 >preview-output/server.log 2>&1 &
+          cat > /tmp/check-tripfit.cjs <<'NODE'
+          const {chromium} = require(process.env.GITHUB_WORKSPACE + '/node_modules/playwright');
+          const fs = require('node:fs');
+          const assert = require('node:assert/strict');
+          (async () => {
+            const executablePath = ['/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/chromium-browser'].find(p => fs.existsSync(p));
+            if (!executablePath) throw new Error('No Chrome/Chromium executable on runner');
+            const browser = await chromium.launch({executablePath, args:['--no-sandbox']});
+            const report = {source:'ray-math/tripfit/web/index.html', sourceUnchanged:true, viewportOnly:true, tests:[]};
+            const errors = [];
+            try {
+              const context = await browser.newContext({viewport:{width:393,height:852}, deviceScaleFactor:2, isMobile:true, hasTouch:true});
+              const page = await context.newPage();
+              page.on('pageerror', e => errors.push(e.message));
+              await page.goto('http://127.0.0.1:8765/iphone_web_ui_demo.html', {waitUntil:'domcontentloaded'});
+              await page.waitForURL('**/web/index.html');
+              await page.waitForSelector('body.mobile');
+              await page.getByRole('button', {name:'같이 정하기', exact:true}).waitFor({state:'visible'});
+              await page.waitForTimeout(800);
+              await page.screenshot({path:'preview-output/tripfit-original-mobile-chat.png'});
+              await page.getByRole('button', {name:'같이 정하기', exact:true}).click();
+              const plansButton = page.getByRole('button', {name:'일정 보기', exact:true});
+              await plansButton.waitFor({state:'visible'});
+              await page.waitForFunction(() => [...document.querySelectorAll('button')].some(b => b.textContent.trim()==='일정 보기' && !b.disabled), {timeout:45000});
+              await plansButton.click();
+              await page.waitForSelector('#track');
+              await page.waitForTimeout(3000);
+              const sizes = await page.evaluate(() => ({viewport:innerWidth, document:document.documentElement.scrollWidth, screen:document.querySelector('#screen').getBoundingClientRect().width, mockStatus:getComputedStyle(document.querySelector('.sb')).display}));
+              assert.equal(sizes.screen,393);
+              assert.ok(sizes.document <= sizes.viewport);
+              assert.equal(sizes.mockStatus,'none');
+              report.tests.push({name:'mobile full-width layout and hidden phone chrome',passed:true,sizes});
+              await page.screenshot({path:'preview-output/tripfit-original-mobile-plans.png'});
+              await page.locator('#nJ').click();
+              assert.equal(await page.locator('#formula0').isVisible(),true);
+              await page.locator('#nJ').click();
+              report.tests.push({name:'satisfaction formula opens and closes',passed:true});
+              const track = await page.locator('#track').boundingBox();
+              await page.mouse.click(track.x+track.width-3,track.y+track.height/2);
+              await page.waitForTimeout(850);
+              await page.mouse.click(track.x+track.width/2,track.y+track.height/2);
+              await page.waitForTimeout(850);
+              report.tests.push({name:'balance slider responds',passed:true});
+              await page.locator('.stop').first().click();
+              await page.locator('.sheet').waitFor({state:'visible'});
+              await page.waitForTimeout(900);
+              await page.screenshot({path:'preview-output/tripfit-original-mobile-detail.png'});
+              await page.locator('.sheet-close').click();
+              await page.locator('.sheet').waitFor({state:'detached'});
+              report.tests.push({name:'place detail sheet opens and closes',passed:true});
+              const desktop = await browser.newContext({viewport:{width:1440,height:1000}, deviceScaleFactor:1});
+              const dp = await desktop.newPage();
+              dp.on('pageerror',e=>errors.push(e.message));
+              await dp.goto('http://127.0.0.1:8765/web/index.html',{waitUntil:'domcontentloaded'});
+              await dp.waitForSelector('.app-brand');
+              await dp.keyboard.press('3');
+              await dp.waitForSelector('#track');
+              await dp.waitForTimeout(3000);
+              assert.equal(await dp.locator('body.mobile').count(),0);
+              await dp.screenshot({path:'preview-output/tripfit-original-desktop-plans.png'});
+              report.tests.push({name:'desktop original phone frame and presentation panels',passed:true});
+              assert.deepEqual(errors,[]);
+              report.javascriptErrors=errors;
+              report.status='passed';
+            } catch(e) { report.status='failed';report.error=e.stack;report.javascriptErrors=errors;process.exitCode=1; }
+            finally {fs.writeFileSync('preview-output/verification.json',JSON.stringify(report,null,2));await browser.close();}
+          })().catch(e=>{console.error(e);process.exitCode=1;});
+          NODE
+          node /tmp/check-tripfit.cjs
+      - name: Include original source for reproducibility
+        if: always()
+        run: |
+          cp -R web preview-output/original-web
+          cp iphone_web_ui_demo.html preview-output/preview-entry.html
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tripfit-original-ui-preview
+          path: preview-output/
+          retention-days: 7
