@@ -1,0 +1,177 @@
+{
+  "sourceRef": "cb7c7bdb9808f19e463290d566c4a1551cf62b97",
+  "sources": {
+    "web/index.html": {
+      "sha256": "e0e4f9cf7ed31f2a4d63ed373420c1841a806a9edf334eb3c47f69195b515fb3",
+      "bytes": 156479
+    },
+    "web/details.css": {
+      "sha256": "b5b3a7776d66618503b3865b809fb4a56ef49ac39d30beccac8168173559870d",
+      "bytes": 7271
+    },
+    "web/pay/app.js": {
+      "sha256": "64e2da51327c8331cf4d67e57ce5ae299adb5061991c6853e88a816a5d78154c",
+      "bytes": 36502
+    },
+    "web/pay/styles.css": {
+      "sha256": "45a39dd9aca8fce37300d2d7fee4efcb3c1a668f0cff9ec6c9ad53d3abee2ec4",
+      "bytes": 18455
+    },
+    "web/logo.svg": {
+      "sha256": "07a99512722401374fc2651793f212586ef1b4aeadd2437f4750c9e7e8c1b9ae",
+      "bytes": 681
+    },
+    "web/favicon.svg": {
+      "sha256": "404b6ef416ab7e680c63e69c8810cc6efcccdf258de663a4c258c81241b25e09",
+      "bytes": 466
+    },
+    "web/og.png": {
+      "sha256": "70dec8e36736aacf2e48f3b6b68a606e1f1e4ae0b6c2566a5793ca830133fde2",
+      "bytes": 154544
+    }
+  },
+  "counts": {
+    "icons": 15,
+    "paymentIcons": 8,
+    "statusIcons": 3
+  },
+  "keyframes": [
+    {
+      "file": "web/index.html",
+      "line": 71,
+      "name": "rot"
+    },
+    {
+      "file": "web/index.html",
+      "line": 169,
+      "name": "typ"
+    },
+    {
+      "file": "web/index.html",
+      "line": 206,
+      "name": "pulse"
+    },
+    {
+      "file": "web/details.css",
+      "line": 10,
+      "name": "logo-left"
+    },
+    {
+      "file": "web/details.css",
+      "line": 11,
+      "name": "logo-right"
+    },
+    {
+      "file": "web/details.css",
+      "line": 12,
+      "name": "logo-lens"
+    },
+    {
+      "file": "web/details.css",
+      "line": 13,
+      "name": "logo-check"
+    },
+    {
+      "file": "web/pay/styles.css",
+      "line": 221,
+      "name": "stamp"
+    },
+    {
+      "file": "web/pay/styles.css",
+      "line": 224,
+      "name": "drop"
+    },
+    {
+      "file": "web/pay/styles.css",
+      "line": 227,
+      "name": "rot"
+    },
+    {
+      "file": "web/pay/styles.css",
+      "line": 291,
+      "name": "decision-rise"
+    },
+    {
+      "file": "web/pay/styles.css",
+      "line": 292,
+      "name": "decision-stamp"
+    },
+    {
+      "file": "web/pay/styles.css",
+      "line": 293,
+      "name": "decision-fill"
+    },
+    {
+      "file": "web/pay/styles.css",
+      "line": 294,
+      "name": "decision-pulse"
+    }
+  ],
+  "animationSites": [
+    {
+      "file": "web/index.html",
+      "line": 530,
+      "code": "const A = (el, kf, kind = \"snap\", o = {}) => el.animate(kf, { duration: reduce ? 1 : SP[kind].duration, easing: SP[kind].easing, fill: \"backwards\", ...o });"
+    },
+    {
+      "file": "web/index.html",
+      "line": 531,
+      "code": "const E = (el, kf, dur = 380, o = {}) => el.animate(kf, { duration: reduce ? 1 : dur, easing: EASE, fill: \"backwards\", ...o });"
+    },
+    {
+      "file": "web/index.html",
+      "line": 744,
+      "code": "l.animate([{ opacity: 0 }, { opacity: .55 }, { opacity: 0 }], { duration: 420, fill: \"forwards\" }).onfinish = () => l.remove();"
+    },
+    {
+      "file": "web/index.html",
+      "line": 752,
+      "code": "[...rg.children].forEach(o => o.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, fill: \"forwards\" }).onfinish = () => o.remove());"
+    },
+    {
+      "file": "web/index.html",
+      "line": 861,
+      "code": "el.animate([{ opacity: 1, transform: \"none\" }, { opacity: 1, transform: \"rotate(-2deg) scale(.98)\", offset: .3 }, { opacity: 0, transform: \"translateX(-80px) rotate(-8deg) scale(.8)\" }],"
+    },
+    {
+      "file": "web/index.html",
+      "line": 903,
+      "code": "dim.animate([{ opacity: 1 }, { opacity: 0 }], { duration: reduce ? 1 : 260, fill: \"forwards\" });"
+    },
+    {
+      "file": "web/index.html",
+      "line": 904,
+      "code": "await sh.animate([{ transform: \"none\" }, { transform: \"translateY(110%)\" }], { duration: reduce ? 1 : 340, easing: \"cubic-bezier(.5,0,.75,0)\", fill: \"forwards\" }).finished;"
+    },
+    {
+      "file": "web/index.html",
+      "line": 1244,
+      "code": "if (!reduce) await fly.animate(["
+    },
+    {
+      "file": "web/index.html",
+      "line": 1269,
+      "code": "await nEl.animate([{ filter: \"blur(0)\", transform: \"none\", opacity: 1 }, { filter: \"blur(10px)\", transform: \"scale(.6)\", opacity: 0 }], { duration: reduce ? 1 : 420, easing: \"cubic-bezier(.5,0,.75,0)\", fill: \"forwards\" }).finished;"
+    },
+    {
+      "file": "web/index.html",
+      "line": 1861,
+      "code": "card?.animate([{ transform: \"none\" }, { transform: \"translateX(-7px) rotate(-1deg)\" }, { transform: \"translateX(7px) rotate(1deg)\" }, { transform: \"translateX(-4px)\" }, { transform: \"none\" }], { duration: reduce ? 1 : 520, iterations: 2 });"
+    },
+    {
+      "file": "web/index.html",
+      "line": 1863,
+      "code": "if (lock && !reduce) lock.animate([{ transform: \"scale(1)\" }, { transform: \"scale(1.03)\" }, { transform: \"scale(1)\" }], { duration: 1100, iterations: 3, delay: 500 });"
+    },
+    {
+      "file": "web/index.html",
+      "line": 2002,
+      "code": "o.animate([{ transform: \"none\", opacity: 1 }, { transform: `translateX(${back ? 30 : -30}%) scale(.94)`, opacity: 0 }], { duration: reduce ? 1 : 420, easing: EASE, fill: \"forwards\" }).onfinish = () => o.remove();"
+    },
+    {
+      "file": "web/pay/app.js",
+      "line": 302,
+      "code": "$('.phone').animate([{transform:'translateX(0)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(-3px)'},{transform:'translateX(0)'}],{duration:300});"
+    }
+  ]
+}

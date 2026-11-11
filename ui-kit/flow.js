@@ -3,7 +3,7 @@ import { springIn, rollDigits, revealHeadline, createFeedbackIsland } from "./tr
 /**
  * Reusable, dependency-free card flow runtime.
  * Keeps app-specific content in a validated data object.
- * No TripFit travel logic or original UI code is imported.
+ * No TripFit travel logic or original application page is imported; visual primitives are adapted from TripFit.
  */
 const TYPES = new Set(["hero", "text", "metric", "choices"]);
 const COLORS = new Set(["lime", "pink", "sky", "mint", "cream", "lilac", "peach"]);
@@ -154,6 +154,7 @@ export class CardFlow {
   }
 
   go(id) {
+    this.reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.dataset.motion === "reduce";
     const step = this.steps.get(id);
     if (!step) throw new Error("Unknown step: " + id);
     const previousIdx = this.flow.steps.findIndex(s => s.id === this.current);
@@ -200,7 +201,7 @@ export class CardFlow {
     if (!this.reducedMotion) {
       enter(page, backward ? "translateX(-15%)" : "translateX(15%)");
       Array.from(page.querySelectorAll(".tk-card")).forEach((card, idx) =>
-        springIn(card, { from: "translateY(36px) scale(.96)", delay: idx * 90 }));
+        card.getBoundingClientRect().top < this.viewport.getBoundingClientRect().bottom && springIn(card, { from: "translateY(36px) scale(.96)", delay: Math.min(idx, 5) * 90 }));
     }
     // Decorative motion works independently of the domain-specific content.
     for (const title of page.querySelectorAll(".tk-title"))

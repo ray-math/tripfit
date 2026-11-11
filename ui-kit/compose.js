@@ -3,15 +3,17 @@
  */
 import { CardFlow } from './flow.js';
 import { rollDigits, springs, springIn } from './tripfit-motion.js';
+import { fitNumbers } from './effects.js';
+import { rafSchd } from './vendor/raf-schd.js';
 import { openDetailSheet } from './tripfit-sheet.js';
 
 export function node(tag, attrs = {}, ...children) {
   const e = document.createElement(tag);
   for (const [key, value] of Object.entries(attrs)) {
-    if (value == null || value === false) continue;
+    if (value == null || (value === false && !key.startsWith('aria-'))) continue;
     if (key === 'class') e.className = value;
     else if (key.startsWith('on') && typeof value === 'function') e.addEventListener(key.slice(2).toLowerCase(), value);
-    else e.setAttribute(key, value === true ? '' : String(value));
+    else e.setAttribute(key, key.startsWith('aria-') ? String(value) : value === true ? '' : String(value));
   }
   for (const child of children.flat(Infinity)) if (child != null && child !== false) e.append(child instanceof Node ? child : document.createTextNode(String(child)));
   return e;
@@ -62,7 +64,7 @@ export class ComposedFlow extends CardFlow {
   constructor(root, definition){
     super(root,definition);this.state={...(definition.state||{})};this.activeSheet=null;
     for(const step of definition.steps)for(const c of step.cards)if(c.render!==undefined&&typeof c.render!=='function')throw new TypeError('card.render must be a function');
-    this._resize=()=>this.fit();
+    this._resize=rafSchd(()=>this.fit());this._pageCleanups=[];
   }
   renderCard(definition){
     if(!definition.render)return super.renderCard(definition);
@@ -76,10 +78,11 @@ export class ComposedFlow extends CardFlow {
     this.mountPoint.querySelector('.tk-kicker').textContent='TRIPFIT UI KIT / COMPOSED EXAMPLE';
     document.documentElement.style.setProperty('--tk-spring',springs.pop.easing);
     document.documentElement.style.setProperty('--tk-spring-ms',springs.pop.duration+'ms');
-    window.addEventListener('resize',this._resize);this.fit();return this;
+    window.addEventListener('resize',this._resize);this._numberCleanup=fitNumbers(this.screen);this.fit();return this;
   }
   go(id){
-    this.activeSheet?.close(true);this.activeSheet=null;
+    while(this.screen?._detailSheet)this.screen._detailSheet.close(true);this.activeSheet?.close(true);this.activeSheet=null;
+    this._pageCleanups?.splice(0).reverse().forEach(fn=>fn());
     const result=super.go(id);
     for(const b of this.footer.querySelectorAll('button')){
       const label=b.textContent;b.replaceChildren(node('span',{},label),node('span',{class:'tk-go'},icon()));
@@ -94,5 +97,6 @@ export class ComposedFlow extends CardFlow {
     const mobile=matchMedia('(max-width: 750px), (pointer: coarse) and (max-width: 900px)').matches;
     rig.style.transform=mobile?'':`scale(${Math.min(1,(innerHeight-32)/916,(innerWidth-48)/(innerWidth>=1100?791:417))})`;
   }
-  destroy(){window.removeEventListener('resize',this._resize);this.activeSheet?.close();this.feedback.hide();this.mountPoint.replaceChildren();}
+  onCleanup(fn){this._pageCleanups.push(fn);return fn;}
+  destroy(){this._pageCleanups.splice(0).reverse().forEach(fn=>fn());window.removeEventListener('resize',this._resize);this._resize.cancel();this._numberCleanup?.();this.activeSheet?.close(true);this.feedback.destroy?.();this.feedback.hide();this.mountPoint.replaceChildren();}
 }

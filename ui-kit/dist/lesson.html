@@ -377,12 +377,33 @@ button,input{-webkit-tap-highlight-color:transparent}button:focus-visible,input:
 .tk-card-list{display:grid;gap:4px}
 
 </style>
+<style data-kit-source="gallery.css">
+:root{--tk-butter:#f4e58e;--tk-leaf:#a8e2c3;--tk-red:#ff5b4a;--tk-violet:#7b5cff}
+.tk-butter{--tk-surface:var(--tk-butter)}.tk-leaf{--tk-surface:var(--tk-leaf)}.tk-red{--tk-surface:var(--tk-red)}.tk-violet{--tk-surface:var(--tk-violet);color:var(--tk-paper)}
+.kg-hero-title{font-size:34px;line-height:1.15;font-weight:500;margin:20px 0 14px;letter-spacing:-.055em;white-space:pre-line}
+.kg-hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:25px;border-top:1.5px solid var(--tk-ink);padding-top:15px}
+.kg-hero-stats strong{font:500 56px/.95 var(--tk-grotesk);letter-spacing:-.05em}.kg-hero-stats small{font-size:12px;margin-left:8px}.kg-hero-note{font-size:12px;line-height:1.65;margin:14px 0 0}
+.kg-controls{display:grid;gap:12px;padding:18px 16px}.kg-tabs{display:flex;gap:5px;flex-wrap:wrap}.kg-tab{border:1.5px solid var(--tk-ink);background:none;border-radius:99px;min-height:40px;padding:0 13px;font:600 12px var(--tk-font);color:var(--tk-ink);cursor:pointer}.kg-tab[aria-pressed=true]{background:var(--tk-ink);color:var(--tk-paper)}
+.kg-search{background:var(--tk-paper);border:1.5px solid var(--tk-ink);border-radius:16px;min-height:46px;width:100%;padding:10px 14px;font:500 16px var(--tk-font);color:var(--tk-ink)}.kg-toggle{display:flex;gap:8px;align-items:center;font-size:12px;min-height:40px}.kg-toggle input{width:18px;height:18px;accent-color:var(--tk-ink)}
+.kg-list{display:grid;gap:4px}.kg-item{display:grid;grid-template-columns:32px minmax(0,1fr) 30px;align-items:center;gap:12px;min-height:100px;width:100%;border:0;text-align:left;font:inherit;cursor:pointer;padding:17px 18px}.kg-number{font:500 24px var(--tk-grotesk);opacity:.6}.kg-item h3{margin:0;font-size:17px;line-height:1.25;letter-spacing:-.04em;font-weight:600}.kg-item p{margin:6px 0 0;font-size:11.5px;line-height:1.5;opacity:.8}.kg-source{font:500 10px/1.6 var(--tk-grotesk);opacity:.7;display:block;margin-top:5px;overflow-wrap:anywhere}.kg-open{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--tk-ink);color:var(--tk-lemon)}.kg-count{font-size:12px;color:var(--tk-paper);padding:8px 12px;margin:0}
+.kg-stage{min-height:230px;display:flex;flex-direction:column;justify-content:center;gap:12px;overflow:hidden;position:relative;padding:22px 18px}.kg-stage .tk-title{white-space:normal}.kg-demo-tile{border-radius:24px;padding:24px;background:var(--tk-lemon);color:var(--tk-ink);font-size:21px;font-weight:600;min-width:0;text-align:center}.kg-demo-row{display:flex;align-items:center;justify-content:center;gap:12px;min-height:100px;flex-wrap:wrap}.kg-demo-dot{width:18px;height:18px;border-radius:50%;background:var(--tk-ink)}
+.kg-mini-button{background:var(--tk-ink);color:var(--tk-paper);font:600 12px var(--tk-font);border:0;border-radius:99px;min-height:44px;padding:0 16px;cursor:pointer}.kg-action-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.kg-demo-tip{font-size:12px;line-height:1.6;margin:8px 0 0;opacity:.8}.kg-toolbar{display:flex;gap:8px}.kg-toolbar .tk-primary{height:52px;min-height:52px;font-size:14px;padding-left:18px}.kg-toolbar .tk-go{width:38px;height:38px}.kg-code{white-space:pre-wrap;word-break:break-word;font:500 11px/1.65 ui-monospace,monospace;background:var(--tk-ink);color:var(--tk-paper);border-radius:18px;padding:16px;margin:12px 0 0}
+.kg-assets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.kg-asset{min-height:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px solid #0e2a3a33;border-radius:16px}.kg-asset small{font-size:9px;max-width:100%;overflow-wrap:anywhere}.kg-palette{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.kg-swatch{min-height:70px;border-radius:16px;border:1px solid #0e2a3a66;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:11px;color:var(--tk-ink)}.kg-swatch small{font:500 10px var(--tk-grotesk)}
+.kg-spinner{width:32px;height:32px;border-radius:50%;border:3px solid #0e2a3a40;border-top-color:var(--tk-ink)}.kg-quote{font-size:21px;line-height:1.6;margin:0}.kg-highlight{padding:2px 4px;background:var(--tk-ink);color:var(--tk-rose);border-radius:6px}.kg-chip-target{align-self:flex-end;margin-top:40px}.kg-path{display:block;width:100%;height:auto;background:var(--tk-mint);border-radius:22px}.kg-hatch{background:repeating-linear-gradient(-45deg,#ffffff22 0 8px,transparent 8px 16px),var(--tk-violet);color:var(--tk-paper)}.kg-stamp{border:3px solid var(--tk-ink);font:600 36px var(--tk-grotesk);padding:4px 20px;align-self:center;letter-spacing:.06em;transform:rotate(-8deg)}.kg-fill{height:15px;background:#0e2a3a26;border-radius:99px;overflow:hidden}.kg-fill>i{display:block;width:82%;height:100%;background:var(--tk-ink);border-radius:99px}
+.kg-hold{position:relative;background:var(--tk-ink);color:var(--tk-lemon);min-height:64px;border:2px solid var(--tk-lemon);border-radius:99px;font:600 16px var(--tk-font);cursor:pointer;user-select:none;touch-action:pan-y;overflow:hidden}.kg-hold:before{content:'';position:absolute;inset:0 auto 0 0;width:var(--hold,0%);background:#d6f23b44}.kg-hold span{position:relative}.kg-avatar{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:var(--person,var(--tk-rose));color:var(--tk-ink);box-shadow:0 0 0 2px var(--tk-ink);font-weight:600}.kg-avatar+.kg-avatar{margin-left:-22px}
+.kg-switch{width:64px;height:38px;border:1.5px solid var(--tk-ink);border-radius:99px;background:var(--tk-paper);position:relative;cursor:pointer}.kg-switch:after{content:'';position:absolute;width:28px;height:28px;border-radius:50%;background:var(--tk-ink);top:3.5px;left:4px;transition:transform .5s var(--tk-spring)}.kg-switch[aria-checked=true]{background:var(--tk-ink)}.kg-switch[aria-checked=true]:after{transform:translateX(26px);background:var(--tk-lilac)}.kg-qr{background:#fff;border-radius:12px;padding:16px;align-self:center;display:inline-block;line-height:0}
+.tk-island{gap:9px;justify-content:flex-start}.tk-island-mark{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--tk-lemon);color:var(--tk-ink);font-size:16px;font-weight:700}.tk-island-label{flex:1;text-align:left;min-width:0}.tk-island-label b{display:block;font-size:12px}.tk-island-label small{display:block;font-size:10px;color:#f3f1eaad;margin-top:3px}.tk-island-right{font:500 12px var(--tk-grotesk);color:var(--tk-lemon)}.tk-island-mark.is-spinning{background:transparent;width:20px;height:20px;border:2px solid #f3f1ea55;border-top-color:var(--tk-lemon);animation:kg-spin .7s linear infinite}@keyframes kg-spin{to{transform:rotate(360deg)}}
+.tk-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}html[data-motion=reduce] *,html[data-motion=reduce] *:before,html[data-motion=reduce] *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+@media(prefers-reduced-motion:reduce){.tk-island-mark.is-spinning{animation:none}}@media(max-width:360px){.kg-hero-title{font-size:30px}.kg-assets{grid-template-columns:repeat(3,minmax(0,1fr))}.kg-item{gap:8px;padding:16px 13px}.kg-tab{padding:0 10px}}
+.kg-stage>.tk-readout{max-width:100%;justify-content:center}.kg-stage .tk-large .tk-value{font-size:clamp(30px,9vw,56px)}
+
+</style>
 </head>
 <body>
 <div id="app"></div>
 <noscript>이 인터랙티브 예시에는 JavaScript가 필요합니다.</noscript>
 <script>
-/* Generated from reusable kit source. Do not edit the generated output. */
+/* Generated from the actual UI kit modules. */
 (()=>{const modules={};
 modules["tripfit-motion.js"]=(()=>{
 /**
@@ -398,6 +419,7 @@ const canLinear = typeof CSS !== "undefined" &&
   CSS.supports("transition-timing-function", "linear(0, 1)");
 
 function makeSpring(k, c) {
+  if(!Number.isFinite(k)||!Number.isFinite(c)||k<=0||c<=0) throw new RangeError('Spring stiffness and damping must be positive finite numbers');
   const w0 = Math.sqrt(k);
   const z = c / (2 * Math.sqrt(k));
   const wd = w0 * Math.sqrt(Math.max(1e-6, 1 - z * z));
@@ -423,7 +445,7 @@ const springs = {
 
 function reduced() {
   return typeof matchMedia === "function" &&
-    matchMedia("(prefers-reduced-motion: reduce)").matches;
+    (matchMedia("(prefers-reduced-motion: reduce)").matches || (typeof document !== "undefined" && document.documentElement.dataset.motion === "reduce"));
 }
 function springIn(element, {
   from = "translateY(36px) scale(.96)", delay = 0, kind = "pop"
@@ -439,6 +461,7 @@ function springIn(element, {
 
 function rollDigits(element, value) {
   const str = String(value);
+  element.setAttribute("role","img");element.setAttribute("aria-label",str);
   if (element.dataset.rollValue === str) return;
   const chars = [...str];
   const digits = ch => /^[0-9]$/.test(ch);
@@ -479,10 +502,12 @@ function rollDigits(element, value) {
     stack.style.transform = `translateY(${-Number(ch) * 10}%)`;
   });
   element.dataset.rollValue = str;
+  for(const child of element.children)child.setAttribute("aria-hidden","true");
 }
 
 function revealHeadline(element, message, { delay = 0 } = {}) {
   const text = String(message);
+  element.setAttribute("aria-label",text);
   if (element.dataset.revealValue === text) return;
   element.dataset.revealValue = text;
   element.replaceChildren();
@@ -492,7 +517,7 @@ function revealHeadline(element, message, { delay = 0 } = {}) {
     for (const [wordIdx, word] of words.entries()) {
       if (wordIdx) element.append(document.createTextNode(" "));
       const token = document.createElement("span");
-      token.className = "tk-title-word";
+      token.className = "tk-title-word";token.setAttribute("aria-hidden","true");
       for (const char of [...word]) {
         const letter = document.createElement("span");
         letter.className = "tk-title-char";
@@ -516,78 +541,28 @@ function revealHeadline(element, message, { delay = 0 } = {}) {
  * Uses textContent throughout; never injects untrusted HTML.
  */
 function createFeedbackIsland(screen) {
-  const root = document.createElement("div");
-  root.className = "tk-island";
-  root.setAttribute("role", "status");
-  root.setAttribute("aria-live", "polite");
-  root.setAttribute("aria-atomic", "true");
-  const label = document.createElement("div");
-  label.className = "tk-island-label";
-  root.append(label);
-  screen.append(root);
-  let timer = null;
-  const hide = () => {
-    if (timer !== null) clearTimeout(timer);
-    timer = null;
-    root.classList.remove("is-open");
+  const root=document.createElement('div');root.className='tk-island';root.setAttribute('role','status');root.setAttribute('aria-live','polite');root.setAttribute('aria-atomic','true');
+  const mark=document.createElement('span');mark.className='tk-island-mark';mark.setAttribute('aria-hidden','true');
+  const label=document.createElement('div');label.className='tk-island-label';
+  const title=document.createElement('b'),sub=document.createElement('small'),right=document.createElement('span');right.className='tk-island-right';
+  label.append(title,sub);root.append(mark,label,right);screen.append(root);let timer=null;
+  const hide=()=>{clearTimeout(timer);timer=null;root.classList.remove('is-open');};
+  const show=(message,{hold=2600}={})=>{
+    hide();const data=typeof message==='object'&&message!==null?message:{title:String(message)};
+    title.textContent=data.title||'';sub.textContent=data.sub||'';sub.hidden=!data.sub;right.textContent=data.right||'';right.hidden=!data.right;
+    mark.classList.toggle('is-spinning',!!data.spin);mark.textContent=data.spin?'':'✓';root.classList.add('is-open');
+    const timeout=data.hold??hold;if(timeout>0)timer=setTimeout(hide,timeout);
   };
-  const show = (message, { hold = 2600 } = {}) => {
-    hide();
-    label.textContent = String(message);
-    root.classList.add("is-open");
-    if (hold > 0) timer = setTimeout(hide, hold);
-  };
-  return { root, show, hide };
+  return {root,show,hide,destroy(){hide();root.remove();}};
 }
 
 return {makeSpring,springs,springIn,rollDigits,revealHeadline,createFeedbackIsland};})();
-modules["tripfit-sheet.js"]=(()=>{
-/** Adapted TripFit sheet pattern, within the existing fork.
- * Supports arbitrary DOM content so different cards can open different layouts.
- * No travel data, solver, original HTML page, or string-HTML injection.
- */
-function openDetailSheet(screen,{title,body,detail,content,tone='mint',onClose}={}) {
-  if(!screen)throw new Error('Missing screen for detail sheet');
-  screen._detailSheet?.close(true);
-  const doc=screen.ownerDocument, make=(tag,cls,text)=>{const n=doc.createElement(tag);n.className=cls;if(text!=null)n.textContent=String(text);return n;};
-  const before=doc.activeElement, layer=make('div','tk-sheet-layer'),dim=make('div','tk-sheet-dim');
-  const sheet=make('section','tk-sheet'),header=make('div','tk-card tk-'+tone+' tk-sheet-head');
-  sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');sheet.tabIndex=-1;
-  const grip=make('div','tk-sheet-grip');grip.setAttribute('aria-hidden','true');
-  const closeButton=make('button','tk-sheet-close','×');closeButton.type='button';closeButton.setAttribute('aria-label','상세 창 닫기');
-  const heading=make('h2','tk-sheet-title',title||'상세 정보');heading.id='tk-detail-'+Math.random().toString(36).slice(2,9);sheet.setAttribute('aria-labelledby',heading.id);
-  header.append(grip,closeButton,heading);if(body)header.append(make('p','tk-sheet-body',body));sheet.append(header);
-  if(detail){const block=make('div','tk-card tk-cream');block.append(make('p','tk-sheet-extra',detail));sheet.append(block);}
-  if(content){const nodes=typeof content==='function'?content():content;for(const item of [nodes].flat(Infinity)){if(item instanceof doc.defaultView.Node)sheet.append(item);else if(item!=null)throw new TypeError('Sheet content must be DOM nodes');}}
-  layer.append(dim,sheet);
-  const siblings=Array.from(screen.children).map(el=>[el,el.inert]);siblings.forEach(([el])=>el.inert=true);
-  screen.append(layer);let closed=false;
-  const reduced=()=>typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const focusable=()=>Array.from(sheet.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),a[href],[tabindex="0"]')).filter(n=>n.getClientRects().length&&!n.closest('[hidden]'));
-  const close=(immediate=false)=>{
-    if(closed)return;closed=true;sheet.removeEventListener('keydown',onKey);layer.classList.remove('is-open');
-    const cleanup=()=>{layer.remove();siblings.forEach(([el,state])=>{if(el.isConnected)el.inert=state;});if(screen._detailSheet===result)screen._detailSheet=null;if(before?.isConnected)before.focus({preventScroll:true});onClose?.();};
-    if(immediate||reduced()||!sheet.animate)cleanup();else sheet.animate([{transform:'none',opacity:1},{transform:'translateY(110%)',opacity:.5}],{duration:300,easing:'ease-in',fill:'forwards'}).finished.then(cleanup).catch(cleanup);
-  };
-  const onKey=e=>{
-    if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();}
-    if(e.key==='Tab'){const nodes=focusable(),first=nodes[0]||sheet,last=nodes.at(-1)||sheet;if(e.shiftKey&&(doc.activeElement===first||doc.activeElement===sheet)){e.preventDefault();last.focus();}else if(!e.shiftKey&&doc.activeElement===last){e.preventDefault();first.focus();}}
-  };
-  dim.addEventListener('click',()=>close());closeButton.addEventListener('click',()=>close());sheet.addEventListener('keydown',onKey);
-  let start=null;
-  header.addEventListener('touchstart',e=>{if(!e.target.closest('button'))start={x:e.touches[0].clientX,y:e.touches[0].clientY};},{passive:true});
-  header.addEventListener('touchend',e=>{if(!start)return;const t=e.changedTouches[0];if(t.clientY-start.y>75&&Math.abs(t.clientX-start.x)<80)close();start=null;},{passive:true});
-  const result={element:sheet,close};screen._detailSheet=result;
-  requestAnimationFrame(()=>{if(!closed)layer.classList.add('is-open');});closeButton.focus({preventScroll:true});return result;
-}
-
-return {openDetailSheet};})();
 modules["flow.js"]=(()=>{
-const { springIn, rollDigits, revealHeadline, createFeedbackIsland }=modules["tripfit-motion.js"];
+const {springIn, rollDigits, revealHeadline, createFeedbackIsland}=modules["tripfit-motion.js"];
 /**
  * Reusable, dependency-free card flow runtime.
  * Keeps app-specific content in a validated data object.
- * No TripFit travel logic or original UI code is imported.
+ * No TripFit travel logic or original application page is imported; visual primitives are adapted from TripFit.
  */
 const TYPES = new Set(["hero", "text", "metric", "choices"]);
 const COLORS = new Set(["lime", "pink", "sky", "mint", "cream", "lilac", "peach"]);
@@ -738,6 +713,7 @@ class CardFlow {
   }
 
   go(id) {
+    this.reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.dataset.motion === "reduce";
     const step = this.steps.get(id);
     if (!step) throw new Error("Unknown step: " + id);
     const previousIdx = this.flow.steps.findIndex(s => s.id === this.current);
@@ -784,7 +760,7 @@ class CardFlow {
     if (!this.reducedMotion) {
       enter(page, backward ? "translateX(-15%)" : "translateX(15%)");
       Array.from(page.querySelectorAll(".tk-card")).forEach((card, idx) =>
-        springIn(card, { from: "translateY(36px) scale(.96)", delay: idx * 90 }));
+        card.getBoundingClientRect().top < this.viewport.getBoundingClientRect().bottom && springIn(card, { from: "translateY(36px) scale(.96)", delay: Math.min(idx, 5) * 90 }));
     }
     // Decorative motion works independently of the domain-specific content.
     for (const title of page.querySelectorAll(".tk-title"))
@@ -799,20 +775,909 @@ class CardFlow {
 }
 
 return {validateFlow,CardFlow};})();
+modules["vendor/raf-schd.js"]=(()=>{
+/* MIT License
+Copyright (c) 2021 Alex Reardon
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Adapted from raf-schd v4.0.3: Flow types removed, named export, explicit null check. */
+function rafSchd(fn){let lastArgs=[],frameId=null;const schedule=(...args)=>{lastArgs=args;if(frameId!==null)return;frameId=requestAnimationFrame(()=>{frameId=null;fn(...lastArgs);});};schedule.cancel=()=>{if(frameId!==null)cancelAnimationFrame(frameId);frameId=null;};return schedule;}
+
+return {rafSchd};})();
+modules["effects.js"]=(()=>{
+/** Reusable TripFit motion primitives. Adapted from web/index.html and web/pay/styles.css.
+ * See SOURCE_AUDIT.md. FLIP API design also informed by AutoAnimate; no FormKit code. */
+const {springs}=modules["tripfit-motion.js"];
+const {rafSchd}=modules["vendor/raf-schd.js"];
+const ease='cubic-bezier(.2,.8,.2,1)',out='cubic-bezier(.5,0,.75,0)';
+const PRESETS={
+ rise:{frames:[{opacity:0,transform:'translateY(36px) scale(.96)'},{opacity:1,transform:'none'}],spring:'pop'},
+ chat:{frames:[{opacity:0,transform:'translateY(40px) scale(.94)'},{opacity:1,transform:'none'}],spring:'pop'},
+ enterRight:{frames:[{opacity:0,transform:'translateX(50px) scale(.92)'},{opacity:1,transform:'none'}],spring:'pop'},
+ exitLeft:{frames:[{opacity:1,transform:'none'},{opacity:1,transform:'rotate(-2deg) scale(.98)',offset:.3},{opacity:0,transform:'translateX(-80px) rotate(-8deg) scale(.8)'}],duration:620,easing:out},
+ glow:{frames:[{boxShadow:'inset 0 0 0 0 #D6F23B'},{boxShadow:'inset 0 0 0 5px #D6F23B'},{boxShadow:'inset 0 0 0 0 #D6F23B'}],duration:1400},
+ shake:{frames:[{transform:'none'},{transform:'translateX(-7px) rotate(-1deg)'},{transform:'translateX(7px) rotate(1deg)'},{transform:'translateX(-4px)'},{transform:'none'}],duration:520},
+ lockPulse:{frames:[{transform:'scale(1)'},{transform:'scale(1.03)'},{transform:'scale(1)'}],duration:1100},
+ pop:{frames:[{opacity:0,transform:'scale(0)'},{opacity:1,transform:'scale(1)'}],spring:'pop'},
+ flag:{frames:[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],spring:'pop'},
+ press:{frames:[{transform:'scale(.9)'},{transform:'none'}],spring:'pop'},
+ timeChange:{frames:[{transform:'scale(1.2)',opacity:.4},{transform:'none',opacity:1}],duration:700},
+ countOut:{frames:[{filter:'blur(0)',transform:'none',opacity:1},{filter:'blur(10px)',transform:'scale(.6)',opacity:0}],duration:420,easing:out},
+ countIn:{frames:[{transform:'scale(2.2)',opacity:0},{transform:'none',opacity:1}],spring:'pop'},
+ textBlur:{frames:[{opacity:0,filter:'blur(6px)'},{opacity:1,filter:'none'}],duration:700},
+ charIn:{frames:[{opacity:0,transform:'translateY(.45em)',filter:'blur(5px)'},{opacity:1,transform:'none',filter:'blur(0)'}],duration:520},
+ subtitle:{frames:[{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'none'}],duration:500},
+ log:{frames:[{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'none'}],duration:420},
+ delta:{frames:[{opacity:0,transform:'translateY(20px) scale(.7)'},{opacity:1,transform:'none'}],spring:'pop'},
+ badge:{frames:[{opacity:0,transform:'translateX(-30px) rotate(-6deg)'},{opacity:1,transform:'none'}],spring:'pop'},
+ split:{frames:[{opacity:0,transform:'translateY(30px) scale(.85)'},{opacity:1,transform:'none'}],spring:'pop'},
+ sheetIn:{frames:[{transform:'translateY(105%)'},{transform:'none'}],spring:'soft'},
+ sheetOut:{frames:[{transform:'none'},{transform:'translateY(110%)'}],duration:340,easing:out},
+ stamp:{frames:[{transform:'scale(1.8) rotate(-22deg)',opacity:0},{transform:'none',opacity:1}],spring:'pop'},
+ stopStamp:{frames:[{transform:'scale(1.4) rotate(-8deg)',opacity:0},{transform:'scale(1) rotate(-8deg)',opacity:1}],duration:380},
+ drop:{frames:[{transform:'translateY(-28px) scale(.94)'},{transform:'none'}],spring:'pop'},
+ spin:{frames:[{transform:'rotate(0deg)'},{transform:'rotate(360deg)'}],duration:700,easing:'linear',iterations:Infinity},
+ ripple:{frames:[{transform:'scale(.6)',opacity:.9},{transform:'scale(2.2)',opacity:0}],duration:1400,iterations:Infinity},
+ typing:{frames:[{opacity:.3,transform:'none'},{opacity:1,transform:'translateY(-3px)',offset:.3},{opacity:.3,transform:'none'}],duration:1000,iterations:Infinity},
+ decisionPulse:{frames:[{opacity:.3},{opacity:1}],duration:1000,direction:'alternate',iterations:Infinity}
+};
+function motionReduced(){return typeof document!=='undefined'&&(document.documentElement.dataset.motion==='reduce'||globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches);}
+function setMotionPreference(reduce){document.documentElement.dataset.motion=reduce?'reduce':'auto';document.dispatchEvent(new CustomEvent('tk:motionchange'));}
+const scopes=new Set();
+function motionStats(){return {scopes:scopes.size,animations:[...scopes].reduce((n,s)=>n+s.animations.size,0)};}
+class MotionScope{
+ constructor(host){
+  if(!host)throw new TypeError('MotionScope needs a host');
+  this.host=host;this.animations=new Set();this.cleanups=[];this.closed=false;this.visible=true;this.paused=new Set();this.loops=new Set();this.controller=new AbortController();scopes.add(this);
+  this.media=matchMedia('(prefers-reduced-motion: reduce)');const sync=()=>this.sync();
+  this.listen(document,'visibilitychange',sync);this.listen(document,'tk:motionchange',sync);this.media.addEventListener('change',sync);this.cleanups.push(()=>this.media.removeEventListener('change',sync));
+  if(typeof IntersectionObserver==='function'){this.observer=new IntersectionObserver(entries=>{this.visible=entries[0]?.isIntersecting??true;this.sync();});this.observer.observe(host);this.cleanups.push(()=>this.observer.disconnect());}
+ }
+ listen(target,type,fn,options={}){target.addEventListener(type,fn,options);this.cleanups.push(()=>target.removeEventListener(type,fn,options));return fn;}
+ sync(){const reduce=motionReduced(),pause=document.hidden||!this.visible;for(const a of this.animations){if(reduce){if(a.effect?.getTiming().iterations===Infinity)a.cancel();else try{a.finish();}catch{a.cancel();}}else if(pause&&a.playState==='running'){a.pause();this.paused.add(a);}else if(!pause&&this.paused.delete(a))a.play();}for(const loop of this.loops)loop.sync();}
+ play(el,name,options={}){
+  if(this.closed||!el?.animate)return {finished:Promise.resolve(),cancel(){}};
+  const preset=typeof name==='string'?PRESETS[name]:name;if(!preset)throw new Error('Unknown effect '+name);
+  const timing={duration:380,easing:ease,fill:'backwards',...(preset.spring?springs[preset.spring]:{}),...preset,...options};delete timing.frames;delete timing.spring;
+  const reduced=motionReduced();if(reduced&&timing.iterations===Infinity)return {finished:Promise.resolve(),cancel(){}};if(reduced){timing.duration=1;timing.delay=0;timing.iterations=1;}
+  const animation=el.animate(preset.frames,timing);this.animations.add(animation);const cleanup=()=>{this.animations.delete(animation);this.paused.delete(animation);};animation.finished.then(cleanup,cleanup);this.sync();return {animation,finished:animation.finished.catch(()=>{}),cancel:()=>animation.cancel()};
+ }
+ async wait(ms){if(this.closed)return false;return new Promise(resolve=>{const finish=()=>{clearTimeout(timer);this.controller.signal.removeEventListener('abort',abort);resolve(!this.closed);};const abort=()=>finish();const timer=setTimeout(finish,motionReduced()?0:ms);this.controller.signal.addEventListener('abort',abort,{once:true});});}
+ loop(tick){
+  let frame=null,last=0,elapsed=0;const can=()=>!this.closed&&!document.hidden&&this.visible&&!motionReduced();
+  const step=now=>{frame=null;if(!can())return;if(last)elapsed+=Math.min(64,now-last);last=now;tick(elapsed);frame=requestAnimationFrame(step);};
+  const item={sync:()=>{if(can()&&frame===null){last=0;frame=requestAnimationFrame(step);}else if(!can()&&frame!==null){cancelAnimationFrame(frame);frame=null;last=0;}},dispose:()=>{if(frame!==null)cancelAnimationFrame(frame);frame=null;this.loops.delete(item);}};this.loops.add(item);this.cleanups.push(item.dispose);item.sync();return item.dispose;
+ }
+ dispose(){if(this.closed)return;this.closed=true;this.controller.abort();for(const a of this.animations)a.cancel();this.animations.clear();this.paused.clear();this.cleanups.splice(0).reverse().forEach(fn=>fn());this.loops.clear();scopes.delete(this);}
+}
+function stagger(scope,elements,name='rise',{gap=90,...options}={}){return Promise.all([...elements].map((e,i)=>scope.play(e,name,{delay:i*gap,...options}).finished));}
+function drawPath(scope,path,{duration=950,delay=0}={}){const length=path.getTotalLength(),previous=path.style.strokeDasharray;path.style.strokeDasharray=String(length);scope.cleanups.push(()=>path.style.strokeDasharray=previous);return scope.play(path,{frames:[{strokeDashoffset:length},{strokeDashoffset:0}],duration},{delay});}
+function followPath(scope,path,marker,{duration=7000}={}){const length=path.getTotalLength();const position=elapsed=>{const pt=path.getPointAtLength((elapsed%duration)/duration*length);marker.setAttribute('transform',`translate(${pt.x},${pt.y})`);};position(0);return scope.loop(position);}
+async function flyChip(scope,source,target){
+ if(scope.closed)return;const a=source.getBoundingClientRect(),b=target.getBoundingClientRect();if(!a.width||!b.width)return;
+ const clone=target.cloneNode(true);clone.removeAttribute('id');clone.querySelectorAll('[id]').forEach(n=>n.removeAttribute('id'));clone.setAttribute('aria-hidden','true');clone.inert=true;
+ Object.assign(clone.style,{position:'fixed',left:b.left+'px',top:b.top+'px',width:b.width+'px',height:b.height+'px',zIndex:1000,pointerEvents:'none',margin:'0'});document.body.append(clone);const before=target.style.visibility;target.style.visibility='hidden';
+ const cleanup=()=>{clone.remove();target.style.visibility=before;};scope.cleanups.push(cleanup);const dx=a.left+a.width/2-(b.left+b.width/2),dy=a.top-b.top;
+ await scope.play(clone,{frames:[{transform:`translate(${dx}px,${dy}px) scale(.4)`,opacity:0},{transform:`translate(${dx*.5}px,${dy*.5-36}px) scale(1.12) rotate(-6deg)`,opacity:1,offset:.5},{transform:'none',opacity:1}],duration:560,easing:'cubic-bezier(.3,.7,.2,1)'}).finished;cleanup();if(!scope.closed)scope.play(target,'press');
+}
+/** Explicit, keyed FLIP lists. This is NOT the AutoAnimate library. */
+function createAnimatedList(host,{key=item=>item.id,render,update}={}){
+ if(typeof render!=='function')throw new TypeError('render is required');const scope=new MotionScope(host),nodes=new Map(),ghosts=new Set();host.style.position='relative';
+ function set(items){
+  if(scope.closed)return;const ids=items.map(key);if(new Set(ids).size!==ids.length)throw new Error('Duplicate list keys');
+  const first=new Map([...nodes].map(([id,e])=>[id,e.getBoundingClientRect()]));ghosts.forEach(e=>e.remove());ghosts.clear();const parent=host.getBoundingClientRect(),scale=host.offsetWidth?parent.width/host.offsetWidth:1;
+  for(const [id,e]of nodes)if(!ids.includes(id)){const r=first.get(id);nodes.delete(id);e.inert=true;e.setAttribute('aria-hidden','true');ghosts.add(e);Object.assign(e.style,{position:'absolute',top:(r.top-parent.top)/scale+'px',left:'0',width:r.width/scale+'px'});scope.play(e,'exitLeft').finished.then(()=>{e.remove();ghosts.delete(e);});}
+  items.forEach((item,i)=>{const id=ids[i];let e=nodes.get(id);const fresh=!e;if(fresh){e=render(item);if(!(e instanceof HTMLElement))throw new TypeError('render must return an element');nodes.set(id,e);e.dataset.listKey=String(id);}else update?.(e,item);host.append(e);if(fresh){scope.play(e,'enterRight',{delay:i*70});scope.play(e,'glow',{delay:160+i*70});}});
+  const last=new Map([...nodes].map(([id,e])=>[id,e.getBoundingClientRect()]));for(const [id,e]of nodes){const before=first.get(id),after=last.get(id);if(before){const dx=(before.left-after.left)/scale,dy=(before.top-after.top)/scale;if(dx||dy)scope.play(e,{frames:[{transform:`translate(${dx}px,${dy}px)`},{transform:'none'}],spring:'soft'});}}
+ }
+ return {set,dispose(){scope.dispose();ghosts.forEach(e=>e.remove());ghosts.clear();nodes.clear();}};
+}
+function fitNumbers(root){
+ const fit=rafSchd(()=>{for(const el of root.querySelectorAll('.tk-readout')){const number=el.querySelector('.tk-value');if(!number||!el.clientWidth)continue;number.style.fontSize='';let size=parseFloat(getComputedStyle(number).fontSize);for(let i=0;i<4&&el.scrollWidth>el.clientWidth+1;i++){size*=Math.max(.5,(el.clientWidth-2)/el.scrollWidth);number.style.fontSize=size+'px';}}});
+ const observer=new ResizeObserver(fit);observer.observe(root);window.addEventListener('resize',fit);let closed=false;document.fonts?.ready.then(()=>{if(!closed)fit();});fit();return ()=>{closed=true;observer.disconnect();window.removeEventListener('resize',fit);fit.cancel();};
+}
+function bindHold(button,{duration=1000,onConfirm=()=>{},scope=new MotionScope(button)}={}){
+ let started=null,done=false,timer=null,held=null;const cancel=()=>{started=null;held=null;clearTimeout(timer);timer=null;button.style.setProperty('--hold','0%');button.classList.remove('is-holding');};
+ const finish=()=>{if(started===null||done)return;done=true;cancel();button.setAttribute('aria-pressed','true');onConfirm();};const begin=()=>{if(done||started!==null||button.disabled)return;started=performance.now();button.classList.add('is-holding');timer=setTimeout(finish,duration);};
+ scope.loop(()=>{if(started!==null)button.style.setProperty('--hold',Math.min(100,(performance.now()-started)/duration*100)+'%');});
+ scope.listen(button,'pointerdown',e=>{if(e.button!==0||!e.isPrimary)return;held=e.pointerId;button.setPointerCapture(e.pointerId);begin();});scope.listen(button,'pointermove',e=>{if(e.pointerId!==held)return;const r=button.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)cancel();});
+ ['pointerup','pointercancel','lostpointercapture','blur'].forEach(t=>scope.listen(button,t,cancel));scope.listen(button,'keydown',e=>{if([' ','Enter'].includes(e.key)){e.preventDefault();if(!e.repeat)begin();}});scope.listen(button,'keyup',e=>{if([' ','Enter'].includes(e.key))cancel();});scope.listen(document,'visibilitychange',()=>{if(document.hidden)cancel();});scope.cleanups.push(cancel);
+ return {reset(){done=false;cancel();button.setAttribute('aria-pressed','false');},dispose:()=>scope.dispose()};
+}
+
+return {PRESETS,motionReduced,setMotionPreference,motionStats,MotionScope,stagger,drawPath,followPath,flyChip,createAnimatedList,fitNumbers,bindHold};})();
+modules["vendor/tabbable.js"]=(()=>{
+/*
+The MIT License (MIT)
+
+Copyright (c) 2015 David Clark
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+Pinned upstream: https://raw.githubusercontent.com/focus-trap/tabbable/52b066375035abc647d76a30b83baced42119bb4/src/index.js
+*/
+// NOTE: separate `:not()` selectors has broader browser support than the newer
+//  `:not([inert], [inert] *)` (Feb 2023)
+const candidateSelectors = [
+  'input:not([inert]):not([inert] *)',
+  'select:not([inert]):not([inert] *)',
+  'textarea:not([inert]):not([inert] *)',
+  'a[href]:not([inert]):not([inert] *)',
+  'area[href]:not([inert]):not([inert] *)',
+  'button:not([inert]):not([inert] *)',
+  '[tabindex]:not(slot):not([inert]):not([inert] *)',
+  'audio[controls]:not([inert]):not([inert] *)',
+  'video[controls]:not([inert]):not([inert] *)',
+  '[contenteditable]:not([contenteditable="false"]):not([inert]):not([inert] *)',
+  'details>summary:first-of-type:not([inert]):not([inert] *)',
+  'details:not([inert]):not([inert] *)',
+];
+const candidateSelector = /* #__PURE__ */ candidateSelectors.join(',');
+
+const NoElement = typeof Element === 'undefined';
+
+const matches = NoElement
+  ? function () {}
+  : Element.prototype.matches ||
+    Element.prototype.msMatchesSelector ||
+    Element.prototype.webkitMatchesSelector;
+
+const getRootNode =
+  !NoElement && Element.prototype.getRootNode
+    ? (element) => element?.getRootNode?.()
+    : (element) => element?.ownerDocument;
+
+/**
+ * Determines if a node is inert or in an inert ancestor.
+ * @param {Node} [node]
+ * @param {boolean} [lookUp] If true and `node` is not inert, looks up at ancestors to
+ *  see if any of them are inert. If false, only `node` itself is considered.
+ * @returns {boolean} True if inert itself or by way of being in an inert ancestor.
+ *  False if `node` is falsy.
+ */
+const isInert = function (node, lookUp = true) {
+  // CAREFUL: JSDom does not support inert at all, so we can't use the `HTMLElement.inert`
+  //  JS API property; we have to check the attribute, which can either be empty or 'true';
+  //  if it's `null` (not specified) or 'false', it's an active element
+  const inertAtt = node?.getAttribute?.('inert');
+  const inert = inertAtt === '' || inertAtt === 'true';
+
+  // NOTE: this could also be handled with `node.matches('[inert], :is([inert] *)')`
+  //  if it weren't for `matches()` not being a function on shadow roots; the following
+  //  code works for any kind of node
+  const result =
+    inert ||
+    (lookUp &&
+      node &&
+      // closest does not exist on shadow roots, so we fall back to a manual
+      // lookup upward, in case it is not defined.
+      (typeof node.closest === 'function'
+        ? node.closest('[inert]')
+        : isInert(node.parentNode)));
+
+  return result;
+};
+
+/**
+ * Determines if a node's content is editable.
+ * @param {Element} [node]
+ * @returns True if it's content-editable; false if it's not or `node` is falsy.
+ */
+const isContentEditable = function (node) {
+  // CAREFUL: JSDom does not support the `HTMLElement.isContentEditable` API so we have
+  //  to use the case-insensitive attribute directly: empty, 'true', and 'plaintext-only'
+  //  are editable states; `null` (not specified) and 'false' are not.
+  const attValue = node?.getAttribute?.('contenteditable')?.toLowerCase();
+  return (
+    attValue === '' || attValue === 'true' || attValue === 'plaintext-only'
+  );
+};
+
+/**
+ * @param {Element} el container to check in
+ * @param {boolean} includeContainer add container to check
+ * @param {(node: Element) => boolean} filter filter candidates
+ * @returns {Element[]}
+ */
+const getCandidates = function (el, includeContainer, filter) {
+  // even if `includeContainer=false`, we still have to check it for inertness because
+  //  if it's inert (either by itself or via its parent), then all its children are inert
+  if (isInert(el)) {
+    return [];
+  }
+
+  let candidates = Array.prototype.slice.apply(
+    el.querySelectorAll(candidateSelector)
+  );
+  if (includeContainer && matches.call(el, candidateSelector)) {
+    candidates.unshift(el);
+  }
+  candidates = candidates.filter(filter);
+  return candidates;
+};
+
+/**
+ * @callback GetShadowRoot
+ * @param {Element} element to check for shadow root
+ * @returns {ShadowRoot|boolean} ShadowRoot if available or boolean indicating if a shadowRoot is attached but not available.
+ */
+
+/**
+ * @callback ShadowRootFilter
+ * @param {Element} shadowHostNode the element which contains shadow content
+ * @returns {boolean} true if a shadow root could potentially contain valid candidates.
+ */
+
+/**
+ * @typedef {Object} CandidateScope
+ * @property {Element} scopeParent contains inner candidates
+ * @property {Element[]} candidates list of candidates found in the scope parent
+ */
+
+/**
+ * @typedef {Object} IterativeOptions
+ * @property {GetShadowRoot|boolean} getShadowRoot true if shadow support is enabled; falsy if not;
+ *  if a function, implies shadow support is enabled and either returns the shadow root of an element
+ *  or a boolean stating if it has an undisclosed shadow root
+ * @property {(node: Element) => boolean} filter filter candidates
+ * @property {boolean} flatten if true then result will flatten any CandidateScope into the returned list
+ * @property {ShadowRootFilter} shadowRootFilter filter shadow roots;
+ */
+
+/**
+ * @param {Element[]} elements list of element containers to match candidates from
+ * @param {boolean} includeContainer add container list to check
+ * @param {IterativeOptions} options
+ * @returns {Array.<Element|CandidateScope>}
+ */
+const getCandidatesIteratively = function (
+  elements,
+  includeContainer,
+  options
+) {
+  const candidates = [];
+  const elementsToCheck = Array.from(elements);
+  while (elementsToCheck.length) {
+    const element = elementsToCheck.shift();
+    if (isInert(element, false)) {
+      // no need to look up since we're drilling down
+      // anything inside this container will also be inert
+      continue;
+    }
+
+    if (element.tagName === 'SLOT') {
+      // add shadow dom slot scope (slot itself cannot be focusable)
+      const assigned = element.assignedElements();
+      const content = assigned.length ? assigned : element.children;
+      const nestedCandidates = getCandidatesIteratively(content, true, options);
+      if (options.flatten) {
+        candidates.push(...nestedCandidates);
+      } else {
+        candidates.push({
+          scopeParent: element,
+          candidates: nestedCandidates,
+        });
+      }
+    } else {
+      // check candidate element
+      const validCandidate = matches.call(element, candidateSelector);
+      if (
+        validCandidate &&
+        options.filter(element) &&
+        (includeContainer || !elements.includes(element))
+      ) {
+        candidates.push(element);
+      }
+
+      // iterate over shadow content if possible
+      const shadowRoot =
+        element.shadowRoot ||
+        // check for an undisclosed shadow
+        (typeof options.getShadowRoot === 'function' &&
+          options.getShadowRoot(element));
+
+      // no inert look up because we're already drilling down and checking for inertness
+      //  on the way down, so all containers to this root node should have already been
+      //  vetted as non-inert
+      const validShadowRoot =
+        !isInert(shadowRoot, false) &&
+        (!options.shadowRootFilter || options.shadowRootFilter(element));
+
+      if (shadowRoot && validShadowRoot) {
+        // add shadow dom scope IIF a shadow root node was given; otherwise, an undisclosed
+        //  shadow exists, so look at light dom children as fallback BUT create a scope for any
+        //  child candidates found because they're likely slotted elements (elements that are
+        //  children of the web component element (which has the shadow), in the light dom, but
+        //  slotted somewhere _inside_ the undisclosed shadow) -- the scope is created below,
+        //  _after_ we return from this recursive call
+        const nestedCandidates = getCandidatesIteratively(
+          shadowRoot === true ? element.children : shadowRoot.children,
+          true,
+          options
+        );
+
+        if (options.flatten) {
+          candidates.push(...nestedCandidates);
+        } else {
+          candidates.push({
+            scopeParent: element,
+            candidates: nestedCandidates,
+          });
+        }
+      } else {
+        // there's not shadow so just dig into the element's (light dom) children
+        //  __without__ giving the element special scope treatment
+        elementsToCheck.unshift(...element.children);
+      }
+    }
+  }
+  return candidates;
+};
+
+/**
+ * @private
+ * Determines if the node has an explicitly specified `tabindex` attribute.
+ * @param {HTMLElement} node
+ * @returns {boolean} True if so; false if not.
+ */
+const hasTabIndex = function (node) {
+  return !isNaN(parseInt(node.getAttribute('tabindex'), 10));
+};
+
+/**
+ * Determine the tab index of a given node.
+ * @param {HTMLElement} node
+ * @returns {number} Tab order (negative, 0, or positive number).
+ * @throws {Error} If `node` is falsy.
+ */
+const getTabIndex = function (node) {
+  if (!node) {
+    throw new Error('No node provided');
+  }
+
+  if (node.tabIndex < 0) {
+    // in Chrome, <details/>, <audio controls/> and <video controls/> elements get a default
+    // `tabIndex` of -1 when the 'tabindex' attribute isn't specified in the DOM,
+    // yet they are still part of the regular tab order; in FF, they get a default
+    // `tabIndex` of 0; since Chrome still puts those elements in the regular tab
+    // order, consider their tab index to be 0.
+    // Also browsers do not return `tabIndex` correctly for contentEditable nodes;
+    // so if they don't have a tabindex attribute specifically set, assume it's 0.
+    if (
+      (/^(AUDIO|VIDEO|DETAILS)$/.test(node.tagName) ||
+        isContentEditable(node)) &&
+      !hasTabIndex(node)
+    ) {
+      return 0;
+    }
+  }
+
+  return node.tabIndex;
+};
+
+/**
+ * Determine the tab index of a given node __for sort order purposes__.
+ * @param {HTMLElement} node
+ * @param {boolean} [isScope] True for a custom element with shadow root or slot that, by default,
+ *  has tabIndex -1, but needs to be sorted by document order in order for its content to be
+ *  inserted into the correct sort position.
+ * @returns {number} Tab order (negative, 0, or positive number).
+ */
+const getSortOrderTabIndex = function (node, isScope) {
+  const tabIndex = getTabIndex(node);
+
+  if (tabIndex < 0 && isScope && !hasTabIndex(node)) {
+    return 0;
+  }
+
+  return tabIndex;
+};
+
+const sortOrderedTabbables = function (a, b) {
+  return a.tabIndex === b.tabIndex
+    ? a.documentOrder - b.documentOrder
+    : a.tabIndex - b.tabIndex;
+};
+
+const isInput = function (node) {
+  return node.tagName === 'INPUT';
+};
+
+const isHiddenInput = function (node) {
+  return isInput(node) && node.type === 'hidden';
+};
+
+const isDetailsWithSummary = function (node) {
+  const r =
+    node.tagName === 'DETAILS' &&
+    Array.prototype.slice
+      .apply(node.children)
+      .some((child) => child.tagName === 'SUMMARY');
+  return r;
+};
+
+const getCheckedRadio = function (nodes, form) {
+  for (let i = 0; i < nodes.length; i++) {
+    if (nodes[i].checked && nodes[i].form === form) {
+      return nodes[i];
+    }
+  }
+};
+
+const isTabbableRadio = function (node) {
+  if (!node.name) {
+    return true;
+  }
+  const radioScope = node.form || getRootNode(node);
+  const queryRadios = function (name) {
+    return radioScope.querySelectorAll(
+      'input[type="radio"][name="' + name + '"]'
+    );
+  };
+
+  let radioSet;
+  if (
+    typeof window !== 'undefined' &&
+    typeof window.CSS !== 'undefined' &&
+    typeof window.CSS.escape === 'function'
+  ) {
+    radioSet = queryRadios(window.CSS.escape(node.name));
+  } else {
+    try {
+      radioSet = queryRadios(node.name);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(
+        'Looks like you have a radio button with a name attribute containing invalid CSS selector characters and need the CSS.escape polyfill: %s',
+        err.message
+      );
+      return false;
+    }
+  }
+
+  const checked = getCheckedRadio(radioSet, node.form);
+  return !checked || checked === node;
+};
+
+const isRadio = function (node) {
+  return isInput(node) && node.type === 'radio';
+};
+
+const isNonTabbableRadio = function (node) {
+  return isRadio(node) && !isTabbableRadio(node);
+};
+
+// determines if a node is ultimately attached to the window's document
+const isNodeAttached = function (node) {
+  // The root node is the shadow root if the node is in a shadow DOM; some document otherwise
+  //  (but NOT _the_ document; see second 'If' comment below for more).
+  // If rootNode is shadow root, it'll have a host, which is the element to which the shadow
+  //  is attached, and the one we need to check if it's in the document or not (because the
+  //  shadow, and all nodes it contains, is never considered in the document since shadows
+  //  behave like self-contained DOMs; but if the shadow's HOST, which is part of the document,
+  //  is hidden, or is not in the document itself but is detached, it will affect the shadow's
+  //  visibility, including all the nodes it contains). The host could be any normal node,
+  //  or a custom element (i.e. web component). Either way, that's the one that is considered
+  //  part of the document, not the shadow root, nor any of its children (i.e. the node being
+  //  tested).
+  // To further complicate things, we have to look all the way up until we find a shadow HOST
+  //  that is attached (or find none) because the node might be in nested shadows...
+  // If rootNode is not a shadow root, it won't have a host, and so rootNode should be the
+  //  document (per the docs) and while it's a Document-type object, that document does not
+  //  appear to be the same as the node's `ownerDocument` for some reason, so it's safer
+  //  to ignore the rootNode at this point, and use `node.ownerDocument`. Otherwise,
+  //  using `rootNode.contains(node)` will _always_ be true we'll get false-positives when
+  //  node is actually detached.
+  // NOTE: If `nodeRootHost` or `node` happens to be the `document` itself (which is possible
+  //  if a tabbable/focusable node was quickly added to the DOM, focused, and then removed
+  //  from the DOM as in https://github.com/focus-trap/focus-trap-react/issues/905), then
+  //  `ownerDocument` will be `null`, hence the optional chaining on it.
+  let nodeRoot = node && getRootNode(node);
+  let nodeRootHost = nodeRoot?.host;
+
+  // in some cases, a detached node will return itself as the root instead of a document or
+  //  shadow root object, in which case, we shouldn't try to look further up the host chain
+  let attached = false;
+  if (nodeRoot && nodeRoot !== node) {
+    attached = !!(
+      nodeRootHost?.ownerDocument?.contains(nodeRootHost) ||
+      node?.ownerDocument?.contains(node)
+    );
+
+    while (!attached && nodeRootHost) {
+      // since it's not attached and we have a root host, the node MUST be in a nested shadow DOM,
+      //  which means we need to get the host's host and check if that parent host is contained
+      //  in (i.e. attached to) the document
+      nodeRoot = getRootNode(nodeRootHost);
+      nodeRootHost = nodeRoot?.host;
+      attached = !!nodeRootHost?.ownerDocument?.contains(nodeRootHost);
+    }
+  }
+
+  return attached;
+};
+
+const isZeroArea = function (node) {
+  const { width, height } = node.getBoundingClientRect();
+  return width === 0 && height === 0;
+};
+const isHidden = function (node, { displayCheck, getShadowRoot }) {
+  if (displayCheck === 'full-native') {
+    if ('checkVisibility' in node) {
+      // Chrome >= 105, Edge >= 105, Firefox >= 106, Safari >= 17.4
+      // @see https://developer.mozilla.org/en-US/docs/Web/API/Element/checkVisibility#browser_compatibility
+      const visible = node.checkVisibility({
+        // Checking opacity might be desirable for some use cases, but natively,
+        // opacity zero elements _are_ focusable and tabbable.
+        checkOpacity: false,
+        opacityProperty: false,
+
+        contentVisibilityAuto: true,
+        visibilityProperty: true,
+        // This is an alias for `visibilityProperty`. Contemporary browsers
+        // support both. However, this alias has wider browser support (Chrome
+        // >= 105 and Firefox >= 106, vs. Chrome >= 121 and Firefox >= 122), so
+        // we include it anyway.
+        checkVisibilityCSS: true,
+      });
+      return !visible;
+    }
+    // Fall through to manual visibility checks
+  }
+
+  // NOTE: visibility will be `undefined` if node is detached from the document
+  //  (see notes about this further down), which means we will consider it visible
+  //  (this is legacy behavior from a very long way back)
+  // NOTE: we check this regardless of `displayCheck="none"` because this is a
+  //  _visibility_ check, not a _display_ check
+  const { visibility } = getComputedStyle(node);
+  if (visibility === 'hidden' || visibility === 'collapse') {
+    return true;
+  }
+
+  const isDirectSummary = matches.call(node, 'details>summary:first-of-type');
+  const nodeUnderDetails = isDirectSummary ? node.parentElement : node;
+  if (matches.call(nodeUnderDetails, 'details:not([open]) *')) {
+    return true;
+  }
+
+  if (
+    !displayCheck ||
+    displayCheck === 'full' ||
+    // full-native can run this branch when it falls through in case
+    // Element#checkVisibility is unsupported
+    displayCheck === 'full-native' ||
+    displayCheck === 'legacy-full'
+  ) {
+    if (typeof getShadowRoot === 'function') {
+      // figure out if we should consider the node to be in an undisclosed shadow and use the
+      //  'non-zero-area' fallback
+      const originalNode = node;
+      while (node) {
+        const parentElement = node.parentElement;
+        const rootNode = getRootNode(node);
+        if (
+          parentElement &&
+          !parentElement.shadowRoot &&
+          getShadowRoot(parentElement) === true // check if there's an undisclosed shadow
+        ) {
+          // node has an undisclosed shadow which means we can only treat it as a black box, so we
+          //  fall back to a non-zero-area test
+          return isZeroArea(node);
+        } else if (node.assignedSlot) {
+          // iterate up slot
+          node = node.assignedSlot;
+        } else if (!parentElement && rootNode !== node.ownerDocument) {
+          // cross shadow boundary
+          node = rootNode.host;
+        } else {
+          // iterate up normal dom
+          node = parentElement;
+        }
+      }
+
+      node = originalNode;
+    }
+    // else, `getShadowRoot` might be true, but all that does is enable shadow DOM support
+    //  (i.e. it does not also presume that all nodes might have undisclosed shadows); or
+    //  it might be a falsy value, which means shadow DOM support is disabled
+
+    // Since we didn't find it sitting in an undisclosed shadow (or shadows are disabled)
+    //  now we can just test to see if it would normally be visible or not, provided it's
+    //  attached to the main document.
+    // NOTE: We must consider case where node is inside a shadow DOM and given directly to
+    //  `isTabbable()` or `isFocusable()` -- regardless of `getShadowRoot` option setting.
+
+    if (isNodeAttached(node)) {
+      // this works wherever the node is: if there's at least one client rect, it's
+      //  somehow displayed; it also covers the CSS 'display: contents' case where the
+      //  node itself is hidden in place of its contents; and there's no need to search
+      //  up the hierarchy either
+      return !node.getClientRects().length;
+    }
+
+    // Else, the node isn't attached to the document, which means the `getClientRects()`
+    //  API will __always__ return zero rects (this can happen, for example, if React
+    //  is used to render nodes onto a detached tree, as confirmed in this thread:
+    //  https://github.com/facebook/react/issues/9117#issuecomment-284228870)
+    //
+    // It also means that even window.getComputedStyle(node).display will return `undefined`
+    //  because styles are only computed for nodes that are in the document.
+    //
+    // NOTE: THIS HAS BEEN THE CASE FOR YEARS. It is not new, nor is it caused by tabbable
+    //  somehow. Though it was never stated officially, anyone who has ever used tabbable
+    //  APIs on nodes in detached containers has actually implicitly used tabbable in what
+    //  was later (as of v5.2.0 on Apr 9, 2021) called `displayCheck="none"` mode -- essentially
+    //  considering __everything__ to be visible because of the innability to determine styles.
+    //
+    // v6.0.0: As of this major release, the default 'full' option __no longer treats detached
+    //  nodes as visible with the 'none' fallback.__
+    if (displayCheck !== 'legacy-full') {
+      return true; // hidden
+    }
+    // else, fallback to 'none' mode and consider the node visible
+  } else if (displayCheck === 'non-zero-area') {
+    // NOTE: Even though this tests that the node's client rect is non-zero to determine
+    //  whether it's displayed, and that a detached node will __always__ have a zero-area
+    //  client rect, we don't special-case for whether the node is attached or not. In
+    //  this mode, we do want to consider nodes that have a zero area to be hidden at all
+    //  times, and that includes attached or not.
+    return isZeroArea(node);
+  }
+
+  // visible, as far as we can tell, or per current `displayCheck=none` mode, we assume
+  //  it's visible
+  return false;
+};
+
+// form fields (nested) inside a disabled fieldset are not focusable/tabbable
+//  unless they are in the _first_ <legend> element of the top-most disabled
+//  fieldset
+const isDisabledFromFieldset = function (node) {
+  if (/^(INPUT|BUTTON|SELECT|TEXTAREA)$/.test(node.tagName)) {
+    let parentNode = node.parentElement;
+    // check if `node` is contained in a disabled <fieldset>
+    while (parentNode) {
+      if (parentNode.tagName === 'FIELDSET' && parentNode.disabled) {
+        // look for the first <legend> among the children of the disabled <fieldset>
+        for (let i = 0; i < parentNode.children.length; i++) {
+          const child = parentNode.children.item(i);
+          // when the first <legend> (in document order) is found
+          if (child.tagName === 'LEGEND') {
+            // if its parent <fieldset> is not nested in another disabled <fieldset>,
+            // return whether `node` is a descendant of its first <legend>
+            return matches.call(parentNode, 'fieldset[disabled] *')
+              ? true
+              : !child.contains(node);
+          }
+        }
+        // the disabled <fieldset> containing `node` has no <legend>
+        return true;
+      }
+      parentNode = parentNode.parentElement;
+    }
+  }
+
+  // else, node's tabbable/focusable state should not be affected by a fieldset's
+  //  enabled/disabled state
+  return false;
+};
+
+const isNodeMatchingSelectorFocusable = function (options, node) {
+  if (
+    node.disabled ||
+    isHiddenInput(node) ||
+    isHidden(node, options) ||
+    // For a details element with a summary, the summary element gets the focus
+    isDetailsWithSummary(node) ||
+    isDisabledFromFieldset(node)
+  ) {
+    return false;
+  }
+  return true;
+};
+
+const isNodeMatchingSelectorTabbable = function (options, node) {
+  if (
+    isNonTabbableRadio(node) ||
+    getTabIndex(node) < 0 ||
+    !isNodeMatchingSelectorFocusable(options, node)
+  ) {
+    return false;
+  }
+  return true;
+};
+
+const isShadowRootTabbable = function (shadowHostNode) {
+  const tabIndex = parseInt(shadowHostNode.getAttribute('tabindex'), 10);
+  if (isNaN(tabIndex) || tabIndex >= 0) {
+    return true;
+  }
+  // If a custom element has an explicit negative tabindex,
+  // browsers will not allow tab targeting said element's children.
+  return false;
+};
+
+/**
+ * @param {Array.<Element|CandidateScope>} candidates
+ * @returns Element[]
+ */
+const sortByOrder = function (candidates) {
+  const regularTabbables = [];
+  const orderedTabbables = [];
+  candidates.forEach(function (item, i) {
+    const isScope = !!item.scopeParent;
+    const element = isScope ? item.scopeParent : item;
+    const candidateTabindex = getSortOrderTabIndex(element, isScope);
+    const elements = isScope ? sortByOrder(item.candidates) : element;
+    if (candidateTabindex === 0) {
+      isScope
+        ? regularTabbables.push(...elements)
+        : regularTabbables.push(element);
+    } else {
+      orderedTabbables.push({
+        documentOrder: i,
+        tabIndex: candidateTabindex,
+        item: item,
+        isScope: isScope,
+        content: elements,
+      });
+    }
+  });
+
+  return orderedTabbables
+    .sort(sortOrderedTabbables)
+    .reduce((acc, sortable) => {
+      sortable.isScope
+        ? acc.push(...sortable.content)
+        : acc.push(sortable.content);
+      return acc;
+    }, [])
+    .concat(regularTabbables);
+};
+
+const tabbable = function (container, options) {
+  options = options || {};
+
+  let candidates;
+  if (options.getShadowRoot) {
+    candidates = getCandidatesIteratively(
+      [container],
+      options.includeContainer,
+      {
+        filter: isNodeMatchingSelectorTabbable.bind(null, options),
+        flatten: false,
+        getShadowRoot: options.getShadowRoot,
+        shadowRootFilter: isShadowRootTabbable,
+      }
+    );
+  } else {
+    candidates = getCandidates(
+      container,
+      options.includeContainer,
+      isNodeMatchingSelectorTabbable.bind(null, options)
+    );
+  }
+  return sortByOrder(candidates);
+};
+
+const focusable = function (container, options) {
+  options = options || {};
+
+  let candidates;
+  if (options.getShadowRoot) {
+    candidates = getCandidatesIteratively(
+      [container],
+      options.includeContainer,
+      {
+        filter: isNodeMatchingSelectorFocusable.bind(null, options),
+        flatten: true,
+        getShadowRoot: options.getShadowRoot,
+      }
+    );
+  } else {
+    candidates = getCandidates(
+      container,
+      options.includeContainer,
+      isNodeMatchingSelectorFocusable.bind(null, options)
+    );
+  }
+
+  return candidates;
+};
+
+const isTabbable = function (node, options) {
+  options = options || {};
+  if (!node) {
+    throw new Error('No node provided');
+  }
+  if (matches.call(node, candidateSelector) === false) {
+    return false;
+  }
+  return isNodeMatchingSelectorTabbable(options, node);
+};
+
+const focusableCandidateSelector = /* #__PURE__ */ candidateSelectors
+  .concat('iframe:not([inert]):not([inert] *)')
+  .join(',');
+
+const isFocusable = function (node, options) {
+  options = options || {};
+  if (!node) {
+    throw new Error('No node provided');
+  }
+  if (matches.call(node, focusableCandidateSelector) === false) {
+    return false;
+  }
+  return isNodeMatchingSelectorFocusable(options, node);
+};
+
+
+
+return {tabbable:tabbable,focusable:focusable,isTabbable:isTabbable,isFocusable:isFocusable,getTabIndex:getTabIndex};})();
+modules["tripfit-sheet.js"]=(()=>{
+/** TripFit sheet geometry with focus-trap/tabbable. Nested layers, focus
+ * restoration, draggable headers and visual viewport adjustment. */
+const {tabbable}=modules["vendor/tabbable.js"];
+const {motionReduced}=modules["effects.js"];
+const stacks=new WeakMap();let serial=0;
+function openDetailSheet(screen,{title,body,detail,content,tone='mint',onClose,stack=false,initialFocus}={}){
+ if(!screen)throw new TypeError('Missing screen for detail sheet');let entries=stacks.get(screen);if(!entries){entries=[];stacks.set(screen,entries);}if(!stack)while(entries.length)entries.at(-1).close(true);
+ const doc=screen.ownerDocument,make=(tag,cls,text)=>{const e=doc.createElement(tag);e.className=cls;if(text!=null)e.textContent=String(text);return e;};
+ const before=doc.activeElement,layer=make('div','tk-sheet-layer'),dim=make('div','tk-sheet-dim'),sheet=make('section','tk-sheet');layer.style.zIndex=String(100+entries.length*2);sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');sheet.tabIndex=-1;
+ const header=make('div','tk-card tk-'+tone+' tk-sheet-head'),grip=make('div','tk-sheet-grip');grip.setAttribute('aria-hidden','true');const closeButton=make('button','tk-sheet-close','×');closeButton.type='button';closeButton.setAttribute('aria-label','상세 창 닫기');
+ const heading=make('h2','tk-sheet-title',title||'상세 정보');heading.id='tk-detail-'+(++serial);heading.tabIndex=-1;sheet.setAttribute('aria-labelledby',heading.id);header.append(grip,closeButton,heading);if(body)header.append(make('p','tk-sheet-body',body));sheet.append(header);if(detail)sheet.append(make('div','tk-card tk-cream',detail));
+ if(content){const nodes=typeof content==='function'?content():content;for(const item of [nodes].flat(Infinity)){if(item instanceof doc.defaultView.Node)sheet.append(item);else if(item!=null)throw new TypeError('Sheet content must be DOM nodes');}}layer.append(dim,sheet);
+ const siblings=[...screen.children].map(e=>[e,e.inert]);siblings.forEach(([e])=>e.inert=true);screen.append(layer);let closed=false,cleaned=false,pull=null;const cleanups=[];
+ const listen=(el,name,fn,opts)=>{el.addEventListener(name,fn,opts);cleanups.push(()=>el.removeEventListener(name,fn,opts));};const top=()=>entries.at(-1)===result;
+ const cleanup=()=>{if(cleaned)return;cleaned=true;layer.remove();siblings.forEach(([e,state])=>{if(e.isConnected)e.inert=state;});const i=entries.indexOf(result);if(i>=0)entries.splice(i,1);screen._detailSheet=entries.at(-1)||null;if(before?.isConnected&&!before.closest('[inert]'))before.focus({preventScroll:true});onClose?.();};
+ const close=(immediate=false)=>{if(closed){if(immediate)cleanup();return;}while(entries.length&&entries.at(-1)!==result)entries.at(-1).close(true);closed=true;cleanups.splice(0).reverse().forEach(fn=>fn());layer.classList.remove('is-open');if(immediate||motionReduced()||!sheet.animate)cleanup();else sheet.animate([{transform:sheet.style.transform||'none',opacity:1},{transform:'translateY(110%)',opacity:.5}],{duration:300,easing:'ease-in',fill:'forwards'}).finished.then(cleanup,cleanup);};
+ const focusables=()=>tabbable(sheet);
+ listen(sheet,'keydown',e=>{if(!top())return;if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();}if(e.key==='Tab'){const nodes=focusables(),first=nodes[0]||sheet,last=nodes.at(-1)||sheet;if(!nodes.length){e.preventDefault();sheet.focus();}else if(e.shiftKey&&(!nodes.includes(doc.activeElement)||doc.activeElement===first)){e.preventDefault();last.focus();}else if(!e.shiftKey&&(!nodes.includes(doc.activeElement)||doc.activeElement===last)){e.preventDefault();first.focus();}}});
+ listen(doc,'focusin',e=>{if(!closed&&top()&&!sheet.contains(e.target))(focusables()[0]||sheet).focus({preventScroll:true});});listen(dim,'click',()=>close());listen(closeButton,'click',()=>close());header.style.touchAction='none';
+ listen(header,'pointerdown',e=>{if(!e.isPrimary||e.button!==0||e.target.closest('button,input,a,textarea'))return;pull={x:e.clientX,y:e.clientY,t:performance.now(),id:e.pointerId,dy:0};header.setPointerCapture(e.pointerId);sheet.style.transition='none';});
+ listen(header,'pointermove',e=>{if(!pull||e.pointerId!==pull.id)return;pull.dy=Math.max(0,e.clientY-pull.y);sheet.style.transform=`translateY(${pull.dy}px)`;});
+ const release=e=>{if(!pull)return;const p=pull;pull=null;sheet.style.transition='';if(e.type!=='pointercancel'&&(p.dy>75||(p.dy>24&&p.dy/(performance.now()-p.t)>.7)))close();else sheet.style.transform='';};
+ listen(header,'pointerup',release);listen(header,'pointercancel',release);listen(header,'lostpointercapture',()=>{if(pull){pull=null;sheet.style.transform='';sheet.style.transition='';}});
+ const viewport=()=>{if(!matchMedia('(max-width:750px), (pointer:coarse) and (max-width:900px)').matches)return;const vv=window.visualViewport;if(!vv)return;const r=screen.getBoundingClientRect();sheet.style.bottom=`calc(${Math.max(6,r.bottom-(vv.height+vv.offsetTop)+6)}px + env(safe-area-inset-bottom))`;sheet.style.maxHeight=`calc(${Math.max(80,Math.min(r.height,vv.height)-24)}px - env(safe-area-inset-top) - env(safe-area-inset-bottom))`;};
+ if(window.visualViewport){listen(window.visualViewport,'resize',viewport);listen(window.visualViewport,'scroll',viewport);}viewport();const result={element:sheet,close};entries.push(result);screen._detailSheet=result;requestAnimationFrame(()=>{if(!closed)layer.classList.add('is-open');});(initialFocus==='heading'?heading:typeof initialFocus==='string'?sheet.querySelector(initialFocus)||closeButton:closeButton).focus({preventScroll:true});return result;
+}
+
+return {openDetailSheet};})();
 modules["compose.js"]=(()=>{
 /** Free-form composition on top of the existing CardFlow runtime.
  * Domain content belongs in examples, not here. No original web/ app is loaded.
  */
-const { CardFlow }=modules["flow.js"];
-const { rollDigits, springs, springIn }=modules["tripfit-motion.js"];
-const { openDetailSheet }=modules["tripfit-sheet.js"];
+const {CardFlow}=modules["flow.js"];
+const {rollDigits, springs, springIn}=modules["tripfit-motion.js"];
+const {fitNumbers}=modules["effects.js"];
+const {rafSchd}=modules["vendor/raf-schd.js"];
+const {openDetailSheet}=modules["tripfit-sheet.js"];
 function node(tag, attrs = {}, ...children) {
   const e = document.createElement(tag);
   for (const [key, value] of Object.entries(attrs)) {
-    if (value == null || value === false) continue;
+    if (value == null || (value === false && !key.startsWith('aria-'))) continue;
     if (key === 'class') e.className = value;
     else if (key.startsWith('on') && typeof value === 'function') e.addEventListener(key.slice(2).toLowerCase(), value);
-    else e.setAttribute(key, value === true ? '' : String(value));
+    else e.setAttribute(key, key.startsWith('aria-') ? String(value) : value === true ? '' : String(value));
   }
   for (const child of children.flat(Infinity)) if (child != null && child !== false) e.append(child instanceof Node ? child : document.createTextNode(String(child)));
   return e;
@@ -863,7 +1728,7 @@ class ComposedFlow extends CardFlow {
   constructor(root, definition){
     super(root,definition);this.state={...(definition.state||{})};this.activeSheet=null;
     for(const step of definition.steps)for(const c of step.cards)if(c.render!==undefined&&typeof c.render!=='function')throw new TypeError('card.render must be a function');
-    this._resize=()=>this.fit();
+    this._resize=rafSchd(()=>this.fit());this._pageCleanups=[];
   }
   renderCard(definition){
     if(!definition.render)return super.renderCard(definition);
@@ -877,10 +1742,11 @@ class ComposedFlow extends CardFlow {
     this.mountPoint.querySelector('.tk-kicker').textContent='TRIPFIT UI KIT / COMPOSED EXAMPLE';
     document.documentElement.style.setProperty('--tk-spring',springs.pop.easing);
     document.documentElement.style.setProperty('--tk-spring-ms',springs.pop.duration+'ms');
-    window.addEventListener('resize',this._resize);this.fit();return this;
+    window.addEventListener('resize',this._resize);this._numberCleanup=fitNumbers(this.screen);this.fit();return this;
   }
   go(id){
-    this.activeSheet?.close(true);this.activeSheet=null;
+    while(this.screen?._detailSheet)this.screen._detailSheet.close(true);this.activeSheet?.close(true);this.activeSheet=null;
+    this._pageCleanups?.splice(0).reverse().forEach(fn=>fn());
     const result=super.go(id);
     for(const b of this.footer.querySelectorAll('button')){
       const label=b.textContent;b.replaceChildren(node('span',{},label),node('span',{class:'tk-go'},icon()));
@@ -895,7 +1761,8 @@ class ComposedFlow extends CardFlow {
     const mobile=matchMedia('(max-width: 750px), (pointer: coarse) and (max-width: 900px)').matches;
     rig.style.transform=mobile?'':`scale(${Math.min(1,(innerHeight-32)/916,(innerWidth-48)/(innerWidth>=1100?791:417))})`;
   }
-  destroy(){window.removeEventListener('resize',this._resize);this.activeSheet?.close();this.feedback.hide();this.mountPoint.replaceChildren();}
+  onCleanup(fn){this._pageCleanups.push(fn);return fn;}
+  destroy(){this._pageCleanups.splice(0).reverse().forEach(fn=>fn());window.removeEventListener('resize',this._resize);this._resize.cancel();this._numberCleanup?.();this.activeSheet?.close(true);this.feedback.destroy?.();this.feedback.hide();this.mountPoint.replaceChildren();}
 }
 
 return {node,icon,pill,button,card,metric,setMetric,progress,split,stats,rowCard,slider,ComposedFlow};})();
@@ -926,8 +1793,8 @@ modules["examples/lesson-demo.js"]=(()=>{
 /** Application composition only: every shell, card, number, sheet and transition
  * is supplied by the reusable kit. No original TripFit page or solver is used.
  */
-const { ComposedFlow, node, card, pill, button, metric, setMetric, progress, split, stats, rowCard, slider, icon }=modules["compose.js"];
-const { lesson }=modules["examples/lesson-data.js"];
+const {ComposedFlow, node, card, pill, button, metric, setMetric, progress, split, stats, rowCard, slider, icon}=modules["compose.js"];
+const {lesson}=modules["examples/lesson-data.js"];
 function graph(h=2,k=-1) {
   const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
   const attr=(el,a)=>{for(const [key,v]of Object.entries(a))el.setAttribute(key,v);return el;};
