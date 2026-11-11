@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Apply the reviewed and locally tested source diff
+      - name: Apply the reviewed source diff without changing workflow files
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -44,22 +44,14 @@ jobs:
           text=test.read_text()
           old=" page.emulate_media(reduced_motion='reduce');page.wait_for_timeout(100)\n ck('OS reduced motion stops loop',page.evaluate('__gallery.stats().animations')==0)"
           new=""" page.emulate_media(reduced_motion='reduce')
-           # WebKit delivers the media-query change and animation cancellation asynchronously.
-           # Await the required end state, not an arbitrary 100ms window on a busy CI host.
+           # Await the observable media-query and animation state, not a fixed delay.
            page.wait_for_function("matchMedia('(prefers-reduced-motion: reduce)').matches && __gallery.stats().animations === 0",timeout=3000)
            ck('OS reduced motion stops loop',page.evaluate('__gallery.stats().animations')==0 and page.locator('#demo-stage').evaluate("(e)=>!e.getAnimations({subtree:true}).some(a=>a.playState==='running' && a.effect?.getTiming().iterations===Infinity)"))"""
           if old in text:
               assert text.count(old)==1
               test.write_text(text.replace(old,new))
-          workflow=Path('.github/workflows/ui-kit-regenerated.yml')
-          text=workflow.read_text()
-          anchor='          python ui-kit/tests/apps.spec.py --browser webkit\n'
-          addition='          python ui-kit/tests/interaction.spec.py --browser chromium\n          python ui-kit/tests/interaction.spec.py --browser webkit\n'
-          if 'python ui-kit/tests/interaction.spec.py' not in text:
-              assert text.count(anchor)==1
-              workflow.write_text(text.replace(anchor,anchor+addition))
           PY
-          git diff --exit-code -- web/
+          git diff --exit-code -- web/ .github/workflows/
       - name: Unit tests
         run: node --test ui-kit/tests/*.test.mjs
       - name: Install browser runners
@@ -78,11 +70,11 @@ jobs:
           python ui-kit/tests/apps.spec.py --browser webkit
           python ui-kit/tests/interaction.spec.py --browser chromium
           python ui-kit/tests/interaction.spec.py --browser webkit
-      - name: Commit verified source and generated examples to high only
+      - name: Commit verified source and examples to high only
         run: |
-          git diff --exit-code -- web/
+          git diff --exit-code -- web/ .github/workflows/
           git add -A -- ui-kit ':!ui-kit/verification'
-          git add -u -- .github
+          git ls-files -z --deleted .github/interaction-patch/ | xargs -0 -r git add -u --
           if ! git diff --cached --quiet; then
             git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'fix(ui-kit): lower-owned connections, restrained press and lighter transitions [skip ci]'
             git push origin HEAD:high
