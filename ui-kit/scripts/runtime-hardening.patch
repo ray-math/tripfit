@@ -1,0 +1,179 @@
+--- a/ui-kit/compose.js
++++ b/ui-kit/compose.js
+@@ -3,15 +3,17 @@
+  */
+ import { CardFlow } from './flow.js';
+ import { rollDigits, springs, springIn } from './tripfit-motion.js';
++import { fitNumbers } from './effects.js';
++import { rafSchd } from './vendor/raf-schd.js';
+ import { openDetailSheet } from './tripfit-sheet.js';
+ 
+ export function node(tag, attrs = {}, ...children) {
+   const e = document.createElement(tag);
+   for (const [key, value] of Object.entries(attrs)) {
+-    if (value == null || value === false) continue;
++    if (value == null || (value === false && !key.startsWith('aria-'))) continue;
+     if (key === 'class') e.className = value;
+     else if (key.startsWith('on') && typeof value === 'function') e.addEventListener(key.slice(2).toLowerCase(), value);
+-    else e.setAttribute(key, value === true ? '' : String(value));
++    else e.setAttribute(key, key.startsWith('aria-') ? String(value) : value === true ? '' : String(value));
+   }
+   for (const child of children.flat(Infinity)) if (child != null && child !== false) e.append(child instanceof Node ? child : document.createTextNode(String(child)));
+   return e;
+@@ -62,7 +64,7 @@
+   constructor(root, definition){
+     super(root,definition);this.state={...(definition.state||{})};this.activeSheet=null;
+     for(const step of definition.steps)for(const c of step.cards)if(c.render!==undefined&&typeof c.render!=='function')throw new TypeError('card.render must be a function');
+-    this._resize=()=>this.fit();
++    this._resize=rafSchd(()=>this.fit());this._pageCleanups=[];
+   }
+   renderCard(definition){
+     if(!definition.render)return super.renderCard(definition);
+@@ -76,10 +78,11 @@
+     this.mountPoint.querySelector('.tk-kicker').textContent='TRIPFIT UI KIT / COMPOSED EXAMPLE';
+     document.documentElement.style.setProperty('--tk-spring',springs.pop.easing);
+     document.documentElement.style.setProperty('--tk-spring-ms',springs.pop.duration+'ms');
+-    window.addEventListener('resize',this._resize);this.fit();return this;
++    window.addEventListener('resize',this._resize);this._numberCleanup=fitNumbers(this.screen);this.fit();return this;
+   }
+   go(id){
+-    this.activeSheet?.close(true);this.activeSheet=null;
++    while(this.screen?._detailSheet)this.screen._detailSheet.close(true);this.activeSheet?.close(true);this.activeSheet=null;
++    this._pageCleanups?.splice(0).reverse().forEach(fn=>fn());
+     const result=super.go(id);
+     for(const b of this.footer.querySelectorAll('button')){
+       const label=b.textContent;b.replaceChildren(node('span',{},label),node('span',{class:'tk-go'},icon()));
+@@ -94,5 +97,6 @@
+     const mobile=matchMedia('(max-width: 750px), (pointer: coarse) and (max-width: 900px)').matches;
+     rig.style.transform=mobile?'':`scale(${Math.min(1,(innerHeight-32)/916,(innerWidth-48)/(innerWidth>=1100?791:417))})`;
+   }
+-  destroy(){window.removeEventListener('resize',this._resize);this.activeSheet?.close();this.feedback.hide();this.mountPoint.replaceChildren();}
++  onCleanup(fn){this._pageCleanups.push(fn);return fn;}
++  destroy(){this._pageCleanups.splice(0).reverse().forEach(fn=>fn());window.removeEventListener('resize',this._resize);this._resize.cancel();this._numberCleanup?.();this.activeSheet?.close(true);this.feedback.destroy?.();this.feedback.hide();this.mountPoint.replaceChildren();}
+ }
+--- a/ui-kit/tripfit-motion.js
++++ b/ui-kit/tripfit-motion.js
+@@ -11,6 +11,7 @@
+   CSS.supports("transition-timing-function", "linear(0, 1)");
+ 
+ export function makeSpring(k, c) {
++  if(!Number.isFinite(k)||!Number.isFinite(c)||k<=0||c<=0) throw new RangeError('Spring stiffness and damping must be positive finite numbers');
+   const w0 = Math.sqrt(k);
+   const z = c / (2 * Math.sqrt(k));
+   const wd = w0 * Math.sqrt(Math.max(1e-6, 1 - z * z));
+@@ -36,7 +37,7 @@
+ 
+ function reduced() {
+   return typeof matchMedia === "function" &&
+-    matchMedia("(prefers-reduced-motion: reduce)").matches;
++    (matchMedia("(prefers-reduced-motion: reduce)").matches || (typeof document !== "undefined" && document.documentElement.dataset.motion === "reduce"));
+ }
+ export function springIn(element, {
+   from = "translateY(36px) scale(.96)", delay = 0, kind = "pop"
+@@ -52,6 +53,7 @@
+ 
+ export function rollDigits(element, value) {
+   const str = String(value);
++  element.setAttribute("role","img");element.setAttribute("aria-label",str);
+   if (element.dataset.rollValue === str) return;
+   const chars = [...str];
+   const digits = ch => /^[0-9]$/.test(ch);
+@@ -92,10 +94,12 @@
+     stack.style.transform = `translateY(${-Number(ch) * 10}%)`;
+   });
+   element.dataset.rollValue = str;
++  for(const child of element.children)child.setAttribute("aria-hidden","true");
+ }
+ 
+ export function revealHeadline(element, message, { delay = 0 } = {}) {
+   const text = String(message);
++  element.setAttribute("aria-label",text);
+   if (element.dataset.revealValue === text) return;
+   element.dataset.revealValue = text;
+   element.replaceChildren();
+@@ -105,7 +109,7 @@
+     for (const [wordIdx, word] of words.entries()) {
+       if (wordIdx) element.append(document.createTextNode(" "));
+       const token = document.createElement("span");
+-      token.className = "tk-title-word";
++      token.className = "tk-title-word";token.setAttribute("aria-hidden","true");
+       for (const char of [...word]) {
+         const letter = document.createElement("span");
+         letter.className = "tk-title-char";
+@@ -129,26 +133,17 @@
+  * Uses textContent throughout; never injects untrusted HTML.
+  */
+ export function createFeedbackIsland(screen) {
+-  const root = document.createElement("div");
+-  root.className = "tk-island";
+-  root.setAttribute("role", "status");
+-  root.setAttribute("aria-live", "polite");
+-  root.setAttribute("aria-atomic", "true");
+-  const label = document.createElement("div");
+-  label.className = "tk-island-label";
+-  root.append(label);
+-  screen.append(root);
+-  let timer = null;
+-  const hide = () => {
+-    if (timer !== null) clearTimeout(timer);
+-    timer = null;
+-    root.classList.remove("is-open");
++  const root=document.createElement('div');root.className='tk-island';root.setAttribute('role','status');root.setAttribute('aria-live','polite');root.setAttribute('aria-atomic','true');
++  const mark=document.createElement('span');mark.className='tk-island-mark';mark.setAttribute('aria-hidden','true');
++  const label=document.createElement('div');label.className='tk-island-label';
++  const title=document.createElement('b'),sub=document.createElement('small'),right=document.createElement('span');right.className='tk-island-right';
++  label.append(title,sub);root.append(mark,label,right);screen.append(root);let timer=null;
++  const hide=()=>{clearTimeout(timer);timer=null;root.classList.remove('is-open');};
++  const show=(message,{hold=2600}={})=>{
++    hide();const data=typeof message==='object'&&message!==null?message:{title:String(message)};
++    title.textContent=data.title||'';sub.textContent=data.sub||'';sub.hidden=!data.sub;right.textContent=data.right||'';right.hidden=!data.right;
++    mark.classList.toggle('is-spinning',!!data.spin);mark.textContent=data.spin?'':'✓';root.classList.add('is-open');
++    const timeout=data.hold??hold;if(timeout>0)timer=setTimeout(hide,timeout);
+   };
+-  const show = (message, { hold = 2600 } = {}) => {
+-    hide();
+-    label.textContent = String(message);
+-    root.classList.add("is-open");
+-    if (hold > 0) timer = setTimeout(hide, hold);
+-  };
+-  return { root, show, hide };
++  return {root,show,hide,destroy(){hide();root.remove();}};
+ }
+--- a/ui-kit/flow.js
++++ b/ui-kit/flow.js
+@@ -3,7 +3,7 @@
+ /**
+  * Reusable, dependency-free card flow runtime.
+  * Keeps app-specific content in a validated data object.
+- * No TripFit travel logic or original UI code is imported.
++ * No TripFit travel logic or original application page is imported; visual primitives are adapted from TripFit.
+  */
+ const TYPES = new Set(["hero", "text", "metric", "choices"]);
+ const COLORS = new Set(["lime", "pink", "sky", "mint", "cream", "lilac", "peach"]);
+@@ -154,6 +154,7 @@
+   }
+ 
+   go(id) {
++    this.reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.dataset.motion === "reduce";
+     const step = this.steps.get(id);
+     if (!step) throw new Error("Unknown step: " + id);
+     const previousIdx = this.flow.steps.findIndex(s => s.id === this.current);
+@@ -200,7 +201,7 @@
+     if (!this.reducedMotion) {
+       enter(page, backward ? "translateX(-15%)" : "translateX(15%)");
+       Array.from(page.querySelectorAll(".tk-card")).forEach((card, idx) =>
+-        springIn(card, { from: "translateY(36px) scale(.96)", delay: idx * 90 }));
++        card.getBoundingClientRect().top < this.viewport.getBoundingClientRect().bottom && springIn(card, { from: "translateY(36px) scale(.96)", delay: Math.min(idx, 5) * 90 }));
+     }
+     // Decorative motion works independently of the domain-specific content.
+     for (const title of page.querySelectorAll(".tk-title"))
+--- a/ui-kit/examples/regenerated.html
++++ b/ui-kit/examples/regenerated.html
+@@ -13,6 +13,7 @@
+ <link rel="stylesheet" href="../theme.css">
+ <link rel="stylesheet" href="../tripfit-details.css">
+ <link rel="stylesheet" href="../presentation.css">
++<link rel="stylesheet" href="../gallery.css">
+ </head>
+ <body>
+ <div id="app"></div>

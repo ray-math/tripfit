@@ -16,7 +16,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-24.04
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -25,51 +25,65 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Existing kit tests
+      - name: Apply reviewed runtime changes and vendor immutable sources
+        run: |
+          if test -f ui-kit/scripts/runtime-hardening.patch; then
+            git apply --check ui-kit/scripts/runtime-hardening.patch
+            git apply ui-kit/scripts/runtime-hardening.patch
+            rm ui-kit/scripts/runtime-hardening.patch
+          fi
+          python ui-kit/scripts/vendor_sources.py
+          python ui-kit/scripts/extract_assets.py
+          git diff --exit-code -- web/
+      - name: Unit tests
         run: node --test ui-kit/tests/*.test.mjs
       - name: Install browser runners
         run: |
           python -m pip install playwright==1.55.0
           python -m playwright install --with-deps chromium webkit
           sudo apt-get install -y fonts-noto-cjk
-      - name: Build and test the actual kit
+      - name: Build actual reusable modules and run both browser suites
         run: |
           python ui-kit/build_preview.py
           python ui-kit/tests/regenerated.spec.py --browser chromium
           python ui-kit/tests/regenerated.spec.py --browser webkit
-      - name: Publish verified standalone preview on high only
+          python ui-kit/tests/catalog.spec.py --browser chromium
+          python ui-kit/tests/catalog.spec.py --browser webkit
+      - name: Publish verified sources and standalone previews on high only
         id: publish
         run: |
-          git add ui-kit/dist/lesson.html ui-kit/dist/manifest.json
+          git diff --exit-code -- web/
+          git add -A -- ui-kit ':!ui-kit/verification'
           if ! git diff --cached --quiet; then
-            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'build(ui-kit): regenerate verified lesson preview [skip ci]'
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'build(ui-kit): publish audited gallery and hardened runtime [skip ci]'
             git push origin HEAD:high
           fi
           SHA=$(git rev-parse HEAD)
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
-          echo "url=https://rawcdn.githack.com/ray-math/tripfit/$SHA/ui-kit/dist/lesson.html" >> "$GITHUB_OUTPUT"
-          echo "Preview: https://rawcdn.githack.com/ray-math/tripfit/$SHA/ui-kit/dist/lesson.html" >> "$GITHUB_STEP_SUMMARY"
-      - name: Check the published link
+          echo "base=https://rawcdn.githack.com/ray-math/tripfit/$SHA/ui-kit/dist/" >> "$GITHUB_OUTPUT"
+          echo "Gallery: https://rawcdn.githack.com/ray-math/tripfit/$SHA/ui-kit/dist/gallery.html" >> "$GITHUB_STEP_SUMMARY"
+          echo "Lesson: https://rawcdn.githack.com/ray-math/tripfit/$SHA/ui-kit/dist/lesson.html" >> "$GITHUB_STEP_SUMMARY"
+      - name: Verify both public links
         env:
-          PREVIEW_URL: ${{ steps.publish.outputs.url }}
+          PREVIEW_BASE: ${{ steps.publish.outputs.base }}
         run: |
           python - <<'PY'
           import json, os, time, urllib.request
           from pathlib import Path
-          url=os.environ['PREVIEW_URL']; error=''
-          for attempt in range(12):
-              try:
-                  req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'})
-                  with urllib.request.urlopen(req,timeout=20) as response:
-                      data=response.read().decode('utf-8')
-                      assert 'class ComposedFlow' in data and 'startLesson' in data and 'data-kit-source' in data
-                  Path('ui-kit/verification/published-preview.json').write_text(json.dumps({'url':url,'http_verified':True},indent=2))
-                  print(url); break
-              except Exception as exc:
-                  error=str(exc);time.sleep(5)
-          else:
-              Path('ui-kit/verification/published-preview.json').write_text(json.dumps({'url':url,'http_verified':False,'error':error},indent=2))
-              print('Public CDN verification pending:',error)
+          report={}
+          for filename,keyword in [('gallery.html','__gallery'),('lesson.html','startLesson')]:
+              url=os.environ['PREVIEW_BASE']+filename;error=''
+              for attempt in range(10):
+                  try:
+                      with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'}),timeout=20) as response:
+                          data=response.read().decode('utf-8');assert keyword in data and 'data-kit-source' in data
+                      report[filename]={'url':url,'http_verified':True};break
+                  except Exception as exc:
+                      error=str(exc);time.sleep(4)
+              else:report[filename]={'url':url,'http_verified':False,'error':error}
+          Path('ui-kit/verification/published-preview.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report,indent=2))
+          assert all(x['http_verified'] for x in report.values()),'Published CDN link could not be verified'
           PY
       - uses: actions/upload-artifact@v4
         if: always()
