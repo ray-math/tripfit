@@ -75,6 +75,8 @@ jobs:
           python ui-kit/tests/catalog.spec.py --browser webkit
           python ui-kit/tests/apps.spec.py --browser chromium
           python ui-kit/tests/apps.spec.py --browser webkit
+          python ui-kit/tests/interaction.spec.py --browser chromium
+          python ui-kit/tests/interaction.spec.py --browser webkit
       - name: Publish verified sources and five standalone examples on high only
         id: publish
         run: |
