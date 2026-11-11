@@ -2,14 +2,21 @@ name: Regenerated UI kit example
 on:
   push:
     branches: [high]
-    paths: ['ui-kit/**', '.github/workflows/ui-kit-regenerated.yml']
+    paths:
+      - 'ui-kit/**'
+      - '!ui-kit/dist/**'
+      - '!ui-kit/verification/**'
+      - '.github/workflows/ui-kit-regenerated.yml'
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
+concurrency:
+  group: regenerated-ui-kit-high
+  cancel-in-progress: true
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -18,16 +25,49 @@ jobs:
       - name: Existing kit tests
         run: node --test ui-kit/tests/*.test.mjs
       - name: Install browser runners
-        if: hashFiles('ui-kit/tests/regenerated.spec.py') != ''
         run: |
           python -m pip install playwright==1.55.0
           python -m playwright install --with-deps chromium webkit
-      - name: Build and test regenerated example
-        if: hashFiles('ui-kit/tests/regenerated.spec.py') != ''
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Build and test the actual kit
         run: |
           python ui-kit/build_preview.py
           python ui-kit/tests/regenerated.spec.py --browser chromium
           python ui-kit/tests/regenerated.spec.py --browser webkit
+      - name: Publish verified standalone preview on high only
+        id: publish
+        run: |
+          git add ui-kit/dist/lesson.html ui-kit/dist/manifest.json
+          if ! git diff --cached --quiet; then
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'build(ui-kit): regenerate verified lesson preview [skip ci]'
+            git push origin HEAD:high
+          fi
+          SHA=$(git rev-parse HEAD)
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "url=https://rawcdn.githack.com/ray-math/tripfit/$SHA/ui-kit/dist/lesson.html" >> "$GITHUB_OUTPUT"
+          echo "Preview: https://rawcdn.githack.com/ray-math/tripfit/$SHA/ui-kit/dist/lesson.html" >> "$GITHUB_STEP_SUMMARY"
+      - name: Check the published link
+        env:
+          PREVIEW_URL: ${{ steps.publish.outputs.url }}
+        run: |
+          python - <<'PY'
+          import json, os, time, urllib.request
+          from pathlib import Path
+          url=os.environ['PREVIEW_URL']; error=''
+          for attempt in range(12):
+              try:
+                  req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'})
+                  with urllib.request.urlopen(req,timeout=20) as response:
+                      data=response.read().decode('utf-8')
+                      assert 'class ComposedFlow' in data and 'startLesson' in data and 'data-kit-source' in data
+                  Path('ui-kit/verification/published-preview.json').write_text(json.dumps({'url':url,'http_verified':True},indent=2))
+                  print(url); break
+              except Exception as exc:
+                  error=str(exc);time.sleep(5)
+          else:
+              Path('ui-kit/verification/published-preview.json').write_text(json.dumps({'url':url,'http_verified':False,'error':error},indent=2))
+              print('Public CDN verification pending:',error)
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
