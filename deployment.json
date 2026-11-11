@@ -1,9 +1,14 @@
 {
   "source_branch": "high",
-  "source_commit": "6c8f4c8e2848e282d88fd839dedf1c8e68e120b5",
-  "source_workflow_run": 43017171069,
-  "gallery": "gallery.html",
-  "lesson": "lesson.html",
-  "aliases": {"index.html": "gallery.html", "regenerated.html": "lesson.html"},
-  "refinement": "Compact 88x32 CSS-pixel mock island; gentler pop spring; original snap and soft preserved."
+  "source_commit": "d1b306deacc4f68c69f8e779dd2a2256b897a0c9",
+  "site_branch": "gh-pages",
+  "examples": [
+    "apps",
+    "cafe",
+    "event",
+    "gallery",
+    "lesson"
+  ],
+  "transactions_real": false,
+  "ticket_valid": false
 }

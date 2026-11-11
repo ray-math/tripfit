@@ -1,0 +1,26 @@
+{
+  "entry": "examples/cafe.js",
+  "modules": {
+    "tripfit-motion.js": "8af7683288cc7c1222e947ae0d8771aa8f5e6d419ce960e26ae99409275c85b9",
+    "flow.js": "be1849c9912546135f17eea6b0657035b55b49f5138ee7592299a57ad9f9b41c",
+    "vendor/raf-schd.js": "a058df1ff3e2f91c432bfea24dd867642d2135b53324baa2b63e11cee78d9a87",
+    "effects.js": "0f9f6cb8fbf99d7d98d3f081de6c036ea98e683d8ee093959cbcccb167ed0f1f",
+    "vendor/tabbable.js": "f07558c48ef48b148910fc5ee287b72f296558a2517980c34555181514f94902",
+    "tripfit-sheet.js": "89ba406bc8c6026dd398824c8337848a976485ff5b7164b113ed5a563ba553ae",
+    "compose.js": "d04bc4561b37efe412aac98a49e8516951e59d37074f75e6b456004a07a74be9",
+    "demo-models.js": "79496480d6f3257deeb4ffe36c2bb3b8e6d6ef1401bb827f43a1023347a45cdd",
+    "original-assets.js": "c3f6f4e8e1f92cc7664f1b65c1e17d8742b1b9feafacf846ac12edf3761dc40c",
+    "vendor/qrcode.js": "6875f9cfe95ed40effae5eba913135eaca782cf2a687ccd27f2c79bff8d88a90",
+    "assets.js": "f3633d36a4aae3f2af6f753edeab528159fab7f89d3b3e482ab80bfcb6c40383",
+    "demo-ui.js": "39472169fcb9ef9ecab9eaaca608e16a23367a270139f2f27b5c21ed0386e775",
+    "examples/cafe.js": "b4fe7ebb6fb5c887b1a4e4b653619029a2a3b73bb4d92f26cc991141220b4225"
+  },
+  "styles": {
+    "theme.css": "ff268268995261c558b8b0224f762a0c2d9741d03f9cc6b5951429f0ebea21a5",
+    "tripfit-details.css": "eab230c2504cef7ec1853e30901aa46792590215b04dda7fab9daf696c443fd8",
+    "presentation.css": "3f918a5933399c6f7eff7ca154a219bfb7cda669f3f45cb69e849bfa1ac8ed03",
+    "gallery.css": "20368c019677e716b07c9c04271359866d2e6c1b72865b9b92878c1aaf9ab778",
+    "demo-apps.css": "0e1984687e47b5cde456fbf25cc6361b5bfb7a6608d5cd7ccefb9a49d32fa9da"
+  },
+  "output_sha256": "3d55515ece4166451b131287208c12d2af0733706b9a7c693a95714c4f045126"
+}

@@ -12,7 +12,7 @@
     "vendor/qrcode.js": "6875f9cfe95ed40effae5eba913135eaca782cf2a687ccd27f2c79bff8d88a90",
     "assets.js": "f3633d36a4aae3f2af6f753edeab528159fab7f89d3b3e482ab80bfcb6c40383",
     "catalog.js": "7ce3941d5800974008090e9327a87dbca44bd3c51ac9a4eeed9b4e7fc1da0612",
-    "examples/gallery.js": "813a155021badebdcbcc3efaa3d38e5956bfd06dd70aef43df522e835867ab40"
+    "examples/gallery.js": "df805b566c3d70c76689ae5ed2ba30d67dbc38fc619f0bbfbcdbc92cc136d6ed"
   },
   "styles": {
     "theme.css": "ff268268995261c558b8b0224f762a0c2d9741d03f9cc6b5951429f0ebea21a5",
@@ -20,5 +20,5 @@
     "presentation.css": "3f918a5933399c6f7eff7ca154a219bfb7cda669f3f45cb69e849bfa1ac8ed03",
     "gallery.css": "20368c019677e716b07c9c04271359866d2e6c1b72865b9b92878c1aaf9ab778"
   },
-  "output_sha256": "b8e1d1f5f3c38377f00bef05a025bb255bf6a446e5594b195eaf1c8b5a833e09"
+  "output_sha256": "395784845e9b141e2be135ba39be73e377295503f4cc781568e5044979ceb08a"
 }
