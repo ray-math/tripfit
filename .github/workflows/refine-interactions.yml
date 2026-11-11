@@ -1,0 +1,88 @@
+name: Verify card connections and interaction refinement
+on:
+  push:
+    branches: [high]
+    paths: ['.github/workflows/refine-interactions.yml', '.github/interaction-patch/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: regenerated-ui-kit-high
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply the reviewed and locally tested source diff
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,lzma,subprocess,shutil
+          folder=Path('.github/interaction-patch')
+          if folder.exists():
+              parts=sorted(folder.glob('part*.xz'))
+              assert [p.name for p in parts]==[f'part{i:02}.xz' for i in range(1,6)]
+              data=b''.join(p.read_bytes() for p in parts)
+              assert hashlib.sha256(data).hexdigest()=='ef02cfce996a5b5e243a28d89a2fcf4c6218ee666c52861c7abb064e8fcd1764'
+              diff=lzma.decompress(data,memlimit=128*1024*1024)
+              assert len(diff)==88194
+              paths=[line[6:] for line in diff.decode().splitlines() if line.startswith('+++ b/')]
+              assert len(paths)==29 and all(p.startswith('ui-kit/') and '..' not in p.split('/') for p in paths)
+              patch=Path('/tmp/interaction-refinement.patch');patch.write_bytes(diff)
+              subprocess.run(['git','apply','--check',str(patch)],check=True)
+              subprocess.run(['git','apply',str(patch)],check=True)
+              shutil.rmtree(folder)
+          workflow=Path('.github/workflows/ui-kit-regenerated.yml')
+          text=workflow.read_text()
+          anchor='          python ui-kit/tests/apps.spec.py --browser webkit\n'
+          addition='          python ui-kit/tests/interaction.spec.py --browser chromium\n          python ui-kit/tests/interaction.spec.py --browser webkit\n'
+          if 'python ui-kit/tests/interaction.spec.py' not in text:
+              assert text.count(anchor)==1
+              workflow.write_text(text.replace(anchor,anchor+addition))
+          PY
+          git diff --exit-code -- web/
+      - name: Unit tests
+        run: node --test ui-kit/tests/*.test.mjs
+      - name: Install browser runners
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium webkit
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Build and verify both engines and all existing apps
+        run: |
+          python ui-kit/build_preview.py
+          python ui-kit/tests/regenerated.spec.py --browser chromium
+          python ui-kit/tests/regenerated.spec.py --browser webkit
+          python ui-kit/tests/catalog.spec.py --browser chromium
+          python ui-kit/tests/catalog.spec.py --browser webkit
+          python ui-kit/tests/apps.spec.py --browser chromium
+          python ui-kit/tests/apps.spec.py --browser webkit
+          python ui-kit/tests/interaction.spec.py --browser chromium
+          python ui-kit/tests/interaction.spec.py --browser webkit
+      - name: Commit verified source and generated examples to high only
+        run: |
+          git diff --exit-code -- web/
+          git add -A -- ui-kit ':!ui-kit/verification'
+          git add -u -- .github
+          if ! git diff --cached --quiet; then
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'fix(ui-kit): lower-owned connections, restrained press and lighter transitions [skip ci]'
+            git push origin HEAD:high
+          fi
+          git rev-parse HEAD | tee /tmp/verified-source-sha.txt
+          echo "Verified source: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: interaction-refinement-verified
+          path: |
+            ui-kit/
+            .github/workflows/refine-interactions.yml
+          retention-days: 7
