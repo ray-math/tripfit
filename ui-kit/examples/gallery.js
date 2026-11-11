@@ -89,4 +89,4 @@ function galleryPage(app){
 }
 const flow={title:'보는 데서,\n다시 쓰는 데로.',brand:'UI KIT',description:'사용하지 않던 모션도 확인하고 재사용할 수 있는 카탈로그. TripFit의 원래 디자인 언어를 유지합니다.',steps:[{id:'gallery',label:'컴포넌트와 모션 갤러리',cards:[{type:'text',render:galleryPage}]}]};
 const app=new ComposedFlow(document.getElementById('app'),flow).mount();window.__kitDemo=app;window.__gallery={app,catalog:CATALOG,show:id=>showEntry(app,CATALOG.find(e=>e.id===id)),stats:motionStats};
-const link=node('a',{class:'tk-primary',href:location.pathname.includes('/dist/')?'lesson.html':'regenerated.html',style:'text-decoration:none'},node('span',{},'이 키트로 만든 수업 보기'),node('span',{class:'tk-go'},icon()));app.footer.append(link);
+const link=node('a',{class:'tk-primary',href:'apps.html',style:'text-decoration:none'},node('span',{},'카페·행사·수업 예시 보기'),node('span',{class:'tk-go'},icon()));app.footer.append(link);

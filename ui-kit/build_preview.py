@@ -4,7 +4,7 @@ Not a general JS parser. Fonts stay external CSS links; no font bytes copied.
 from pathlib import Path
 import hashlib,json,re
 ROOT=Path(__file__).resolve().parent
-STYLES=['theme.css','tripfit-details.css','presentation.css','gallery.css']
+STYLES=['theme.css','tripfit-details.css','presentation.css','gallery.css','demo-apps.css']
 IMPORT=re.compile(r'^import\s*\{([^}]+)\}\s*from\s*[\'\"]([^\'\"]+)[\'\"];?\s*$',re.M)
 def build(entry,template,output):
  modules=[];seen=set();visiting=set()
@@ -35,6 +35,7 @@ def build(entry,template,output):
   bundle+=['modules['+json.dumps(name)+']=(()=>{',source,'return {'+returns+'};})();']
  bundle+=['window.__kitModules=modules;})();'];html=(ROOT/template).read_text()
  for name in STYLES:
+  if f'<link rel="stylesheet" href="../{name}">' not in html:continue
   css=(ROOT/name).read_text();manifest['styles'][name]=hashlib.sha256(css.encode()).hexdigest()
   html=html.replace(f'<link rel="stylesheet" href="../{name}">','<style data-kit-source="'+name+'">\n'+css+'\n</style>')
  script='<script type="module" src="./'+Path(entry).name+'"></script>'
@@ -49,3 +50,7 @@ def build(entry,template,output):
 if __name__=='__main__':
  build('examples/lesson-demo.js','examples/regenerated.html','lesson.html')
  build('examples/gallery.js','examples/gallery.html','gallery.html')
+
+ build('examples/cafe.js','examples/cafe.html','cafe.html')
+ build('examples/event.js','examples/event.html','event.html')
+ build('examples/apps.js','examples/apps.html','apps.html')
