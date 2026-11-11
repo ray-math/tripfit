@@ -1,0 +1,35 @@
+
+/* Additional adaptable visual details from TripFit checklist and bottom-sheet patterns. */
+.tk-checklist { display: grid; gap: 10px; margin-top: 12px; }
+.tk-checkitem { display: grid; grid-template-columns: minmax(0,1fr) minmax(40px,70px) 38px; gap: 8px; align-items: center; font-size: 13px; }
+.tk-checkitem.is-muted { opacity: .45; }
+.tk-checkitem.is-muted .tk-checklabel { text-decoration: line-through; }
+.tk-checktrack { height: 8px; background: #0e2a3a29; border-radius: 9px; overflow: hidden; }
+.tk-checkfill { display: block; height: 100%; border-radius: 9px; background: var(--tk-ink); transition: width 700ms cubic-bezier(.34,1.4,.64,1); }
+.tk-checkpercent { font-variant-numeric: tabular-nums; text-align: right; font-weight: 650; }
+.tk-detail-button { margin-top: 16px; min-height: 44px; width: 100%; border: 1.5px solid var(--tk-ink); border-radius: 999px; cursor: pointer; background: transparent; font: 650 13px var(--tk-font); }
+.tk-detail-button:focus-visible { outline: 3px solid #7b5cff; outline-offset: 3px; }
+.tk-sheet-layer { position: absolute; inset: 0; z-index: 120; pointer-events: none; }
+.tk-sheet-layer.is-open { pointer-events: auto; }
+.tk-sheet-dim { position: absolute; inset: 0; background: rgba(5,14,20,.65); opacity: 0; transition: opacity 250ms; }
+.tk-sheet-layer.is-open .tk-sheet-dim { opacity: 1; }
+.tk-sheet {
+  position: absolute; left: 6px; right: 6px; bottom: 6px;
+  max-height: calc(100% - 24px); overflow-y: auto; overscroll-behavior: contain;
+  padding: 28px 23px 35px; color: var(--tk-ink);
+  background: var(--tk-paper);
+  border-radius: 44px; transform: translateY(105%);
+  transition: transform 480ms cubic-bezier(.34,1.4,.64,1);
+}
+.tk-sheet-layer.is-open .tk-sheet { transform: none; }
+.tk-sheet-grip { width: 40px; height: 5px; border-radius: 6px; background: #0e2a3a4d; margin: -12px auto 22px; }
+.tk-sheet-close { display: block; float: right; border: none; background: var(--tk-ink); color: var(--tk-paper); padding: 7px 13px; border-radius: 99px; font: 650 12px var(--tk-font); cursor: pointer; }
+.tk-sheet-title { font-size: 26px; letter-spacing: -.04em; clear: both; margin: 15px 0; }
+.tk-sheet-body,.tk-sheet-extra { font-size: 15px; line-height: 1.65; }
+.tk-sheet-extra { padding: 15px; background: var(--tk-mint); border-radius: 20px; }
+@media (max-width: 750px), (pointer: coarse) and (max-width: 900px) {
+ .tk-sheet { bottom: calc(6px + env(safe-area-inset-bottom)); max-height: calc(100% - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) {
+ .tk-checkfill,.tk-sheet-dim,.tk-sheet { transition: none !important; }
+}
