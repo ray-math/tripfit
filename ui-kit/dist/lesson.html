@@ -1,0 +1,1027 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e2a3a">
+<meta name="description" content="TripFit UI 키트의 공통 부품으로 조립한 새 수학 수업 예시. 원본 여행 앱을 불러오지 않습니다.">
+<title>Ray class · 키트로 재생성한 수업 화면</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23d6f23b'/%3E%3Cpath d='M10 11q10 35 20 0' stroke='%230e2a3a' stroke-width='3' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style data-kit-source="theme.css">
+/* Reusable independent card UI — no dependency on TripFit's application CSS */
+:root {
+  --tk-ink: #0e2a3a;
+  --tk-deep: #173a4c;
+  --tk-paper: #f3f1ea;
+  --tk-lemon: #d6f23b;
+  --tk-rose: #ffcce5;
+  --tk-blue: #8ec5ee;
+  --tk-mint: #bdefdb;
+  --tk-lilac: #cbbdff;
+  --tk-peach: #f8d5bc;
+  --tk-backdrop: #e7f1ec;
+  --tk-font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", system-ui, sans-serif;
+}
+.tk-stage *, .tk-stage *::before, .tk-stage *::after { box-sizing: border-box; }
+.tk-stage {
+  background: var(--tk-backdrop);
+  color: var(--tk-ink);
+  font-family: var(--tk-font);
+  min-height: 100dvh;
+  padding: 24px;
+  display: grid;
+  place-items: center;
+}
+.tk-rig {
+  width: 100%;
+  max-width: 920px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+}
+.tk-aside { flex: 1; max-width: 390px; }
+.tk-kicker { font-size: 12px; font-weight: 700; letter-spacing: .14em; opacity: .65; }
+.tk-aside-title {
+  font-size: clamp(35px, 5vw, 56px);
+  letter-spacing: -.06em;
+  line-height: 1.1;
+  margin: 18px 0;
+}
+.tk-aside-subtitle { font-size: 16px; line-height: 1.65; color: #425f69; }
+.tk-progress { display: flex; gap: 5px; margin-top: 26px; }
+.tk-dot {
+  width: 16px; height: 6px; border-radius: 6px;
+  background: #b1c2bb; transition: width .35s ease;
+}
+.tk-dot.is-active { width: 46px; background: var(--tk-ink); }
+.tk-dot.is-done { background: #708f82; }
+.tk-device {
+  background: #101619;
+  width: 410px; height: 850px;
+  padding: 11px; border-radius: 58px;
+  flex: none;
+  box-shadow: 0 0 0 2px #777f89, 0 0 0 4px #afb8bf, 0 30px 80px #193d4b33;
+}
+.tk-screen {
+  position: relative;
+  width: 100%; height: 100%;
+  background: var(--tk-ink);
+  border-radius: 47px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.tk-status {
+  display: flex; flex: none; justify-content: space-between; align-items: center;
+  color: var(--tk-paper); padding: 35px 25px 16px;
+  font-size: 11px; font-weight: 750; letter-spacing: .12em;
+}
+.tk-counter { opacity: .7; font-variant-numeric: tabular-nums; }
+.tk-viewport { flex: 1; min-height: 0; position: relative; overflow: hidden; }
+.tk-page {
+  position: absolute; inset: 0;
+  overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-direction: column;
+  gap: 4px; padding: 5px 5px 18px;
+  scrollbar-width: none;
+}
+.tk-page::-webkit-scrollbar { display: none; }
+.tk-eyebrow {
+  color: #c1eccf; font-size: 11px; letter-spacing: .14em;
+  padding: 3px 18px 10px; font-weight: 750;
+}
+.tk-card {
+  --tk-surface: var(--tk-paper);
+  flex: none;
+  padding: 20px;
+  border-radius: 29px;
+  background: var(--tk-surface);
+  color: var(--tk-ink);
+  overflow-wrap: anywhere;
+}
+.tk-card.tk-hero { padding: 31px 22px 28px; border-radius: 37px; min-height: 188px; }
+.tk-lime { --tk-surface: var(--tk-lemon); }
+.tk-pink { --tk-surface: var(--tk-rose); }
+.tk-sky { --tk-surface: var(--tk-blue); }
+.tk-mint { --tk-surface: var(--tk-mint); }
+.tk-cream { --tk-surface: var(--tk-paper); }
+.tk-lilac { --tk-surface: var(--tk-lilac); }
+.tk-peach { --tk-surface: var(--tk-peach); }
+.tk-label { margin: 0 0 12px; font-size: 11px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; opacity: .75; }
+.tk-title {
+  margin: 0 0 8px;
+  font-size: 24px; font-weight: 700; line-height: 1.23;
+  letter-spacing: -.045em; white-space: pre-line;
+}
+.tk-hero .tk-title { font-size: 36px; }
+.tk-body { margin: 0; font-size: 15px; line-height: 1.56; color: #34535c; }
+.tk-metric { display: flex; gap: 10px; align-items: baseline; margin-top: 15px; }
+.tk-value { font-weight: 600; font-size: 58px; letter-spacing: -.06em; font-variant-numeric: tabular-nums; }
+.tk-unit { font-weight: 650; font-size: 15px; }
+.tk-options { display: grid; gap: 9px; margin-top: 12px; }
+.tk-option {
+  width: 100%; min-height: 52px; cursor: pointer; text-align: left;
+  padding: 12px 20px; border-radius: 999px; border: none;
+  background: var(--tk-ink); color: white;
+  font: 650 15px var(--tk-font);
+  transition: filter .2s ease, transform .2s ease;
+}
+.tk-option:hover { filter: brightness(1.18); }
+.tk-option:active { transform: scale(.98); }
+.tk-clickable { cursor: pointer; transition: filter .2s ease, transform .2s ease; }
+.tk-clickable:hover { filter: brightness(.97); }
+.tk-clickable:active { transform: scale(.99); }
+.tk-clickable:focus-visible, .tk-option:focus-visible, .tk-primary:focus-visible {
+  outline: 3px solid #7b5cff; outline-offset: 3px;
+}
+.tk-footer { flex: none; padding: 13px 12px 26px; display: grid; gap: 9px; background: var(--tk-ink); }
+.tk-footer:empty { display: none; }
+.tk-primary {
+  border: none; background: var(--tk-lemon); color: var(--tk-ink);
+  border-radius: 999px; min-height: 60px;
+  text-align: left; padding: 12px 23px;
+  cursor: pointer; font: 750 16px var(--tk-font);
+}
+@media (max-width: 750px), (pointer: coarse) and (max-width: 900px) {
+  .tk-stage { padding: 0; background: var(--tk-ink); }
+  .tk-rig { width: 100vw; height: 100dvh; display: block; }
+  .tk-aside { display: none; }
+  .tk-device { width: 100%; height: 100%; padding: 0; border-radius: 0; box-shadow: none; }
+  .tk-screen { border-radius: 0; }
+  .tk-status { padding-top: calc(18px + env(safe-area-inset-top)); }
+  .tk-footer { padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tk-stage *, .tk-stage *::before, .tk-stage *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+</style>
+<style data-kit-source="tripfit-details.css">
+/*
+ * Extracted/adapted visual details from TripFit's web/index.html:
+ *   its original .cut/.tab/.flag/.pill and digit roller patterns.
+ * Only intended for continued development inside this GitHub fork until
+ * the upstream author's reuse permission is clarified.
+ */
+.tk-page .tk-card { position: relative; }
+.tk-page .tk-card.tk-cut::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 50%;
+  width: 104px; height: 14px; margin-left: -52px;
+  background: var(--tk-ink);
+  border-radius: 10px 10px 0 0;
+}
+.tk-page .tk-card.tk-cut.tk-right::after {
+  left: auto; right: 40px; margin: 0;
+}
+.tk-page .tk-card.tk-cut.tk-left::after {
+  left: 40px; margin: 0;
+}
+.tk-page .tk-card.tk-tab::before {
+  content: "";
+  position: absolute; z-index: 1;
+  top: -14px; left: 50%;
+  width: 96px; height: 18px; margin-left: -48px;
+  background: var(--tk-surface);
+  border-radius: 10px 10px 0 0;
+}
+.tk-page .tk-card.tk-tab.tk-right::before {
+  left: auto; right: 44px; margin: 0;
+}
+.tk-page .tk-card.tk-tab.tk-left::before {
+  left: 44px; margin: 0;
+}
+.tk-floating-flag {
+  position: relative; z-index: 3;
+  display: inline-flex; align-items: center;
+  height: 35px; padding: 0 16px;
+  margin: -11px 0 -12px 12px;
+  background: var(--tk-ink);
+  color: var(--tk-paper);
+  border-radius: 999px;
+  font-size: 12px; font-weight: 650;
+  box-shadow: 0 0 0 4px var(--tk-ink);
+  align-self: flex-start;
+}
+.tk-pill {
+  display: inline-flex; align-items: center;
+  padding: 0 13px; height: 30px; max-width: 100%;
+  border: 1.5px solid var(--tk-ink);
+  border-radius: 999px;
+  font-size: 12px; font-weight: 650;
+  margin-top: 12px;
+}
+.tk-title-word { display: inline-block; white-space: nowrap; }
+.tk-title-char { display: inline-block; }
+.tk-odometer { display: inline-flex; line-height: 1; white-space: nowrap; }
+.tk-od-column { display: inline-block; overflow: hidden; height: 1em; width: .65em; }
+.tk-od-stack { display: flex; flex-direction: column; transition: transform 700ms cubic-bezier(.34,1.4,.64,1); }
+.tk-od-stack > span { height: 1em; min-height: 1em; line-height: 1em; text-align: center; }
+.tk-od-static { display: inline-block; }
+.tk-island {
+  position: absolute; z-index: 90;
+  top: 11px; left: 50%;
+  transform: translateX(-50%);
+  background: #050607; color: #fff;
+  border-radius: 20px;
+  width: 126px; height: 37px;
+  padding: 0 15px;
+  display: flex; align-items: center;
+  justify-content: center;
+  opacity: 0; visibility: hidden;
+  overflow: hidden;
+  transition: width 480ms cubic-bezier(.34,1.4,.64,1),
+              height 480ms cubic-bezier(.34,1.4,.64,1),
+              opacity 200ms, border-radius 480ms;
+  pointer-events: none;
+}
+.tk-island.is-open {
+  width: calc(100% - 24px); max-width: 370px;
+  height: 66px; border-radius: 31px;
+  opacity: 1; visibility: visible;
+}
+.tk-island-label {
+  font: 650 13px/1.4 var(--tk-font);
+  white-space: normal; overflow-wrap: anywhere;
+  text-align: center;
+}
+@media (max-width: 750px), (pointer: coarse) and (max-width: 900px) {
+  .tk-island { top: calc(7px + env(safe-area-inset-top)); }
+  .tk-island.is-open { background: var(--tk-deep); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tk-od-stack, .tk-island { transition: none !important; }
+}
+
+</style>
+<style data-kit-source="presentation.css">
+/* Fidelity layer for the extracted TripFit primitives, not a new visual theme.
+   Geometry/color/motion follow the source project; data and layouts stay free. */
+:root{--tk-grotesk:"Inter Tight","Helvetica Neue",Arial,var(--tk-font);--tk-violet:#7b5cff;--tk-red:#ff5b4a}
+html,body{margin:0;height:100%;background:var(--tk-ink)}
+.tk-stage{height:100dvh;min-height:0;padding:0;overflow:hidden;-webkit-font-smoothing:antialiased;word-break:keep-all}
+.tk-rig{width:auto;max-width:none;gap:44px;transform-origin:center;flex:none}
+.tk-aside{width:330px;flex:none}
+.tk-aside-title{font-size:52px;font-weight:500;line-height:1.08}
+.tk-aside-subtitle{font-weight:400;line-height:1.6}
+.tk-device{width:417px;height:876px;padding:12px;border-radius:68px;background:#0a0d10;box-shadow:0 0 0 1.5px #4d5560,0 0 0 3.5px #9aa2ac,0 0 0 5px #39404a,0 50px 90px -40px #0e2a3a80}
+.tk-screen{width:393px;height:852px;border-radius:56px;isolation:isolate;display:block}
+.tk-screen:after{content:'';position:absolute;top:11px;left:50%;transform:translateX(-50%);width:126px;height:37px;border-radius:19px;background:#000;pointer-events:none;z-index:60}
+.tk-status{position:absolute;inset:0 0 auto;height:54px;padding:6px 34px 0 35px;color:var(--tk-ink);z-index:40;pointer-events:none;font-size:12px;letter-spacing:0;font-weight:600}
+.tk-viewport{position:absolute;inset:0}
+.tk-page{display:flex;gap:4px;padding:4px 4px 150px;overscroll-behavior:contain}
+.tk-card{position:relative;padding:18px 20px;border-radius:30px;overflow-wrap:normal;min-width:0}
+.tk-card.tk-top{border-radius:52px 52px 30px 30px;padding-top:62px}
+.tk-title{font-size:25px;font-weight:600;line-height:1.24;letter-spacing:-.045em;margin:10px 0 0;white-space:pre-line}
+.tk-balance-title{font-size:21px;min-height:2.5em}
+.tk-body{font-size:15px;color:var(--tk-ink);line-height:1.6;font-weight:500;white-space:pre-line}
+.tk-label{font-size:11px;letter-spacing:.09em;font-weight:600;margin:0;opacity:.8}
+.tk-lab{font-size:12.5px;font-weight:500;opacity:.8}
+.tk-pill{font-size:12px;height:28px;font-weight:600;padding:0 10px;margin:0;gap:6px;white-space:nowrap}
+.tk-pill.tk-filled{background:var(--tk-ink);color:var(--tk-paper)}
+.tk-row{display:flex;align-items:center;gap:12px;min-width:0}
+.tk-between{justify-content:space-between}
+.tk-pair{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:end;margin-top:18px}
+.tk-readout{display:inline-flex;align-items:baseline;gap:2px;font-family:var(--tk-grotesk);white-space:nowrap;line-height:1}
+.tk-value{display:inline-flex;font-family:var(--tk-grotesk);font-size:34px;font-weight:500;line-height:1;letter-spacing:-.045em}
+.tk-readout em{font-size:14px;font-style:normal;letter-spacing:0;font-weight:500}
+.tk-large .tk-value{font-size:92px;line-height:.86;letter-spacing:-.06em}
+.tk-large em{font-size:22px;margin-left:3px}
+.tk-pair>.tk-readout:last-child{justify-content:flex-end}
+.tk-colon{font:500 64px/.86 var(--tk-grotesk);padding:0 4px 6px}
+.tk-od-column{width:auto;min-width:0}
+.tk-od-stack{transition:transform var(--tk-spring-ms,700ms) var(--tk-spring,cubic-bezier(.34,1.4,.64,1))}
+.tk-od-stack>span{min-height:1em;letter-spacing:inherit}
+.tk-pair-labels{display:flex;justify-content:space-between;margin-top:12px;font-size:12.5px;font-weight:600}
+.tk-dot-person{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--person);box-shadow:0 0 0 1.5px var(--tk-ink);margin:0 6px 0 0}
+.tk-balance-note{display:flex;flex-wrap:wrap;gap:5px 10px;font-size:11px;margin-top:12px;line-height:1.5}
+.tk-slider{margin-top:16px}
+.tk-slider-track{position:relative;height:46px;margin:0 10px}
+.tk-slider-track:before{content:'';height:2px;position:absolute;left:0;right:0;top:22px;background:var(--tk-ink)}
+.tk-slider-track>i{position:absolute;top:17px;width:12px;height:12px;border-radius:50%;background:var(--tk-ink);transform:translateX(-50%)}
+.tk-slider input{appearance:none;-webkit-appearance:none;position:absolute;left:-21px;top:0;width:calc(100% + 42px);height:46px;background:transparent;margin:0;cursor:grab;touch-action:pan-y}
+.tk-slider input::-webkit-slider-thumb{appearance:none;width:42px;height:42px;border-radius:50%;background:var(--tk-ink);border:10px solid var(--tk-ink);box-shadow:inset 0 0 0 2px var(--tk-lemon)}
+.tk-slider input::-moz-range-thumb{width:24px;height:24px;border:9px solid var(--tk-ink);border-radius:50%;background:var(--tk-ink);box-shadow:inset 0 0 0 2px var(--tk-lemon)}
+.tk-slider-labels{display:flex;justify-content:space-between;font-size:11px;font-weight:600;margin-top:4px;opacity:.8}
+.tk-split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+.tk-split .tk-card{padding:16px 14px 14px}
+.tk-mini-head{display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:11px;font-weight:600}
+.tk-mini-head b{font:500 26px/1 var(--tk-grotesk)}
+.tk-progress-row{display:grid;grid-template-columns:minmax(0,1fr) 30px 28px;gap:4px;align-items:center;margin-top:10px;font-size:11.5px;font-weight:600}
+.tk-progress-row i{height:8px;border-radius:6px;background:#0e2a3a26;overflow:hidden}
+.tk-progress-row i b{display:block;height:100%;background:var(--tk-ink);border-radius:6px;transition:width var(--tk-spring-ms,700ms) var(--tk-spring,ease)}
+.tk-progress-row em{font:500 11px var(--tk-grotesk);text-align:right}
+.tk-tap-note{display:block;margin-top:12px;font-size:10px;opacity:.75}
+.tk-chart-card{padding:0;overflow:visible}
+.tk-chart-top{padding:14px 16px 0;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tk-chart{width:100%;height:auto;display:block}
+.tk-chart text{font-family:var(--tk-grotesk);fill:var(--tk-ink)}
+.tk-row-card{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;padding:16px}
+.tk-row-card h3{font-size:17px;letter-spacing:-.04em;line-height:1.25;margin:0;font-weight:600}
+.tk-row-card p{font-size:12.5px;line-height:1.5;margin:4px 0 0;opacity:.8}
+.tk-row-card .tk-value{font-size:30px}
+.tk-ico{display:grid;place-items:center;flex:none;width:46px;height:46px;border-radius:50%;background:var(--tk-ink);color:var(--tk-lemon)}
+.tk-stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:20px}
+.tk-stat-grid .tk-readout{margin-top:8px;display:flex}
+.tk-footer{position:absolute;bottom:0;left:0;right:0;padding:20px 10px 28px;z-index:20;background:linear-gradient(to top,var(--tk-ink) 60%,#0e2a3a00);display:grid;gap:8px}
+.tk-primary,.tk-secondary{width:100%;height:64px;min-height:64px;border-radius:99px;border:0;background:var(--tk-lemon);color:var(--tk-ink);font:600 17px var(--tk-font);letter-spacing:-.03em;display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 28px;cursor:pointer}
+.tk-go{width:48px;height:48px;display:grid;place-items:center;background:var(--tk-ink);color:var(--tk-lemon);border-radius:50%;flex:none}
+.tk-primary:active,.tk-secondary:active{transform:scale(.97)}
+.tk-secondary{background:var(--tk-ink);color:var(--tk-paper);margin-top:12px}
+.tk-secondary .tk-go{background:var(--tk-lemon);color:var(--tk-ink)}
+.tk-plain{border:0;background:none;color:inherit;font:600 12px var(--tk-font);min-height:44px;cursor:pointer;padding:0 8px}
+.tk-choice-list{display:grid;gap:6px;margin-top:18px}
+.tk-choice{display:flex;align-items:center;gap:12px;width:100%;padding:13px 16px;min-height:52px;border:1.5px solid var(--tk-ink);border-radius:20px;background:var(--tk-paper);color:var(--tk-ink);text-align:left;font:600 16px var(--tk-font);cursor:pointer}
+.tk-choice i{font:500 13px var(--tk-grotesk);font-style:normal;opacity:.65}
+.tk-choice.is-picked{background:var(--tk-ink);color:var(--tk-lemon)}
+.tk-choice.is-correct{background:var(--tk-lemon);color:var(--tk-ink)}
+.tk-choice.is-wrong{background:#ffcce5;color:var(--tk-ink)}
+.tk-result{margin-top:12px;font-size:14px;line-height:1.6;min-height:0}
+.tk-formula{font:500 32px/1.3 var(--tk-grotesk);margin:16px 0;letter-spacing:-.04em}
+.tk-formula.small{font-size:25px}
+.tk-section-label{color:var(--tk-paper);font-size:11px;letter-spacing:.04em;padding:10px 12px 4px;opacity:.75}
+.tk-sheet-layer{position:absolute;inset:0;z-index:100}
+.tk-sheet-dim{position:absolute;inset:0;background:#050e1499;opacity:0;transition:opacity .3s}
+.tk-sheet{position:absolute;bottom:6px;left:6px;right:6px;max-height:calc(100% - 24px);background:var(--tk-ink);border-radius:50px;padding:4px;overflow-y:auto;overscroll-behavior:contain;transform:translateY(110%);transition:transform 600ms var(--tk-spring,ease);scrollbar-width:none}
+.tk-sheet-layer.is-open .tk-sheet{transform:none}.tk-sheet-layer.is-open .tk-sheet-dim{opacity:1}
+.tk-sheet>.tk-card{margin-bottom:4px}.tk-sheet>.tk-card:first-child{border-radius:46px 46px 30px 30px}.tk-sheet>.tk-card:last-child{border-radius:30px 30px 46px 46px;margin:0}
+.tk-sheet-head{position:relative;padding:32px 20px 20px}
+.tk-sheet-title{font:600 25px/1.25 var(--tk-font);letter-spacing:-.045em;padding-right:30px;margin:5px 0 12px;white-space:pre-line}
+.tk-sheet-close{position:absolute;top:16px;right:14px;width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:var(--tk-ink);font-size:28px;cursor:pointer}
+.tk-sheet-grip{position:absolute;top:10px;left:50%;width:40px;height:5px;transform:translateX(-50%);border-radius:3px;background:currentColor;opacity:.3}
+.tk-sheet-body,.tk-sheet-extra{font-size:15px;line-height:1.6;white-space:pre-line;margin:0}
+.tk-code-note{font-size:12px;line-height:1.7;overflow-wrap:anywhere;color:var(--tk-paper);padding:12px 18px}
+.tk-island.is-open{z-index:120}.tk-island{transition:width var(--tk-spring-ms,700ms) var(--tk-spring,ease),height var(--tk-spring-ms,700ms) var(--tk-spring,ease),opacity .2s,border-radius .5s}
+button,input{-webkit-tap-highlight-color:transparent}button:focus-visible,input:focus-visible,[tabindex="0"]:focus-visible{outline:3px solid var(--tk-violet);outline-offset:2px}
+@media (max-width:1099px){.tk-aside{display:none}}
+@media (max-width:750px),(pointer:coarse) and (max-width:900px){
+ .tk-stage,.tk-rig,.tk-device,.tk-screen{width:100vw;height:100dvh;border-radius:0;padding:0;box-shadow:none}
+ .tk-rig{transform:none!important;display:block}.tk-status,.tk-screen:after{display:none}
+ .tk-page{padding:env(safe-area-inset-top) max(4px,env(safe-area-inset-right)) calc(132px + env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left))}
+ .tk-card.tk-top{border-radius:30px;padding-top:24px}
+ .tk-large .tk-value{font-size:clamp(64px,20vw,86px)}.tk-large em{font-size:clamp(16px,4.8vw,21px)}.tk-colon{font-size:clamp(40px,13vw,56px)}
+ .tk-split .tk-card{padding:14px 10px}.tk-stat-grid{padding:18px 14px}.tk-stat-grid .tk-value{font-size:clamp(25px,8vw,34px)}
+ .tk-row-card{gap:10px;padding:16px 12px}.tk-footer{padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+ .tk-sheet{bottom:calc(6px + env(safe-area-inset-bottom));max-height:calc(100% - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+}
+@media (prefers-reduced-motion:reduce){.tk-stage *, .tk-sheet, .tk-sheet-dim{transition:none!important;animation:none!important}}
+.tk-card-list{display:grid;gap:4px}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<noscript>이 인터랙티브 예시에는 JavaScript가 필요합니다.</noscript>
+<script>
+/* Generated from reusable kit source. Do not edit the generated output. */
+(()=>{const modules={};
+modules["tripfit-motion.js"]=(()=>{
+/**
+ * Extracted/adapted from the original TripFit prototype's motion approach:
+ *   web/index.html at harheem/tripfit (CSS spring, odometer, text reveal).
+ * Maintained within ray-math/tripfit fork. Original repo has no explicit
+ * repository-wide license; do not publish this extracted code as a separately
+ * licensed package or redistribute it outside the fork without permission.
+ */
+const fallbackEase = "cubic-bezier(.34,1.4,.64,1)";
+const canLinear = typeof CSS !== "undefined" &&
+  typeof CSS.supports === "function" &&
+  CSS.supports("transition-timing-function", "linear(0, 1)");
+
+function makeSpring(k, c) {
+  const w0 = Math.sqrt(k);
+  const z = c / (2 * Math.sqrt(k));
+  const wd = w0 * Math.sqrt(Math.max(1e-6, 1 - z * z));
+  const x = t => z < 1
+    ? 1 - Math.exp(-z * w0 * t) * (Math.cos(wd * t) + (z * w0 / wd) * Math.sin(wd * t))
+    : 1 - Math.exp(-w0 * t) * (1 + w0 * t);
+  let T = .25;
+  for (let t = 0; t < 4; t += 1 / 120)
+    if (Math.abs(1 - x(t)) > .003) T = t + 1 / 120;
+  const pts = [];
+  for (let i = 0; i <= 48; i++) pts.push(+x(T * i / 48).toFixed(4));
+  pts[48] = 1;
+  return {
+    easing: canLinear ? `linear(${pts.join(",")})` : fallbackEase,
+    duration: Math.round(T * 1000)
+  };
+}
+const springs = {
+  snap: makeSpring(420, 34),
+  pop: makeSpring(320, 15),
+  soft: makeSpring(170, 20)
+};
+
+function reduced() {
+  return typeof matchMedia === "function" &&
+    matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+function springIn(element, {
+  from = "translateY(36px) scale(.96)", delay = 0, kind = "pop"
+} = {}) {
+  if (reduced() || !element?.animate) return;
+  const spring = springs[kind] ?? springs.pop;
+  return element.animate([
+    { opacity: 0, transform: from },
+    { opacity: 1, transform: "none" }
+  ], { duration: spring.duration, easing: spring.easing,
+       delay, fill: "backwards" });
+}
+
+function rollDigits(element, value) {
+  const str = String(value);
+  if (element.dataset.rollValue === str) return;
+  const chars = [...str];
+  const digits = ch => /^[0-9]$/.test(ch);
+  const existing = [...element.children];
+  if (existing.length !== chars.length ||
+      chars.some((ch, i) => digits(ch) !== existing[i].classList.contains("tk-od-column"))) {
+    element.replaceChildren();
+    for (const char of chars) {
+      if (!digits(char)) {
+        const span = document.createElement("span");
+        span.className = "tk-od-static";
+        span.textContent = char;
+        element.append(span);
+        continue;
+      }
+      const col = document.createElement("span");
+      col.className = "tk-od-column";
+      const stack = document.createElement("span");
+      stack.className = "tk-od-stack";
+      for (const d of "0123456789") {
+        const glyph = document.createElement("span");
+        glyph.textContent = d;
+        stack.append(glyph);
+      }
+      col.append(stack);
+      element.append(col);
+    }
+    // Force layout so the transform transition plays on first update.
+    void element.offsetWidth;
+  }
+  chars.forEach((ch, i) => {
+    if (!digits(ch)) {
+      element.children[i].textContent = ch;
+      return;
+    }
+    const stack = element.children[i].firstElementChild;
+    stack.style.transitionDelay = (chars.length - 1 - i) * 45 + "ms";
+    stack.style.transform = `translateY(${-Number(ch) * 10}%)`;
+  });
+  element.dataset.rollValue = str;
+}
+
+function revealHeadline(element, message, { delay = 0 } = {}) {
+  const text = String(message);
+  if (element.dataset.revealValue === text) return;
+  element.dataset.revealValue = text;
+  element.replaceChildren();
+  for (const [lineIdx, line] of text.split("\n").entries()) {
+    if (lineIdx) element.append(document.createTextNode("\n"));
+    const words = line.split(" ");
+    for (const [wordIdx, word] of words.entries()) {
+      if (wordIdx) element.append(document.createTextNode(" "));
+      const token = document.createElement("span");
+      token.className = "tk-title-word";
+      for (const char of [...word]) {
+        const letter = document.createElement("span");
+        letter.className = "tk-title-char";
+        letter.textContent = char;
+        token.append(letter);
+      }
+      element.append(token);
+    }
+  }
+  if (reduced() || !element.animate) return;
+  const letters = [...element.querySelectorAll(".tk-title-char")];
+  letters.forEach((char, i) => char.animate([
+    { opacity: 0, transform: "translateY(.45em)", filter: "blur(5px)" },
+    { opacity: 1, transform: "none", filter: "blur(0)" }
+  ], { duration: 520, delay: delay + i * 18,
+       easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards" }));
+}
+
+/**
+ * Small system feedback overlay modeled on TripFit's notification island.
+ * Uses textContent throughout; never injects untrusted HTML.
+ */
+function createFeedbackIsland(screen) {
+  const root = document.createElement("div");
+  root.className = "tk-island";
+  root.setAttribute("role", "status");
+  root.setAttribute("aria-live", "polite");
+  root.setAttribute("aria-atomic", "true");
+  const label = document.createElement("div");
+  label.className = "tk-island-label";
+  root.append(label);
+  screen.append(root);
+  let timer = null;
+  const hide = () => {
+    if (timer !== null) clearTimeout(timer);
+    timer = null;
+    root.classList.remove("is-open");
+  };
+  const show = (message, { hold = 2600 } = {}) => {
+    hide();
+    label.textContent = String(message);
+    root.classList.add("is-open");
+    if (hold > 0) timer = setTimeout(hide, hold);
+  };
+  return { root, show, hide };
+}
+
+return {makeSpring,springs,springIn,rollDigits,revealHeadline,createFeedbackIsland};})();
+modules["tripfit-sheet.js"]=(()=>{
+/** Adapted TripFit sheet pattern, within the existing fork.
+ * Supports arbitrary DOM content so different cards can open different layouts.
+ * No travel data, solver, original HTML page, or string-HTML injection.
+ */
+function openDetailSheet(screen,{title,body,detail,content,tone='mint',onClose}={}) {
+  if(!screen)throw new Error('Missing screen for detail sheet');
+  screen._detailSheet?.close(true);
+  const doc=screen.ownerDocument, make=(tag,cls,text)=>{const n=doc.createElement(tag);n.className=cls;if(text!=null)n.textContent=String(text);return n;};
+  const before=doc.activeElement, layer=make('div','tk-sheet-layer'),dim=make('div','tk-sheet-dim');
+  const sheet=make('section','tk-sheet'),header=make('div','tk-card tk-'+tone+' tk-sheet-head');
+  sheet.setAttribute('role','dialog');sheet.setAttribute('aria-modal','true');sheet.tabIndex=-1;
+  const grip=make('div','tk-sheet-grip');grip.setAttribute('aria-hidden','true');
+  const closeButton=make('button','tk-sheet-close','×');closeButton.type='button';closeButton.setAttribute('aria-label','상세 창 닫기');
+  const heading=make('h2','tk-sheet-title',title||'상세 정보');heading.id='tk-detail-'+Math.random().toString(36).slice(2,9);sheet.setAttribute('aria-labelledby',heading.id);
+  header.append(grip,closeButton,heading);if(body)header.append(make('p','tk-sheet-body',body));sheet.append(header);
+  if(detail){const block=make('div','tk-card tk-cream');block.append(make('p','tk-sheet-extra',detail));sheet.append(block);}
+  if(content){const nodes=typeof content==='function'?content():content;for(const item of [nodes].flat(Infinity)){if(item instanceof doc.defaultView.Node)sheet.append(item);else if(item!=null)throw new TypeError('Sheet content must be DOM nodes');}}
+  layer.append(dim,sheet);
+  const siblings=Array.from(screen.children).map(el=>[el,el.inert]);siblings.forEach(([el])=>el.inert=true);
+  screen.append(layer);let closed=false;
+  const reduced=()=>typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const focusable=()=>Array.from(sheet.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),a[href],[tabindex="0"]')).filter(n=>n.getClientRects().length&&!n.closest('[hidden]'));
+  const close=(immediate=false)=>{
+    if(closed)return;closed=true;sheet.removeEventListener('keydown',onKey);layer.classList.remove('is-open');
+    const cleanup=()=>{layer.remove();siblings.forEach(([el,state])=>{if(el.isConnected)el.inert=state;});if(screen._detailSheet===result)screen._detailSheet=null;if(before?.isConnected)before.focus({preventScroll:true});onClose?.();};
+    if(immediate||reduced()||!sheet.animate)cleanup();else sheet.animate([{transform:'none',opacity:1},{transform:'translateY(110%)',opacity:.5}],{duration:300,easing:'ease-in',fill:'forwards'}).finished.then(cleanup).catch(cleanup);
+  };
+  const onKey=e=>{
+    if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();}
+    if(e.key==='Tab'){const nodes=focusable(),first=nodes[0]||sheet,last=nodes.at(-1)||sheet;if(e.shiftKey&&(doc.activeElement===first||doc.activeElement===sheet)){e.preventDefault();last.focus();}else if(!e.shiftKey&&doc.activeElement===last){e.preventDefault();first.focus();}}
+  };
+  dim.addEventListener('click',()=>close());closeButton.addEventListener('click',()=>close());sheet.addEventListener('keydown',onKey);
+  let start=null;
+  header.addEventListener('touchstart',e=>{if(!e.target.closest('button'))start={x:e.touches[0].clientX,y:e.touches[0].clientY};},{passive:true});
+  header.addEventListener('touchend',e=>{if(!start)return;const t=e.changedTouches[0];if(t.clientY-start.y>75&&Math.abs(t.clientX-start.x)<80)close();start=null;},{passive:true});
+  const result={element:sheet,close};screen._detailSheet=result;
+  requestAnimationFrame(()=>{if(!closed)layer.classList.add('is-open');});closeButton.focus({preventScroll:true});return result;
+}
+
+return {openDetailSheet};})();
+modules["flow.js"]=(()=>{
+const { springIn, rollDigits, revealHeadline, createFeedbackIsland }=modules["tripfit-motion.js"];
+/**
+ * Reusable, dependency-free card flow runtime.
+ * Keeps app-specific content in a validated data object.
+ * No TripFit travel logic or original UI code is imported.
+ */
+const TYPES = new Set(["hero", "text", "metric", "choices"]);
+const COLORS = new Set(["lime", "pink", "sky", "mint", "cream", "lilac", "peach"]);
+
+function validateFlow(flow) {
+  if (!flow || !Array.isArray(flow.steps) || flow.steps.length === 0)
+    throw new Error("flow.steps must be a non-empty array");
+  const ids = new Set();
+  for (const step of flow.steps) {
+    if (typeof step?.id !== "string" || !step.id.trim())
+      throw new Error("Each step requires a non-empty string id");
+    if (ids.has(step.id)) throw new Error("Duplicate step id: " + step.id);
+    ids.add(step.id);
+    if (!Array.isArray(step.cards))
+      throw new Error(step.id + ": cards must be an array");
+    if (step.actions !== undefined && !Array.isArray(step.actions))
+      throw new Error(step.id + ": actions must be an array");
+    for (const card of step.cards) {
+      if (!card || !TYPES.has(card.type))
+        throw new Error(step.id + ": unsupported card type " + card?.type);
+      if (card.type === "choices" && (!Array.isArray(card.options) || !card.options.length))
+        throw new Error(step.id + ": choices card needs options");
+      if (card.type !== "choices" && card.options !== undefined)
+        throw new Error(step.id + ": options only belong on choice cards");
+      if (card.color !== undefined && !COLORS.has(card.color))
+        throw new Error(step.id + ": unsupported card color " + card.color);
+      if (card.shape !== undefined && !["cut", "tab"].includes(card.shape))
+        throw new Error(step.id + ": unsupported card shape " + card.shape);
+      if (card.align !== undefined && !["left", "center", "right"].includes(card.align))
+        throw new Error(step.id + ": unsupported shape alignment " + card.align);
+    }
+  }
+  const start = flow.start ?? flow.steps[0].id;
+  if (!ids.has(start)) throw new Error("Unknown start step: " + start);
+  for (const step of flow.steps) {
+    const actions = [
+      ...(step.actions ?? []),
+      ...step.cards.filter(c => c.type === "choices").flatMap(c => c.options),
+      ...step.cards.filter(c => c.next !== undefined).map(c => ({
+        label: c.title || c.label || "Open card", next: c.next
+      }))
+    ];
+    for (const action of actions) {
+      if (typeof action?.label !== "string" || !action.label.trim())
+        throw new Error(step.id + ": action label is required");
+      if (typeof action.next !== "string" || !ids.has(action.next))
+        throw new Error(step.id + ": unknown target " + action.next);
+    }
+  }
+  return flow;
+}
+
+function el(tag, cls, value) {
+  const node = document.createElement(tag);
+  if (cls) node.className = cls;
+  if (value !== null && value !== undefined) node.textContent = String(value);
+  return node;
+}
+
+function enter(node, from, options) {
+  if (typeof node.animate !== "function") return;
+  node.animate([
+    { opacity: 0, transform: from },
+    { opacity: 1, transform: "none" }
+  ], { duration: 420, easing: "cubic-bezier(.22,1,.36,1)", fill: "both", ...options });
+}
+
+class CardFlow {
+  constructor(mountPoint, flow) {
+    if (!mountPoint) throw new Error("Missing mount element");
+    this.mountPoint = mountPoint;
+    this.flow = validateFlow(flow);
+    this.steps = new Map(flow.steps.map(step => [step.id, step]));
+    this.current = null;
+    this.reducedMotion = typeof matchMedia === "function" &&
+      matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  mount() {
+    const stage = el("div", "tk-stage");
+    const rig = el("div", "tk-rig");
+    const aside = el("aside", "tk-aside");
+    aside.append(
+      el("p", "tk-kicker", "INTERACTIVE CARD FLOW"),
+      el("h1", "tk-aside-title", this.flow.title ?? "Cards"),
+      el("p", "tk-aside-subtitle", this.flow.description ?? "선택에 따라 새로운 화면이 열립니다.")
+    );
+    this.progress = el("div", "tk-progress");
+    this.progress.setAttribute("aria-label", "진행 단계");
+    aside.append(this.progress);
+
+    const device = el("div", "tk-device");
+    const screen = el("div", "tk-screen");
+    const status = el("div", "tk-status");
+    this.counter = el("span", "tk-counter");
+    status.append(el("span", "", this.flow.brand ?? "CARD FLOW"), this.counter);
+    this.viewport = el("main", "tk-viewport");
+    this.footer = el("nav", "tk-footer");
+    this.footer.setAttribute("aria-label", "다음 화면");
+    screen.append(status, this.viewport, this.footer);
+    this.feedback = createFeedbackIsland(screen);
+    device.append(screen);
+    rig.append(aside, device);
+    stage.append(rig);
+    this.mountPoint.replaceChildren(stage);
+    this.go(this.flow.start ?? this.flow.steps[0].id);
+    return this;
+  }
+
+  renderCard(card) {
+    const element = el("article", "tk-card tk-" + (card.color ?? "cream") +
+      (card.type === "hero" ? " tk-hero" : ""));
+    if (card.shape) element.classList.add("tk-" + card.shape);
+    if (card.align && card.align !== "center") element.classList.add("tk-" + card.align);
+    if (card.label) element.append(el("p", "tk-label", card.label));
+    if (card.title) element.append(el(card.type === "hero" ? "h2" : "h3", "tk-title", card.title));
+    if (card.body) element.append(el("p", "tk-body", card.body));
+    if (card.pill) element.append(el("span", "tk-pill", card.pill));
+    if (card.type === "metric") {
+      const group = el("div", "tk-metric");
+      group.append(el("strong", "tk-value", card.value ?? "—"));
+      if (card.unit) group.append(el("span", "tk-unit", card.unit));
+      element.append(group);
+    }
+    if (card.type === "choices") {
+      const group = el("div", "tk-options");
+      for (const option of card.options) {
+        const button = el("button", "tk-option", option.label);
+        button.type = "button";
+        button.addEventListener("click", () => this.go(option.next));
+        group.append(button);
+      }
+      element.append(group);
+    } else if (card.next) {
+      element.classList.add("tk-clickable");
+      element.setAttribute("role", "button");
+      element.setAttribute("tabindex", "0");
+      element.setAttribute("aria-label", card.title || card.label || "다음 단계");
+      element.addEventListener("click", () => this.go(card.next));
+      element.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          this.go(card.next);
+        }
+      });
+    }
+    return element;
+  }
+
+  go(id) {
+    const step = this.steps.get(id);
+    if (!step) throw new Error("Unknown step: " + id);
+    const previousIdx = this.flow.steps.findIndex(s => s.id === this.current);
+    const nextIdx = this.flow.steps.findIndex(s => s.id === id);
+    const backward = previousIdx >= 0 && nextIdx < previousIdx;
+    this.current = id;
+    const page = el("section", "tk-page");
+    page.setAttribute("aria-label", step.label ?? step.id);
+    if (step.eyebrow) page.append(el("div", "tk-eyebrow", step.eyebrow));
+    for (const card of step.cards) {
+      if (card.flag) page.append(el("span", "tk-floating-flag", card.flag));
+      page.append(this.renderCard(card));
+    }
+    const previousPages = Array.from(this.viewport.querySelectorAll(".tk-page"));
+    this.viewport.append(page);
+    for (const old of previousPages) {
+      old.style.pointerEvents = "none";
+      if (this.reducedMotion || typeof old.animate !== "function") {
+        old.remove();
+      } else {
+        const animation = old.animate([
+          { opacity: 1, transform: "none" },
+          { opacity: 0, transform: backward ? "translateX(22%)" : "translateX(-22%)" }
+        ], { duration: 220, easing: "ease-in", fill: "forwards" });
+        animation.onfinish = () => old.remove();
+        animation.oncancel = () => old.remove();
+      }
+    }
+    this.footer.replaceChildren();
+    for (const action of step.actions ?? []) {
+      const button = el("button", "tk-primary", action.label);
+      button.type = "button";
+      button.addEventListener("click", () => this.go(action.next));
+      this.footer.append(button);
+    }
+    this.counter.textContent = String(nextIdx + 1).padStart(2, "0") + " / " +
+      String(this.flow.steps.length).padStart(2, "0");
+    this.progress.replaceChildren();
+    this.flow.steps.forEach((s, idx) => {
+      const dot = el("span", "tk-dot" + (idx === nextIdx ? " is-active" : idx < nextIdx ? " is-done" : ""));
+      dot.setAttribute("title", s.label ?? s.id);
+      this.progress.append(dot);
+    });
+    if (!this.reducedMotion) {
+      enter(page, backward ? "translateX(-15%)" : "translateX(15%)");
+      Array.from(page.querySelectorAll(".tk-card")).forEach((card, idx) =>
+        springIn(card, { from: "translateY(36px) scale(.96)", delay: idx * 90 }));
+    }
+    // Decorative motion works independently of the domain-specific content.
+    for (const title of page.querySelectorAll(".tk-title"))
+      revealHeadline(title, title.textContent, { delay: 90 });
+    for (const value of page.querySelectorAll(".tk-value"))
+      rollDigits(value, value.textContent);
+    if (step.feedback) this.feedback.show(step.feedback);
+    else this.feedback.hide();
+    page.scrollTop = 0;
+    return id;
+  }
+}
+
+return {validateFlow,CardFlow};})();
+modules["compose.js"]=(()=>{
+/** Free-form composition on top of the existing CardFlow runtime.
+ * Domain content belongs in examples, not here. No original web/ app is loaded.
+ */
+const { CardFlow }=modules["flow.js"];
+const { rollDigits, springs, springIn }=modules["tripfit-motion.js"];
+const { openDetailSheet }=modules["tripfit-sheet.js"];
+function node(tag, attrs = {}, ...children) {
+  const e = document.createElement(tag);
+  for (const [key, value] of Object.entries(attrs)) {
+    if (value == null || value === false) continue;
+    if (key === 'class') e.className = value;
+    else if (key.startsWith('on') && typeof value === 'function') e.addEventListener(key.slice(2).toLowerCase(), value);
+    else e.setAttribute(key, value === true ? '' : String(value));
+  }
+  for (const child of children.flat(Infinity)) if (child != null && child !== false) e.append(child instanceof Node ? child : document.createTextNode(String(child)));
+  return e;
+}
+const PATHS = {
+  arrow: 'M7 17 17 7M9 7h8v8', back: 'm15 6-6 6 6 6',
+  check: 'm5 12 4 4L19 6', book: 'M12 6v15M3 4c4-1 6 0 9 2 3-2 5-3 9-2v14c-4-1-6 0-9 2-3-2-5-3-9-2Z',
+  graph: 'M4 3v17h17M7 7q5 19 13-2', pen: 'm5 15 11-11 4 4L9 19l-6 2Zm9-9 4 4',
+  spark: 'm12 2 2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5Z',
+  clock: 'M12 8v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0',
+  code: 'm8 6-6 6 6 6m8-12 6 6-6 6m-3-15-2 18', close: 'm6 6 12 12M18 6 6 18'
+};
+function icon(name = 'arrow', size = 20) {
+  const ns = 'http://www.w3.org/2000/svg', e = document.createElementNS(ns, 'svg');
+  Object.entries({viewBox:'0 0 24 24', width:size, height:size, fill:'none', stroke:'currentColor', 'stroke-width':2, 'stroke-linecap':'round', 'stroke-linejoin':'round', 'aria-hidden':'true'}).forEach(([k,v])=>e.setAttribute(k,v));
+  const p = document.createElementNS(ns,'path'); p.setAttribute('d', PATHS[name] || PATHS.arrow); e.append(p); return e;
+}
+function pill(text, opts = {}) { return node('span',{class:'tk-pill'+(opts.fill?' tk-filled':''), ...opts.attrs},text); }
+function button(text, action, {secondary=false, id}={}) {
+  return node('button',{class:secondary?'tk-secondary':'tk-primary',type:'button',id,onClick:action}, node('span',{},text), node('span',{class:'tk-go'},icon()));
+}
+function card({tone='cream',join='',side='',title,eyebrow,onClick,id,className='',hint}={},...children) {
+  const e=node('article',{class:`tk-card tk-${tone} ${join.split(' ').filter(Boolean).map(s=>'tk-'+s).join(' ')} ${side?'tk-'+side:''} ${className}`,id});
+  if (eyebrow) e.append(node('div',{class:'tk-label'},eyebrow));
+  if (title) e.append(node('h2',{class:'tk-title'},title));
+  e.append(...children.flat().filter(x=>x instanceof Node));
+  if(onClick){e.classList.add('tk-clickable');e.setAttribute('role','button');e.tabIndex=0;e.setAttribute('aria-label',hint||title||eyebrow||'상세 보기');e.addEventListener('click',onClick);e.addEventListener('keydown',ev=>{if(ev.target===e&&['Enter',' '].includes(ev.key)){ev.preventDefault();onClick(ev);}});}
+  return e;
+}
+function metric(value, unit='', {id, large=false}={}) {
+  return node('span',{class:`tk-readout ${large?'tk-large':''}`,role:'img','aria-label':String(value)+unit},node('span',{class:'tk-value tk-odometer',id,'aria-hidden':'true'},value),node('em',{'aria-hidden':'true'},unit));
+}
+function setMetric(el, value, unit='') {rollDigits(el,value);el.closest('.tk-readout')?.setAttribute('aria-label',String(value)+unit);}
+function progress(label, value, {tone='pink'}={}) {
+  return node('div',{class:'tk-progress-row'},node('span',{},label),node('i',{role:'progressbar','aria-label':label,'aria-valuemin':0,'aria-valuemax':100,'aria-valuenow':value},node('b',{style:`width:${Math.max(0,Math.min(100,value))}%`})),node('em',{},value+'%'));
+}
+function split(...children){return node('div',{class:'tk-split'},children);}
+function stats(items){return card({tone:'pink',join:'tab',side:'left',className:'tk-stat-grid'},...items.map(x=>node('div',{},node('span',{class:'tk-lab'},x.label),metric(x.value,x.unit))));}
+function rowCard({title,subtitle,tone='cream',symbol='book',value,unit='',onClick,id}) {
+  return card({tone,onClick,id,hint:title+' 열기',className:'tk-row-card'},node('span',{class:'tk-ico'},icon(symbol,21)),node('div',{class:'tk-row-copy'},node('h3',{},title),node('p',{},subtitle)),value!=null?metric(value,unit):icon());
+}
+function slider({min=0,max=2,value=1,labels=[],onInput,id='balance'}) {
+  const input=node('input',{type:'range',min,max,step:1,value,id,'aria-label':'학습 균형 선택'});
+  input.addEventListener('input',()=>onInput?.(Number(input.value)));
+  return node('div',{class:'tk-slider'},node('div',{class:'tk-slider-track'},...Array.from({length:max-min+1},(_,i)=>node('i',{style:`left:${i/(max-min)*100}%`})),input),node('div',{class:'tk-slider-labels'},labels.map(s=>node('span',{},s))));
+}
+class ComposedFlow extends CardFlow {
+  constructor(root, definition){
+    super(root,definition);this.state={...(definition.state||{})};this.activeSheet=null;
+    for(const step of definition.steps)for(const c of step.cards)if(c.render!==undefined&&typeof c.render!=='function')throw new TypeError('card.render must be a function');
+    this._resize=()=>this.fit();
+  }
+  renderCard(definition){
+    if(!definition.render)return super.renderCard(definition);
+    const result=definition.render(this);
+    if(!(result instanceof HTMLElement))throw new TypeError('A custom card renderer must return an HTMLElement');
+    return result;
+  }
+  mount(){
+    super.mount();this.mountPoint.querySelector('.tk-stage').classList.add('tk-faithful');
+    this.screen=this.mountPoint.querySelector('.tk-screen');
+    this.mountPoint.querySelector('.tk-kicker').textContent='TRIPFIT UI KIT / COMPOSED EXAMPLE';
+    document.documentElement.style.setProperty('--tk-spring',springs.pop.easing);
+    document.documentElement.style.setProperty('--tk-spring-ms',springs.pop.duration+'ms');
+    window.addEventListener('resize',this._resize);this.fit();return this;
+  }
+  go(id){
+    this.activeSheet?.close(true);this.activeSheet=null;
+    const result=super.go(id);
+    for(const b of this.footer.querySelectorAll('button')){
+      const label=b.textContent;b.replaceChildren(node('span',{},label),node('span',{class:'tk-go'},icon()));
+    }
+    this.viewport.querySelectorAll('.tk-page').forEach(e=>e.inert=e!==this.viewport.lastElementChild);
+    this.flow.onStep?.(id,this);this.fit();return result;
+  }
+  sheet(options){this.activeSheet=openDetailSheet(this.screen||this.mountPoint.querySelector('.tk-screen'),options);return this.activeSheet;}
+  notify(message){this.feedback.show(message);}
+  fit(){
+    const rig=this.mountPoint.querySelector('.tk-rig');if(!rig)return;
+    const mobile=matchMedia('(max-width: 750px), (pointer: coarse) and (max-width: 900px)').matches;
+    rig.style.transform=mobile?'':`scale(${Math.min(1,(innerHeight-32)/916,(innerWidth-48)/(innerWidth>=1100?791:417))})`;
+  }
+  destroy(){window.removeEventListener('resize',this._resize);this.activeSheet?.close();this.feedback.hide();this.mountPoint.replaceChildren();}
+}
+
+return {node,icon,pill,button,card,metric,setMetric,progress,split,stats,rowCard,slider,ComposedFlow};})();
+modules["examples/lesson-data.js"]=(()=>{
+/** Replace this content without changing the UI kit. All progress values are demo data. */
+const lesson = {
+  brand: 'Ray class', topic: '이차함수', subtitle: '꼭짓점에서 시작하는 그래프',
+  title: '개념과 문제,\n둘 다 균형 있게',
+  formula: 'y = (x − 2)² − 1', vertex: [2, -1],
+  profiles: [
+    { label: '개념부터 차근차근', concept: 100, practice: 75, left: [100,100,100], right: [80,65,80] },
+    { label: '균형 있게', concept: 79, practice: 83, left: [100,80,58], right: [90,75,84] },
+    { label: '문제로 더 깊이', concept: 59, practice: 89, left: [80,58,39], right: [100,85,82] }
+  ],
+  conceptLabels: ['꼭짓점', '대칭축', '최솟값'], practiceLabels: ['그래프 읽기', '평행이동', '식 만들기'],
+  question: '이 그래프의 꼭짓점은\n어디일까요?',
+  options: ['(−2, −1)', '(2, −1)', '(2, 1)', '(−2, 1)'], answer: 1,
+  explanation: 'y = (x − p)² + q의 꼭짓점은 (p, q)예요.\n괄호 안의 −2를 그대로 쓰는 것이 아니라, x − 2 = 0이 되는 x = 2를 읽어요.',
+  steps: [
+    { title:'꼭짓점 찾기', subtitle:'개념 카드 · 읽고 이해하기', tone:'cream', symbol:'book', value:'04', unit:'분', action:'concept' },
+    { title:'그래프 움직이기', subtitle:'탐구 카드 · 직접 조작하기', tone:'mint', symbol:'graph', value:'03', unit:'분', action:'graph' },
+    { title:'문제로 확인하기', subtitle:'문제 카드 · 선택하고 피드백 받기', tone:'peach', symbol:'pen', value:'05', unit:'분', action:'quiz' }
+  ]
+};
+
+return {lesson};})();
+modules["examples/lesson-demo.js"]=(()=>{
+/** Application composition only: every shell, card, number, sheet and transition
+ * is supplied by the reusable kit. No original TripFit page or solver is used.
+ */
+const { ComposedFlow, node, card, pill, button, metric, setMetric, progress, split, stats, rowCard, slider, icon }=modules["compose.js"];
+const { lesson }=modules["examples/lesson-data.js"];
+function graph(h=2,k=-1) {
+  const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
+  const attr=(el,a)=>{for(const [key,v]of Object.entries(a))el.setAttribute(key,v);return el;};
+  attr(svg,{class:'tk-chart',viewBox:'0 0 385 190',role:'img','aria-label':`꼭짓점이 (${h}, ${k})인 이차함수 그래프`});
+  const add=(type,a,text)=>{const e=attr(document.createElementNS(ns,type),a);if(text!=null)e.textContent=text;svg.append(e);return e;};
+  const x=v=>35+(v+3)/8*320,y=v=>164-(v+2)/7*144;
+  const clipId='chart-'+Math.random().toString(36).slice(2,9);
+  const defs=add('defs',{}),clip=attr(document.createElementNS(ns,'clipPath'),{id:clipId});clip.append(attr(document.createElementNS(ns,'rect'),{x:24,y:10,width:340,height:160}));defs.append(clip);
+  for(let v=-2;v<=5;v++)add('line',{x1:x(-3),x2:x(5),y1:y(v),y2:y(v),stroke:'#e6f8ef','stroke-width':1.2});
+  for(let v=-3;v<=5;v++)add('line',{x1:x(v),x2:x(v),y1:y(-2),y2:y(5),stroke:'#e6f8ef','stroke-width':1.2});
+  add('line',{x1:x(-3),x2:x(5),y1:y(0),y2:y(0),stroke:'#0e2a3a','stroke-width':1.2,opacity:.55});
+  add('line',{x1:x(0),x2:x(0),y1:y(-2),y2:y(5),stroke:'#0e2a3a','stroke-width':1.2,opacity:.55});
+  add('line',{x1:x(h),x2:x(h),y1:y(-2),y2:y(5),stroke:'#0e2a3a','stroke-dasharray':'3 4',opacity:.3});
+  const points=Array.from({length:161},(_,i)=>{const v=-3+i/20;return `${i?'L':'M'}${x(v).toFixed(2)},${y((v-h)**2+k).toFixed(2)}`;}).join('');
+  add('path',{d:points,fill:'none',stroke:'#0e2a3a','stroke-width':3.5,'stroke-linecap':'round','clip-path':`url(#${clipId})`});
+  add('circle',{cx:x(h),cy:y(k),r:7,fill:'#d6f23b',stroke:'#0e2a3a','stroke-width':2});
+  add('text',{x:x(h),y:y(k)+18,'text-anchor':'middle','font-size':12,'font-weight':600},`(${h}, ${k})`);
+  add('text',{x:x(0)-12,y:y(0)+15,'font-size':10},'0');add('text',{x:362,y:y(0)+4,'font-size':12},'x');add('text',{x:x(0)+7,y:15,'font-size':12},'y');
+  return svg;
+}
+function showConcept(app,d){
+  const note=card({tone:'cream',title:'괄호 안은 반대로,\n괄호 밖은 그대로'},node('p',{class:'tk-formula'},'y = (x − p)² + q'),node('p',{class:'tk-body'},'꼭짓점은 (p, q)\n대칭축은 x = p\na가 양수이면 최솟값은 q'));
+  const sample=card({tone:'pink',title:'지금 식에 적용하면'},node('p',{class:'tk-formula small'},d.formula),node('p',{class:'tk-body'},'p = 2, q = −1\n꼭짓점 (2, −1), 대칭축 x = 2'));
+  let sh;const finish=button('이 개념 이해했어요',()=>{app.state.conceptRead=true;sh.close();app.notify('개념 확인 완료 · 이제 그래프를 움직여 보세요');},{secondary:true});
+  const tail=card({tone:'lime'},finish);sh=app.sheet({title:'꼭짓점, 한 장으로',body:'개념 카드 · 설명형 상세 화면',tone:'pink',content:[note,sample,tail]});
+}
+function showGraph(app,d){
+  const chartHost=node('div',{},graph(...d.vertex)),label=node('p',{class:'tk-formula small',id:'graph-formula'},d.formula);
+  const input=node('input',{type:'range',min:-2,max:3,value:2,step:1,id:'vertex-slider','aria-label':'꼭짓점의 x 좌표',style:'width:100%;min-height:44px;accent-color:var(--tk-ink)'});
+  input.addEventListener('input',()=>{const h=Number(input.value);chartHost.replaceChildren(graph(h,-1));label.textContent=h===0?'y = x² − 1':`y = (x ${h<0?'+':'−'} ${Math.abs(h)})² − 1`;app.state.graphX=h;});
+  app.sheet({title:'손끝으로 평행이동',body:'탐구 카드 · 인터랙티브 그래프',tone:'mint',content:[card({tone:'mint',className:'tk-chart-card'},chartHost),card({tone:'cream'},label,node('label',{class:'tk-body',for:'vertex-slider'},'슬라이더를 움직여 꼭짓점의 x 좌표를 바꿔 보세요.'),input,node('p',{class:'tk-body'},'위아래 위치는 −1로 유지돼요.')),card({tone:'lilac',title:'변하지 않는 것은?'},node('p',{class:'tk-body'},'포물선의 모양과 최솟값은 그대로예요.\n가로 위치와 대칭축만 바뀝니다.'))]});
+}
+function showKit(app){
+  app.sheet({title:'원본 페이지가 아니라,\n키트로 조립한 화면',body:'TripFit의 시각 부품 + 별도의 수학 수업 콘텐츠',tone:'lime',content:[
+    card({tone:'cream',title:'공통 부품'},node('p',{class:'tk-body'},'맞물리는 카드 · 숫자 롤링 · 글자별 등장\n스프링 모션 · 상세 시트 · 모바일 전환')),
+    card({tone:'pink',title:'내용마다 다른 상세 화면'},node('p',{class:'tk-body'},'개념 카드는 설명을, 그래프 카드는 조작 화면을, 문제 카드는 선택지를 보여줘요. 같은 시트 안에 다른 구성을 넣었습니다.')),
+    card({tone:'sky',title:'교체하는 것은 콘텐츠'},node('p',{class:'tk-body'},'lesson-data.js에서 제목과 데이터를 바꾸고, lesson-demo.js에서 필요한 화면을 조립해요. 키트의 디자인·모션은 그대로 재사용합니다.')),
+    node('p',{class:'tk-code-note'},'개념·문제 점수는 UI 동작을 보여 주기 위한 예시 값입니다. 학생 성적이나 실제 학습 진단이 아닙니다. 원본 여행 계산 엔진은 포함하지 않았습니다.')
+  ]});
+}
+function balance(app,d){
+  const p=d.profiles[app.state.balance];
+  const head=node('div',{class:'tk-row tk-between'},node('span',{class:'tk-label'},'학습 균형'),node('button',{class:'tk-plain',type:'button',id:'kit-info',onClick:()=>showKit(app)},'키트로 만든 예시 ↗'));
+  const labels=node('div',{class:'tk-pair-labels'},node('span',{},node('i',{class:'tk-dot-person',style:'--person:var(--tk-rose)'}),'개념 이해'),node('span',{},'문제 적용 ',node('i',{class:'tk-dot-person',style:'--person:var(--tk-blue)'})));
+  return card({tone:'lime',join:'cut',side:'right',className:'tk-top',id:'balance-card'},head,node('h1',{class:'tk-title tk-balance-title'},d.title),node('div',{class:'tk-pair'},metric(p.concept,'%',{id:'concept-value',large:true}),node('span',{class:'tk-colon'},':'),metric(p.practice,'%',{id:'practice-value',large:true})),labels,node('div',{class:'tk-balance-note'},node('b',{id:'profile-label'},p.label),node('span',{},'슬라이더로 바꿔 보는 예시 점수')),slider({value:app.state.balance,labels:['개념 쪽','균형','문제 쪽'],onInput:i=>{
+    app.state.balance=i;const profile=d.profiles[i];
+    setMetric(document.getElementById('concept-value'),profile.concept,'%');setMetric(document.getElementById('practice-value'),profile.practice,'%');
+    document.getElementById('profile-label').textContent=profile.label;
+    const boxes=[document.getElementById('concept-list'),document.getElementById('practice-list')];
+    [profile.left,profile.right].forEach((values,j)=>{boxes[j].querySelector('.tk-mini-score').textContent=(j?profile.practice:profile.concept)+'%';boxes[j].querySelectorAll('.tk-progress-row').forEach((row,k)=>{row.querySelector('b').style.width=values[k]+'%';row.querySelector('i').setAttribute('aria-valuenow',values[k]);row.querySelector('em').textContent=values[k]+'%';});});
+    app.notify(profile.label+' · 카드와 숫자가 함께 바뀌어요');
+  }}));
+}
+function checklists(app,d){const p=d.profiles[app.state.balance];return split(...[0,1].map(i=>card({tone:i?'sky':'pink',join:i?'tab':'',side:i?'right':'',onClick:()=>i?app.go('quiz'):showConcept(app,d),id:i?'practice-list':'concept-list',hint:i?'문제 적용 카드 열기':'개념 이해 카드 열기'},node('div',{class:'tk-mini-head'},node('span',{},i?'문제 적용':'개념 이해'),node('b',{class:'tk-mini-score'},(i?p.practice:p.concept)+'%')),...(i?d.practiceLabels:d.conceptLabels).map((label,k)=>progress(label,(i?p.right:p.left)[k])),node('span',{class:'tk-tap-note'},i?'눌러서 문제 풀기 ↗':'눌러서 개념 보기 ↗'))));}
+function question(app,d){
+  const options=node('div',{class:'tk-choice-list'}),feedback=node('p',{class:'tk-result',role:'status',id:'answer-feedback'});
+  const choose=i=>{app.state.answer=i;options.querySelectorAll('button').forEach((b,j)=>{b.classList.toggle('is-correct',j===d.answer);b.classList.toggle('is-wrong',j===i&&i!==d.answer);b.setAttribute('aria-pressed',String(j===i));});feedback.textContent=i===d.answer?'맞았어요. 꼭짓점은 (2, −1)입니다.':'괄호 안의 부호를 다시 확인해 보세요. 정답은 (2, −1)이에요.';app.footer.querySelector('button').disabled=false;app.notify(i===d.answer?'정답 · 개념이 문제로 연결됐어요':'다시 확인 · x − 2 = 0을 생각해 보세요');};
+  d.options.forEach((text,i)=>options.append(node('button',{class:'tk-choice',type:'button','data-option':i,'aria-pressed':'false',onClick:()=>choose(i)},node('i',{},String(i+1).padStart(2,'0')),text)));
+  const block=card({tone:'cream',join:'tab',side:'left'},node('span',{class:'tk-label'},'한 번 선택해 보세요'),options,feedback);
+  if(app.state.answer!=null){const i=app.state.answer;options.querySelectorAll('button').forEach((b,j)=>{b.classList.toggle('is-correct',j===d.answer);b.classList.toggle('is-wrong',j===i&&i!==d.answer);b.setAttribute('aria-pressed',String(j===i));});feedback.textContent=i===d.answer?'맞았어요. 꼭짓점은 (2, −1)입니다.':'정답은 (2, −1)이에요. 풀이에서 이유를 확인하세요.';}
+  return block;
+}
+function createLessonFlow(d=lesson){return {
+  title:'같은 디자인,\n새로운 수업.',brand:d.brand,description:'원본 화면을 다시 여는 것이 아닙니다. 기존 UI 키트의 카드, 모션, 숫자, 상세 시트로 별도의 수업 화면을 조립했습니다.',state:{balance:1,answer:null},start:'learn',
+  onStep:(id,app)=>{if(id==='quiz')app.footer.querySelector('button').disabled=app.state.answer==null;},
+  steps:[
+    {id:'learn',label:d.topic+' 학습 화면',cards:[
+      {type:'text',render:app=>balance(app,d)},
+      {type:'text',render:app=>checklists(app,d)},
+      {type:'text',render:app=>card({tone:'mint',join:'cut',className:'tk-chart-card',id:'graph-card',onClick:()=>showGraph(app,d),hint:'그래프 탐구 열기'},node('div',{class:'tk-chart-top'},pill(d.topic+' · 그래프 탐구'),icon('arrow',18)),graph(...d.vertex))},
+      {type:'text',render:app=>card({tone:'lilac',join:'tab cut',side:'left',className:'tk-row-card',onClick:()=>showConcept(app,d),id:'concept-card',hint:'핵심 개념 한 장 열기'},node('span',{class:'tk-ico'},icon('spark')),node('div',{class:'tk-row-copy'},node('h3',{},'핵심 개념 한 장'),node('p',{},'읽기 · 조작 · 문제, 각자 다른 상세 화면')),icon())},
+      {type:'text',render:()=>stats([{label:'학습 카드',value:'03',unit:'개'},{label:'예상 시간',value:'12',unit:'min'},{label:'확인 문제',value:'01',unit:'개'}])},
+      {type:'text',render:app=>node('div',{class:'tk-card-list'},node('div',{class:'tk-section-label'},'오늘의 순서 · '+d.topic),...d.steps.map((s,i)=>rowCard({...s,id:'lesson-row-'+i,onClick:()=>s.action==='concept'?showConcept(app,d):s.action==='graph'?showGraph(app,d):app.go('quiz')})))},
+      {type:'text',render:()=>node('p',{class:'tk-code-note'},'Ray class · TripFit UI kit로 조립한 새 예시\n점수와 시간은 화면 동작을 위한 예시입니다.')}
+    ],actions:[{label:'문제로 확인하기',next:'quiz'}]},
+    {id:'quiz',label:'꼭짓점 확인 문제',cards:[
+      {type:'text',render:app=>card({tone:'lime',join:'cut',side:'left',className:'tk-top'},node('div',{class:'tk-row tk-between'},node('span',{class:'tk-label'},'02 / 확인 문제'),node('button',{class:'tk-plain',type:'button',onClick:()=>app.go('learn')},'← 학습 화면')),node('h1',{class:'tk-title'},d.question),node('p',{class:'tk-formula'},d.formula))},
+      {type:'text',render:app=>question(app,d)},
+      {type:'text',render:app=>card({tone:'mint',className:'tk-chart-card',onClick:()=>showGraph(app,d),hint:'그래프 다시 보기'},node('div',{class:'tk-chart-top'},pill('그래프로 다시 확인'),icon()),graph(...d.vertex))},
+      {type:'text',render:app=>rowCard({tone:'pink',title:'힌트가 필요하다면',subtitle:'괄호 안의 식을 0으로 만들어 보세요',symbol:'spark',onClick:()=>showConcept(app,d),id:'hint-card'})}
+    ],actions:[{label:'풀이와 결과 보기',next:'result'}]},
+    {id:'result',label:'문제 풀이와 결과',cards:[
+      {type:'text',render:app=>card({tone:'lime',join:'cut',className:'tk-top'},node('span',{class:'tk-label'},'03 / 학습 확인'),node('h1',{class:'tk-title'},app.state.answer===d.answer?'개념이 문제로,\n연결됐어요.':'한 번 더 보면,\n분명해져요.'),node('div',{style:'margin-top:22px'},metric(app.state.answer===d.answer?'100':'0','%',{large:true,id:'result-score'})),node('p',{class:'tk-body',style:'margin-top:14px'},'이번 확인 문제 · 선택 결과'))},
+      {type:'text',render:()=>card({tone:'cream',join:'tab cut',side:'left',title:'정답은 (2, −1)'},node('p',{class:'tk-formula'},'p = 2, q = −1'),node('p',{class:'tk-body'},d.explanation))},
+      {type:'text',render:app=>card({tone:'sky',join:'tab',side:'left',title:'이제 직접 설명해 보세요.'},node('p',{class:'tk-body'},'왜 x 좌표는 −2가 아니라 2일까요?\n왜 y 좌표는 −1일까요?'),button('다시 풀어보기',()=>{app.state.answer=null;app.go('quiz');},{secondary:true,id:'retry-question'}))},
+      {type:'text',render:app=>rowCard({tone:'lilac',title:'이 예시는 어떻게 만들었나요?',subtitle:'원본이 아닌 키트 기반 재생성',symbol:'code',onClick:()=>showKit(app),id:'kit-proof'})}
+    ],actions:[{label:'학습 화면으로 돌아가기',next:'learn'}]}
+  ]
+};}
+function startLesson(mount=document.getElementById('app'),data=lesson){const app=new ComposedFlow(mount,createLessonFlow(data)).mount();window.__kitDemo=app;return app;}
+if(typeof document!=='undefined'&&document.getElementById('app'))startLesson();
+
+return {createLessonFlow,startLesson};})();
+window.__kitModules=modules;})();
+</script>
+</body>
+</html>
