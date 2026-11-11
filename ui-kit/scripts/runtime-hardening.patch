@@ -118,17 +118,23 @@
 +    check('mobile does not add a second hardware island',page.locator('.tk-screen').evaluate('(e)=>getComputedStyle(e,"::after").display')=='none')
      page.screenshot(path=str(OUT/f'{args.browser}-mobile-home.png'))
      page.locator('#balance').fill('2');page.wait_for_timeout(1200)
-@@ -80,5 +81,13 @@
+@@ -80,5 +81,19 @@
      load(desktop);desktop.wait_for_timeout(1200)
      check('desktop has original 417px phone frame',desktop.locator('.tk-device').evaluate('(e)=>getComputedStyle(e).width')=='417px')
 +    notch=desktop.locator('.tk-screen').evaluate('(e)=>{const s=getComputedStyle(e,"::after");return {w:s.width,h:s.height,r:s.borderRadius}}')
 +    check('compact island is 88x32 CSS pixels',notch=={'w':'88px','h':'32px','r':'16px'})
      desktop.screenshot(path=str(OUT/f'{args.browser}-desktop-home.png'))
-+    desktop.evaluate("window.__kitDemo.notify('상세 문구는 충분히 읽을 수 있게 유지해요')")
-+    desktop.wait_for_timeout(900)
++    desktop.bring_to_front()
++    desktop.evaluate("window.__kitDemo.feedback.show({title:'상세 문구는 충분히 읽을 수 있게 유지해요',hold:0})")
++    try:
++        desktop.wait_for_function("document.querySelector('.tk-island').offsetWidth >= 360", timeout=6000)
++    except Exception:
++        print('ISLAND DIAGNOSTIC', desktop.locator('.tk-island').evaluate("e=>({width:e.offsetWidth,height:e.offsetHeight,classes:e.className,css:getComputedStyle(e).cssText,transition:getComputedStyle(e).transition,easing:getComputedStyle(e).transitionTimingFunction,visibility:document.visibilityState,screen:document.querySelector('.tk-screen').offsetWidth})"))
++        desktop.screenshot(path=str(OUT/f'{args.browser}-island-failure.png'))
++        raise
 +    check('expanded feedback island keeps its readable size',desktop.locator('.tk-island').evaluate('(e)=>e.offsetWidth')>=360)
 +    desktop.evaluate('window.__kitDemo.feedback.hide()')
-+    desktop.wait_for_timeout(900)
++    desktop.wait_for_function("document.querySelector('.tk-island').offsetWidth === 88 && document.querySelector('.tk-island').offsetHeight === 32", timeout=6000)
 +    check('feedback island collapses to matching compact geometry',desktop.locator('.tk-island').evaluate('(e)=>({w:e.offsetWidth,h:e.offsetHeight})')=={'w':88,'h':32})
      if not args.url:
          if offline:
