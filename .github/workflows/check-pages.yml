@@ -1,0 +1,52 @@
+name: Verify live GitHub Pages
+on:
+  push:
+    branches: [gh-pages]
+    paths: ['.github/workflows/check-pages.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-live-site:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Confirm live HTML and route aliases match verified build outputs
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, time, urllib.request
+          base = 'https://ray-math.github.io/tripfit/'
+          expected_source = '101bfe03b5f9d1900a85b392386b0b0ccea6509e'
+          paths = ['', 'gallery.html', 'lesson.html', 'regenerated.html', 'gallery-manifest.json', 'lesson-manifest.json', 'deployment.json']
+          deadline = time.monotonic() + 180
+          last_error = ''
+          while time.monotonic() < deadline:
+              try:
+                  results = {}
+                  for path in paths:
+                      request = urllib.request.Request(base + path, headers={'User-Agent':'TripFit-Pages-Verification/1.0', 'Cache-Control':'no-cache'})
+                      with urllib.request.urlopen(request, timeout=15) as response:
+                          assert response.status == 200, (path, response.status)
+                          data = response.read()
+                          if path in ['', 'gallery.html', 'lesson.html', 'regenerated.html']:
+                              assert 'text/html' in response.headers.get('Content-Type',''), path
+                          results[path] = data
+                  gallery = json.loads(results['gallery-manifest.json'])['output_sha256']
+                  lesson = json.loads(results['lesson-manifest.json'])['output_sha256']
+                  for path, expected_hash in [('',gallery), ('gallery.html',gallery), ('lesson.html',lesson), ('regenerated.html',lesson)]:
+                      assert hashlib.sha256(results[path]).hexdigest() == expected_hash, 'Published bytes mismatch: ' + path
+                  assert json.loads(results['deployment.json'])['source_commit'] == expected_source
+                  assert b'__gallery' in results[''] and b'startLesson' in results['lesson.html']
+                  print(json.dumps({'verified':True,'source_commit':expected_source,'routes':[base+p for p in paths]}, indent=2))
+                  with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+                      summary.write('## Live GitHub Pages verified\n\n')
+                      summary.write('Gallery: ' + base + '\n\nLesson: ' + base + 'lesson.html\n\n')
+                      summary.write('HTTP 200 and exact build SHA-256 matches for gallery, lesson and aliases.\n')
+                  break
+              except Exception as exc:
+                  last_error = str(exc)
+                  print('Waiting for Pages propagation:', last_error)
+                  time.sleep(8)
+          else:
+              raise RuntimeError('Live GitHub Pages verification failed: ' + last_error)
+          PY
