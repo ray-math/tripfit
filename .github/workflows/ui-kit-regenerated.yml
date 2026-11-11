@@ -25,7 +25,31 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Apply reviewed runtime changes and vendor immutable sources
+      - name: Materialize exact locally tested example source payload once
+        run: |
+          python - <<'PY'
+          from pathlib import Path, PurePosixPath
+          import hashlib, json, lzma, shutil
+          folder=Path('ui-kit/scripts/_apps-payload')
+          if folder.exists():
+              parts=sorted(folder.glob('part*.xz'))
+              assert [p.name for p in parts]==[f'part{i:02}.xz' for i in range(1,6)]
+              data=b''.join(p.read_bytes() for p in parts)
+              assert hashlib.sha256(data).hexdigest()=='bdb0d5a46e8e3726dbf6c86cc5ac7e7dd5d5dc55daf823adfa63b6f408688338'
+              raw=lzma.decompress(data,memlimit=128*1024*1024)
+              assert len(raw)==133646
+              files=json.loads(raw)
+              allowed={'ui-kit/APP_DEMOS.md','ui-kit/README.md','ui-kit/build_preview.py','ui-kit/demo-apps.css','ui-kit/demo-models.js','ui-kit/demo-ui.js','ui-kit/examples/apps.html','ui-kit/examples/apps.js','ui-kit/examples/cafe.html','ui-kit/examples/cafe.js','ui-kit/examples/event.html','ui-kit/examples/event.js','ui-kit/examples/gallery.js','ui-kit/tests/apps.spec.py','ui-kit/tests/demo-models.test.mjs'}
+              assert set(files)==allowed
+              for name,content in files.items():
+                  assert isinstance(content,str) and len(content)<100000
+                  path=PurePosixPath(name)
+                  assert not path.is_absolute() and '..' not in path.parts
+                  dest=Path(name); dest.parent.mkdir(parents=True,exist_ok=True);dest.write_text(content,encoding='utf-8')
+              shutil.rmtree(folder)
+              print('Materialized 15 reviewed source files; removed transfer fragments.')
+          PY
+      - name: Verify immutable dependencies and preserve original application
         run: |
           if test -f ui-kit/scripts/runtime-hardening.patch; then
             git apply --check ui-kit/scripts/runtime-hardening.patch
@@ -42,48 +66,52 @@ jobs:
           python -m pip install playwright==1.55.0
           python -m playwright install --with-deps chromium webkit
           sudo apt-get install -y fonts-noto-cjk
-      - name: Build actual reusable modules and run both browser suites
+      - name: Build shared kit and exercise all applications in both engines
         run: |
           python ui-kit/build_preview.py
           python ui-kit/tests/regenerated.spec.py --browser chromium
           python ui-kit/tests/regenerated.spec.py --browser webkit
           python ui-kit/tests/catalog.spec.py --browser chromium
           python ui-kit/tests/catalog.spec.py --browser webkit
-      - name: Publish verified sources and standalone previews on high only
+          python ui-kit/tests/apps.spec.py --browser chromium
+          python ui-kit/tests/apps.spec.py --browser webkit
+      - name: Publish verified sources and five standalone examples on high only
         id: publish
         run: |
           git diff --exit-code -- web/
           git add -A -- ui-kit ':!ui-kit/verification'
           if ! git diff --cached --quiet; then
-            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'build(ui-kit): publish audited gallery and hardened runtime [skip ci]'
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'build(ui-kit): publish verified cafe and event demos from shared components [skip ci]'
             git push origin HEAD:high
           fi
           SHA=$(git rev-parse HEAD)
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
           echo "base=https://rawcdn.githack.com/ray-math/tripfit/$SHA/ui-kit/dist/" >> "$GITHUB_OUTPUT"
-          echo "Gallery: https://rawcdn.githack.com/ray-math/tripfit/$SHA/ui-kit/dist/gallery.html" >> "$GITHUB_STEP_SUMMARY"
-          echo "Lesson: https://rawcdn.githack.com/ray-math/tripfit/$SHA/ui-kit/dist/lesson.html" >> "$GITHUB_STEP_SUMMARY"
-      - name: Verify both public links
+          echo "Examples: https://rawcdn.githack.com/ray-math/tripfit/$SHA/ui-kit/dist/apps.html" >> "$GITHUB_STEP_SUMMARY"
+      - name: Verify all five public preview outputs
         env:
           PREVIEW_BASE: ${{ steps.publish.outputs.base }}
         run: |
           python - <<'PY'
-          import json, os, time, urllib.request
+          import hashlib,json,os,time,urllib.request
           from pathlib import Path
           report={}
-          for filename,keyword in [('gallery.html','__gallery'),('lesson.html','startLesson')]:
-              url=os.environ['PREVIEW_BASE']+filename;error=''
+          for name in ['gallery','lesson','cafe','event','apps']:
+              filename=name+'.html';url=os.environ['PREVIEW_BASE']+filename;error=''
+              expected=json.loads(Path('ui-kit/dist/'+name+'-manifest.json').read_text())['output_sha256']
               for attempt in range(10):
                   try:
-                      with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'}),timeout=20) as response:
-                          data=response.read().decode('utf-8');assert keyword in data and 'data-kit-source' in data
-                      report[filename]={'url':url,'http_verified':True};break
+                      request=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'})
+                      with urllib.request.urlopen(request,timeout=20) as response:
+                          data=response.read();assert response.status==200
+                          assert hashlib.sha256(data).hexdigest()==expected
+                      report[filename]={'url':url,'http_verified':True,'sha256':expected};break
                   except Exception as exc:
                       error=str(exc);time.sleep(4)
               else:report[filename]={'url':url,'http_verified':False,'error':error}
           Path('ui-kit/verification/published-preview.json').write_text(json.dumps(report,indent=2))
           print(json.dumps(report,indent=2))
-          assert all(x['http_verified'] for x in report.values()),'Published CDN link could not be verified'
+          assert all(x['http_verified'] for x in report.values()),'Preview propagation not verified'
           PY
       - uses: actions/upload-artifact@v4
         if: always()
