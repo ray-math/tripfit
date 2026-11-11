@@ -40,6 +40,17 @@ jobs:
               subprocess.run(['git','apply','--check',str(patch)],check=True)
               subprocess.run(['git','apply',str(patch)],check=True)
               shutil.rmtree(folder)
+          test=Path('ui-kit/tests/catalog.spec.py')
+          text=test.read_text()
+          old=" page.emulate_media(reduced_motion='reduce');page.wait_for_timeout(100)\n ck('OS reduced motion stops loop',page.evaluate('__gallery.stats().animations')==0)"
+          new=""" page.emulate_media(reduced_motion='reduce')
+           # WebKit delivers the media-query change and animation cancellation asynchronously.
+           # Await the required end state, not an arbitrary 100ms window on a busy CI host.
+           page.wait_for_function("matchMedia('(prefers-reduced-motion: reduce)').matches && __gallery.stats().animations === 0",timeout=3000)
+           ck('OS reduced motion stops loop',page.evaluate('__gallery.stats().animations')==0 and page.locator('#demo-stage').evaluate("(e)=>!e.getAnimations({subtree:true}).some(a=>a.playState==='running' && a.effect?.getTiming().iterations===Infinity)"))"""
+          if old in text:
+              assert text.count(old)==1
+              test.write_text(text.replace(old,new))
           workflow=Path('.github/workflows/ui-kit-regenerated.yml')
           text=workflow.read_text()
           anchor='          python ui-kit/tests/apps.spec.py --browser webkit\n'
