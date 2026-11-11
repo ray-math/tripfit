@@ -1,3 +1,5 @@
+import { springIn, rollDigits, revealHeadline, createFeedbackIsland } from "./tripfit-motion.js";
+
 /**
  * Reusable, dependency-free card flow runtime.
  * Keeps app-specific content in a validated data object.
@@ -28,6 +30,10 @@ export function validateFlow(flow) {
         throw new Error(step.id + ": options only belong on choice cards");
       if (card.color !== undefined && !COLORS.has(card.color))
         throw new Error(step.id + ": unsupported card color " + card.color);
+      if (card.shape !== undefined && !["cut", "tab"].includes(card.shape))
+        throw new Error(step.id + ": unsupported card shape " + card.shape);
+      if (card.align !== undefined && !["left", "center", "right"].includes(card.align))
+        throw new Error(step.id + ": unsupported shape alignment " + card.align);
     }
   }
   const start = flow.start ?? flow.steps[0].id;
@@ -98,6 +104,7 @@ export class CardFlow {
     this.footer = el("nav", "tk-footer");
     this.footer.setAttribute("aria-label", "다음 화면");
     screen.append(status, this.viewport, this.footer);
+    this.feedback = createFeedbackIsland(screen);
     device.append(screen);
     rig.append(aside, device);
     stage.append(rig);
@@ -109,9 +116,12 @@ export class CardFlow {
   renderCard(card) {
     const element = el("article", "tk-card tk-" + (card.color ?? "cream") +
       (card.type === "hero" ? " tk-hero" : ""));
+    if (card.shape) element.classList.add("tk-" + card.shape);
+    if (card.align && card.align !== "center") element.classList.add("tk-" + card.align);
     if (card.label) element.append(el("p", "tk-label", card.label));
     if (card.title) element.append(el(card.type === "hero" ? "h2" : "h3", "tk-title", card.title));
     if (card.body) element.append(el("p", "tk-body", card.body));
+    if (card.pill) element.append(el("span", "tk-pill", card.pill));
     if (card.type === "metric") {
       const group = el("div", "tk-metric");
       group.append(el("strong", "tk-value", card.value ?? "—"));
@@ -153,7 +163,10 @@ export class CardFlow {
     const page = el("section", "tk-page");
     page.setAttribute("aria-label", step.label ?? step.id);
     if (step.eyebrow) page.append(el("div", "tk-eyebrow", step.eyebrow));
-    for (const card of step.cards) page.append(this.renderCard(card));
+    for (const card of step.cards) {
+      if (card.flag) page.append(el("span", "tk-floating-flag", card.flag));
+      page.append(this.renderCard(card));
+    }
     const previousPages = Array.from(this.viewport.querySelectorAll(".tk-page"));
     this.viewport.append(page);
     for (const old of previousPages) {
@@ -187,8 +200,15 @@ export class CardFlow {
     if (!this.reducedMotion) {
       enter(page, backward ? "translateX(-15%)" : "translateX(15%)");
       Array.from(page.querySelectorAll(".tk-card")).forEach((card, idx) =>
-        enter(card, "translateY(26px) scale(.96)", { delay: idx * 75 }));
+        springIn(card, { from: "translateY(36px) scale(.96)", delay: idx * 90 }));
     }
+    // Decorative motion works independently of the domain-specific content.
+    for (const title of page.querySelectorAll(".tk-title"))
+      revealHeadline(title, title.textContent, { delay: 90 });
+    for (const value of page.querySelectorAll(".tk-value"))
+      rollDigits(value, value.textContent);
+    if (step.feedback) this.feedback.show(step.feedback);
+    else this.feedback.hide();
     page.scrollTop = 0;
     return id;
   }
