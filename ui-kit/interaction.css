@@ -1,0 +1,37 @@
+/* One-sided connector: the lower card owns the tab AND its navy clearance.
+   There is no separately painted upper notch to become orphaned. */
+:root { --tk-join-width:96px; --tk-join-height:14px; --tk-join-gap:4px; }
+.tk-card.tk-linked { position:relative; overflow:visible; }
+.tk-card.tk-linked::before {
+  content:""; position:absolute; z-index:2; pointer-events:none;
+  box-sizing:content-box; width:var(--tk-join-width); height:var(--tk-join-height);
+  top:calc(-1 * (var(--tk-join-height) + var(--tk-join-gap)));
+  left:calc(50% - var(--tk-join-width) / 2 - var(--tk-join-gap));
+  background:var(--tk-surface); border:var(--tk-join-gap) solid var(--tk-ink);
+  border-bottom:0; border-radius:14px 14px 0 0;
+}
+.tk-card.tk-linked[data-tk-connect=left]::before { left:40px; }
+.tk-card.tk-linked[data-tk-connect=right]::before { left:auto; right:40px; }
+/* Legacy 'cut' is deliberately inert. Old tabs are migrated by the renderer. */
+.tk-page .tk-card.tk-cut::after { content:none; }
+.tk-page .tk-card.tk-tab:not(.tk-linked)::before { content:none; }
+.tk-card-badge { display:inline-flex; align-self:flex-start; width:max-content;
+  max-width:100%; border:1px solid currentColor; border-radius:99px;
+  padding:4px 10px; margin:0 0 10px; font:600 11px/1.4 var(--tk-font); }
+/* Press doesn't change layout or overwrite an entrance transform. No spring rebound. */
+.tk-screen .tk-pressable { transition:scale 140ms cubic-bezier(.2,.8,.2,1),opacity 140ms ease;
+  transform-origin:50% 50%; }
+.tk-screen .tk-pressable.tk-press-active { scale:.98; opacity:.91;
+  transition-duration:70ms; }
+.tk-screen .tk-card.tk-press-active { scale:.994; opacity:.96; }
+.tk-screen .tk-card.tk-linked.tk-press-active { scale:.998; }
+.tk-screen .tk-primary:active,.tk-screen .tk-secondary:active,
+.tk-screen .tk-clickable:active,.tk-screen .tk-option:active { transform:none; }
+@media (hover:none) { .tk-screen .tk-clickable:hover,.tk-screen .tk-option:hover { filter:none; } }
+@media (prefers-reduced-motion:reduce) {
+ .tk-screen .tk-pressable.tk-press-active { scale:1; opacity:.8; transition:none; }
+}
+html[data-motion=reduce] .tk-screen .tk-pressable.tk-press-active { scale:1; opacity:.8; }
+.tk-perf-track { border-radius:14px;background:var(--tk-ink);height:28px;position:relative;overflow:hidden;margin:16px 0; }
+.tk-perf-marker { position:absolute;width:32px;height:20px;top:4px;left:4px;background:var(--tk-lemon);border-radius:10px; }
+.tk-perf-result { white-space:pre-line;font:500 14px/1.8 var(--tk-font);min-height:90px; }

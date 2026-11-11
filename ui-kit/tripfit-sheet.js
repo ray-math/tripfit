@@ -1,3 +1,4 @@
+import { watchConnections } from './connections.js';
 /** TripFit sheet geometry with focus-trap/tabbable. Nested layers, focus
  * restoration, draggable headers and visual viewport adjustment. */
 import { tabbable } from './vendor/tabbable.js';
@@ -10,7 +11,7 @@ export function openDetailSheet(screen,{title,body,detail,content,tone='mint',on
  const header=make('div','tk-card tk-'+tone+' tk-sheet-head'),grip=make('div','tk-sheet-grip');grip.setAttribute('aria-hidden','true');const closeButton=make('button','tk-sheet-close','×');closeButton.type='button';closeButton.setAttribute('aria-label','상세 창 닫기');
  const heading=make('h2','tk-sheet-title',title||'상세 정보');heading.id='tk-detail-'+(++serial);heading.tabIndex=-1;sheet.setAttribute('aria-labelledby',heading.id);header.append(grip,closeButton,heading);if(body)header.append(make('p','tk-sheet-body',body));sheet.append(header);if(detail)sheet.append(make('div','tk-card tk-cream',detail));
  if(content){const nodes=typeof content==='function'?content():content;for(const item of [nodes].flat(Infinity)){if(item instanceof doc.defaultView.Node)sheet.append(item);else if(item!=null)throw new TypeError('Sheet content must be DOM nodes');}}layer.append(dim,sheet);
- const siblings=[...screen.children].map(e=>[e,e.inert]);siblings.forEach(([e])=>e.inert=true);screen.append(layer);let closed=false,cleaned=false,pull=null;const cleanups=[];
+ const siblings=[...screen.children].map(e=>[e,e.inert]);siblings.forEach(([e])=>e.inert=true);screen.append(layer);let closed=false,cleaned=false,pull=null;const cleanups=[watchConnections(sheet)];
  const listen=(el,name,fn,opts)=>{el.addEventListener(name,fn,opts);cleanups.push(()=>el.removeEventListener(name,fn,opts));};const top=()=>entries.at(-1)===result;
  const cleanup=()=>{if(cleaned)return;cleaned=true;layer.remove();siblings.forEach(([e,state])=>{if(e.isConnected)e.inert=state;});const i=entries.indexOf(result);if(i>=0)entries.splice(i,1);screen._detailSheet=entries.at(-1)||null;if(before?.isConnected&&!before.closest('[inert]'))before.focus({preventScroll:true});onClose?.();};
  const close=(immediate=false)=>{if(closed){if(immediate)cleanup();return;}while(entries.length&&entries.at(-1)!==result)entries.at(-1).close(true);closed=true;cleanups.splice(0).reverse().forEach(fn=>fn());layer.classList.remove('is-open');if(immediate||motionReduced()||!sheet.animate)cleanup();else sheet.animate([{transform:sheet.style.transform||'none',opacity:1},{transform:'translateY(110%)',opacity:.5}],{duration:300,easing:'ease-in',fill:'forwards'}).finished.then(cleanup,cleanup);};

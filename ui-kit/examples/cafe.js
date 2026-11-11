@@ -13,7 +13,7 @@ const pickupLabels={soon:'가능한 빨리 · 약 8분',later:'여유롭게 · �
 const stages=['주문 접수','만드는 중','픽업 준비 완료','픽업 완료'];
 const state=()=>saved.value,save=values=>saved.save({...state(),...values});
 function tools(){return smallButton('···',()=>appSettings(app,saved,()=>app.go('menu')),{class:'da-small da-round','aria-label':'데모 설정'});}
-function top(kicker,title,subtitle,tone='lime'){return card({tone,className:'tk-top',join:'cut',side:'left'},node('div',{class:'da-topline'},node('span',{class:'tk-label'},kicker),tools()),node('h1',{class:'tk-title da-title'},title),node('p',{class:'da-subtitle'},subtitle));}
+function top(kicker,title,subtitle,tone='lime'){return card({tone,className:'tk-top'},node('div',{class:'da-topline'},node('span',{class:'tk-label'},kicker),tools()),node('h1',{class:'tk-title da-title'},title),node('p',{class:'da-subtitle'},subtitle));}
 function favoriteButton(item){
  const b=smallButton(state().favorites.includes(item.id)?'♥':'♡',()=>{const yes=state().favorites.includes(item.id);save({favorites:yes?state().favorites.filter(id=>id!==item.id):[...state().favorites,item.id]});b.textContent=yes?'♡':'♥';b.setAttribute('aria-pressed',String(!yes));if(favoriteOnly)refresh(app);},{class:'da-favorite','aria-label':item.name+' 즐겨찾기','aria-pressed':state().favorites.includes(item.id)});return b;
 }
@@ -38,7 +38,7 @@ function productSheet(item,editing=null){
  sh=app.sheet({title:item.name,body:item.note,tone:item.tone,content:[card({tone:item.tone,className:'da-product-visual'},drinkArt(item.art,true)),form,card({tone:'lime'},commit)]});
 }
 function menuPage(){
- const hero=card({tone:'lime',className:'tk-top',join:'cut',side:'right'},node('div',{class:'da-topline'},node('span',{class:'tk-label'},'SLOW MORNING / CAFE'),tools()),node('div',{class:'da-hero-art'},node('div',{},node('h1',{class:'tk-title da-title'},'한 잔의 여유,\n내 취향대로.'),node('p',{class:'da-subtitle'},'내 취향대로 한 잔.\n실제 결제 없는 주문 데모.')),drinkArt('latte')),node('div',{class:'da-hero-foot'},node('span',{},node('b',{},'08'),' min · 예시 준비 시간'),node('span',{class:'da-badge'},'PICKUP DEMO')));
+ const hero=card({tone:'lime',className:'tk-top'},node('div',{class:'da-topline'},node('span',{class:'tk-label'},'SLOW MORNING / CAFE'),tools()),node('div',{class:'da-hero-art'},node('div',{},node('h1',{class:'tk-title da-title'},'한 잔의 여유,\n내 취향대로.'),node('p',{class:'da-subtitle'},'내 취향대로 한 잔.\n실제 결제 없는 주문 데모.')),drinkArt('latte')),node('div',{class:'da-hero-foot'},node('span',{},node('b',{},'08'),' min · 예시 준비 시간'),node('span',{class:'da-badge'},'PICKUP DEMO')));
  const grid=node('div',{class:'da-product-grid',id:'menu-grid'}),count=node('p',{class:'da-menu-count',role:'status'});
  const render=()=>{
   const found=MENU.filter(x=>(category==='all'||x.category===category)&&(!favoriteOnly||state().favorites.includes(x.id))&&(x.name+' '+x.en).toLowerCase().includes(query.toLowerCase()));count.textContent=`${found.length}개의 메뉴 · 가격과 재고는 예시입니다`;
@@ -46,7 +46,7 @@ function menuPage(){
   if(!found.length)grid.append(empty('아직 메뉴가 없어요','다른 분류나 검색어를 선택해 보세요.'));
  };
  const search=node('input',{class:'da-input da-search',type:'search',placeholder:'메뉴 이름 검색','aria-label':'메뉴 검색',value:query,onInput:e=>{query=e.target.value;render();}});
- const filters=card({tone:'pink',join:'tab',side:'right'},heading('MENU','오늘의 메뉴',node('span',{class:'da-badge'},'6 CHOICES')),tabs([['all','전체'],['coffee','커피'],['tea','티·라테'],['bakery','베이커리']],category,id=>{category=id;render();}),search,node('label',{class:'da-check'},node('input',{type:'checkbox',checked:favoriteOnly,onChange:e=>{favoriteOnly=e.target.checked;render();}}),'즐겨찾기만 보기'));
+ const filters=card({tone:'pink',connect:'right'},heading('MENU','오늘의 메뉴',node('span',{class:'da-badge'},'6 CHOICES')),tabs([['all','전체'],['coffee','커피'],['tea','티·라테'],['bakery','베이커리']],category,id=>{category=id;render();}),search,node('label',{class:'da-check'},node('input',{type:'checkbox',checked:favoriteOnly,onChange:e=>{favoriteOnly=e.target.checked;render();}}),'즐겨찾기만 보기'));
  render();return stack(hero,filters,count,grid,card({tone:'mint',title:'처음 만나는 한 잔'},node('p',{class:'da-note'},'8,000원 이상 담으면 WELCOME10.\n10% 할인, 최대 1,500원 — 데모 쿠폰.'),smallButton('쿠폰 코드 복사',()=>shareText(app,'데모 쿠폰','WELCOME10'))),node('p',{class:'da-caption'},'가상의 카페입니다. 주문·재고·픽업 시간은 시연 데이터이며 실제 매장으로 전송되지 않습니다.'));
 }
 function cartPage(){
@@ -62,7 +62,7 @@ function undoCard(){return card({tone:'sky'},node('div',{class:'da-line-actions'
 function summaryCard(t,coupon){return card({tone:'cream'},node('div',{class:'da-checkout-row'},node('span',{},'상품 금액'),node('b',{},money(t.subtotal))),node('div',{class:'da-checkout-row'},node('span',{},coupon?'데모 쿠폰 할인':'할인'),node('b',{},'−'+money(t.discount))),node('div',{class:'da-checkout-row total'},node('span',{},'예시 합계'),node('strong',{},money(t.total))),coupon&&!t.discount?notice('현재 금액은 쿠폰 최소 주문액 미만이므로 할인이 적용되지 않아요.','warn'):node('p',{class:'da-muted'},'표시된 금액은 시연용입니다. 실제 청구는 없습니다.'));}
 function checkoutPage(){
  const s=state(),t=totals(s.cart,s.coupon);if(!t.count)return empty('메뉴를 먼저 담아 주세요.','주문 정보는 장바구니에서 가져옵니다.',smallButton('메뉴로',()=>app.go('menu')));
- return stack(top('PICKUP DETAILS','어느 때의\n여유가 좋을까요?', '가상 매장 · SLOW MORNING 01'),card({tone:'mint',join:'tab',side:'left',title:'픽업 시간 선택'},tabs([['soon','약 8분'],['later','약 20분'],['takeaway','약 30분']],s.pickup,pickup=>save({pickup}),{label:'픽업 시간'}),notice('실제 예약 시간이 아닌 데모 선택입니다.')),card({tone:'pink',title:'한 줄 요청'},node('label',{class:'da-note',for:'order-note'},'개인정보 없이 옵션 메모만 입력하세요.'),node('textarea',{class:'da-input',id:'order-note',maxLength:100,rows:2,placeholder:'예: 빨대는 빼 주세요.',onInput:e=>save({note:e.target.value})},s.note),node('p',{class:'da-muted'},'최대 100자 · 이 브라우저에만 저장')),summaryCard(t,s.coupon),card({tone:'sky',title:'결제는 하지 않습니다.'},node('p',{class:'da-note'},'아래 버튼은 데모 주문만 만듭니다.\n카드 정보·주소·전화번호는 필요하지 않아요.')));
+ return stack(top('PICKUP DETAILS','어느 때의\n여유가 좋을까요?', '가상 매장 · SLOW MORNING 01'),card({tone:'mint',connect:'left',title:'픽업 시간 선택'},tabs([['soon','약 8분'],['later','약 20분'],['takeaway','약 30분']],s.pickup,pickup=>save({pickup}),{label:'픽업 시간'}),notice('실제 예약 시간이 아닌 데모 선택입니다.')),card({tone:'pink',title:'한 줄 요청'},node('label',{class:'da-note',for:'order-note'},'개인정보 없이 옵션 메모만 입력하세요.'),node('textarea',{class:'da-input',id:'order-note',maxLength:100,rows:2,placeholder:'예: 빨대는 빼 주세요.',onInput:e=>save({note:e.target.value})},s.note),node('p',{class:'da-muted'},'최대 100자 · 이 브라우저에만 저장')),summaryCard(t,s.coupon),card({tone:'sky',title:'결제는 하지 않습니다.'},node('p',{class:'da-note'},'아래 버튼은 데모 주문만 만듭니다.\n카드 정보·주소·전화번호는 필요하지 않아요.')));
 }
 function confirmOrder(){
  if(!state().cart.length)return;
@@ -76,7 +76,7 @@ function repeat(order){const run=()=>{save({cart:order.lines,coupon:'',pickup:or
 function statusPage(){
  const o=activeOrder();if(!o)return stack(top('PICKUP STATUS','아직은\n빈 픽업 선반.', '첫 번째 주문을 만들어 보세요.'),empty('진행 중인 데모가 없어요','메뉴부터 골라 볼까요?',smallButton('메뉴 보기',()=>app.go('menu'))));
  const t=totals(o.lines,o.coupon),title=o.cancelled?'취소된 데모 주문':stages[o.stage];
- const hero=card({tone:o.stage>=2?'mint':'lime',className:'tk-top',join:'cut'},node('div',{class:'da-topline'},node('span',{class:'tk-label'},'PICKUP / DEMO ONLY'),tools()),node('h1',{class:'tk-title'},title),node('div',{class:'da-order-number'},'#'+o.number),node('p',{class:'da-subtitle'},o.cancelled?'실제 결제는 발생하지 않았습니다.':pickupLabels[o.pickup]+' · 아래 버튼으로 상태를 시연하세요.'));
+ const hero=card({tone:o.stage>=2?'mint':'lime',className:'tk-top'},node('div',{class:'da-topline'},node('span',{class:'tk-label'},'PICKUP / DEMO ONLY'),tools()),node('h1',{class:'tk-title'},title),node('div',{class:'da-order-number'},'#'+o.number),node('p',{class:'da-subtitle'},o.cancelled?'실제 결제는 발생하지 않았습니다.':pickupLabels[o.pickup]+' · 아래 버튼으로 상태를 시연하세요.'));
  const list=node('ol',{class:'da-stage-list'},...stages.map((text,i)=>node('li',{class:o.cancelled?'':i<o.stage?'is-done':i===o.stage?'is-active':''},node('i',{},i<o.stage?'✓':String(i+1).padStart(2,'0')),node('span',{},text),node('small',{},i===o.stage&&!o.cancelled?'NOW':''))));
  const summary=card({tone:'pink'},heading('ORDER SUMMARY',`${t.count}개 메뉴`));
  for(const r of o.lines){const m=MENU.find(x=>x.id===r.id);summary.append(node('div',{class:'da-checkout-row'},node('span',{},m.name+' × '+r.qty),node('b',{},money(linePrice(m,r.options)*r.qty))));}
@@ -91,11 +91,11 @@ function statusPage(){
  );
  const actions=card({tone:'cream'},smallButton('같은 메뉴 다시 담기',()=>repeat(o)));
  if(!o.cancelled&&o.stage<2)actions.append(textButton('데모 주문 취소',()=>confirmSheet(app,{title:'데모 주문을 취소할까요?',body:'이 브라우저의 주문 상태만 취소로 바뀝니다.',confirm:'주문 취소',onConfirm:()=>updateOrder(o,{cancelled:true})})));
- return stack(hero,card({tone:'cream',join:'tab'},list,notice('상태는 버튼으로 변경하는 시연입니다. 실제 매장 상황과 연결되지 않습니다.')),summary,code,actions);
+ return stack(hero,card({tone:'cream',connect:'center'},list,notice('상태는 버튼으로 변경하는 시연입니다. 실제 매장 상황과 연결되지 않습니다.')),summary,code,actions);
 }
 function historyPage(){
  const orders=state().orders,done=orders.filter(x=>x.stage===3&&!x.cancelled).length;
- const stamps=card({tone:'pink',join:'tab',side:'left'},heading('DEMO STAMPS','나의 커피 기록',pill(done+' / 6')));
+ const stamps=card({tone:'pink',connect:'left'},heading('DEMO STAMPS','나의 커피 기록',pill(done+' / 6')));
  stamps.append(node('div',{class:'da-inline'},...Array.from({length:6},(_,i)=>node('span',{class:'da-avatar',style:i<done?'background:var(--tk-ink);color:var(--tk-lemon)':'background:transparent;border:1px dashed var(--tk-ink);color:var(--tk-ink)'},i<done?'✓':'·'))),node('p',{class:'da-muted'},'픽업 완료 시 한 칸. 실제 적립 혜택은 없습니다.'));
  const root=stack(top('LOCAL HISTORY','작은 취향이\n기록이 됩니다.',`${orders.length}개의 데모 주문 · 이 브라우저에만 저장`),stamps);
  if(!orders.length)root.append(empty('기록은 첫 주문부터','픽업 완료까지 눌러 보고 변화를 확인해 보세요.'));

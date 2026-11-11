@@ -71,8 +71,10 @@ with sync_playwright() as p:
  page.evaluate('__currentDemo.close()');page.wait_for_timeout(40)
  page.evaluate("document.documentElement.dataset.motion='auto';document.dispatchEvent(new Event('tk:motionchange'));__gallery.show('spinner')")
  page.wait_for_timeout(200);ck('spinner animates normally',page.evaluate('__gallery.stats().animations')>0)
- page.emulate_media(reduced_motion='reduce');page.wait_for_timeout(100)
- ck('OS reduced motion stops loop',page.evaluate('__gallery.stats().animations')==0)
+ page.emulate_media(reduced_motion='reduce')
+ # Await the observable media-query and animation state, not a fixed delay.
+ page.wait_for_function("matchMedia('(prefers-reduced-motion: reduce)').matches && __gallery.stats().animations === 0",timeout=3000)
+ ck('OS reduced motion stops loop',page.evaluate('__gallery.stats().animations')==0 and page.locator('#demo-stage').evaluate("(e)=>!e.getAnimations({subtree:true}).some(a=>a.playState==='running' && a.effect?.getTiming().iterations===Infinity)"))
  page.evaluate('__currentDemo.close()');page.wait_for_timeout(40)
  for w,h in [(320,568),(375,667),(393,852),(430,932),(852,393)]:
   page.set_viewport_size({'width':w,'height':h});page.wait_for_timeout(90)

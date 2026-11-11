@@ -172,34 +172,7 @@
  * the upstream author's reuse permission is clarified.
  */
 .tk-page .tk-card { position: relative; }
-.tk-page .tk-card.tk-cut::after {
-  content: "";
-  position: absolute;
-  bottom: 0; left: 50%;
-  width: 104px; height: 14px; margin-left: -52px;
-  background: var(--tk-ink);
-  border-radius: 10px 10px 0 0;
-}
-.tk-page .tk-card.tk-cut.tk-right::after {
-  left: auto; right: 40px; margin: 0;
-}
-.tk-page .tk-card.tk-cut.tk-left::after {
-  left: 40px; margin: 0;
-}
-.tk-page .tk-card.tk-tab::before {
-  content: "";
-  position: absolute; z-index: 1;
-  top: -14px; left: 50%;
-  width: 96px; height: 18px; margin-left: -48px;
-  background: var(--tk-surface);
-  border-radius: 10px 10px 0 0;
-}
-.tk-page .tk-card.tk-tab.tk-right::before {
-  left: auto; right: 44px; margin: 0;
-}
-.tk-page .tk-card.tk-tab.tk-left::before {
-  left: 44px; margin: 0;
-}
+/* Connection geometry lives in interaction.css; no independently painted upper cutout. */
 .tk-floating-flag {
   position: relative; z-index: 3;
   display: inline-flex; align-items: center;
@@ -399,6 +372,46 @@ button,input{-webkit-tap-highlight-color:transparent}button:focus-visible,input:
 .kg-stage>.tk-readout{max-width:100%;justify-content:center}.kg-stage .tk-large .tk-value{font-size:clamp(30px,9vw,56px)}
 
 </style>
+<style data-kit-source="interaction.css">
+/* One-sided connector: the lower card owns the tab AND its navy clearance.
+   There is no separately painted upper notch to become orphaned. */
+:root { --tk-join-width:96px; --tk-join-height:14px; --tk-join-gap:4px; }
+.tk-card.tk-linked { position:relative; overflow:visible; }
+.tk-card.tk-linked::before {
+  content:""; position:absolute; z-index:2; pointer-events:none;
+  box-sizing:content-box; width:var(--tk-join-width); height:var(--tk-join-height);
+  top:calc(-1 * (var(--tk-join-height) + var(--tk-join-gap)));
+  left:calc(50% - var(--tk-join-width) / 2 - var(--tk-join-gap));
+  background:var(--tk-surface); border:var(--tk-join-gap) solid var(--tk-ink);
+  border-bottom:0; border-radius:14px 14px 0 0;
+}
+.tk-card.tk-linked[data-tk-connect=left]::before { left:40px; }
+.tk-card.tk-linked[data-tk-connect=right]::before { left:auto; right:40px; }
+/* Legacy 'cut' is deliberately inert. Old tabs are migrated by the renderer. */
+.tk-page .tk-card.tk-cut::after { content:none; }
+.tk-page .tk-card.tk-tab:not(.tk-linked)::before { content:none; }
+.tk-card-badge { display:inline-flex; align-self:flex-start; width:max-content;
+  max-width:100%; border:1px solid currentColor; border-radius:99px;
+  padding:4px 10px; margin:0 0 10px; font:600 11px/1.4 var(--tk-font); }
+/* Press doesn't change layout or overwrite an entrance transform. No spring rebound. */
+.tk-screen .tk-pressable { transition:scale 140ms cubic-bezier(.2,.8,.2,1),opacity 140ms ease;
+  transform-origin:50% 50%; }
+.tk-screen .tk-pressable.tk-press-active { scale:.98; opacity:.91;
+  transition-duration:70ms; }
+.tk-screen .tk-card.tk-press-active { scale:.994; opacity:.96; }
+.tk-screen .tk-card.tk-linked.tk-press-active { scale:.998; }
+.tk-screen .tk-primary:active,.tk-screen .tk-secondary:active,
+.tk-screen .tk-clickable:active,.tk-screen .tk-option:active { transform:none; }
+@media (hover:none) { .tk-screen .tk-clickable:hover,.tk-screen .tk-option:hover { filter:none; } }
+@media (prefers-reduced-motion:reduce) {
+ .tk-screen .tk-pressable.tk-press-active { scale:1; opacity:.8; transition:none; }
+}
+html[data-motion=reduce] .tk-screen .tk-pressable.tk-press-active { scale:1; opacity:.8; }
+.tk-perf-track { border-radius:14px;background:var(--tk-ink);height:28px;position:relative;overflow:hidden;margin:16px 0; }
+.tk-perf-marker { position:absolute;width:32px;height:20px;top:4px;left:4px;background:var(--tk-lemon);border-radius:10px; }
+.tk-perf-result { white-space:pre-line;font:500 14px/1.8 var(--tk-font);min-height:90px; }
+
+</style>
 </head>
 <body>
 <div id="app"></div>
@@ -406,6 +419,63 @@ button,input{-webkit-tap-highlight-color:transparent}button:focus-visible,input:
 <script>
 /* Generated from the actual UI kit modules. */
 (()=>{const modules={};
+modules["connections.js"]=(()=>{
+/** Lower-card-owned interlocks. No upper cutout state and no frame-by-frame geometry.
+ * Only explicit vertical stacks can connect; grids and section dividers break chains.
+ */
+const SIDES = new Set(['left', 'center', 'right']);
+const STACKS = '.tk-page,.tk-sheet,.da-stack,.tk-card-list,.kg-list,.kg-stage,[data-tk-stack]';
+function connectionSpec(value) {
+  if (!value || value === 'none') return null;
+  const spec = typeof value === 'string' ? { side: value } : value;
+  if (!spec || !SIDES.has(spec.side || 'center')) throw new TypeError('connect.side must be left, center or right');
+  if (spec.from !== undefined && (typeof spec.from !== 'string' || !spec.from)) throw new TypeError('connect.from must be a non-empty card id');
+  return { side: spec.side || 'center', from: spec.from || '' };
+}
+function declareConnection(card, value) {
+  const spec = connectionSpec(value);
+  if (spec) {
+    card.dataset.tkConnect = spec.side;
+    if (spec.from) card.dataset.tkFrom = spec.from;
+  }
+  return card;
+}
+function previousVisible(el) {
+  let prev = el.previousElementSibling;
+  while (prev && (prev.hidden || prev.getAttribute('aria-hidden') === 'true')) prev = prev.previousElementSibling;
+  return prev;
+}
+function resolveConnections(root) {
+  const cards = [...root.querySelectorAll('[data-tk-connect]')];
+  for (const lower of cards) {
+    const upper = previousVisible(lower);
+    const allowed = lower.parentElement?.matches(STACKS) && !lower.parentElement.matches('.tk-split,.da-product-grid');
+    const valid = !!(allowed && !lower.hidden && upper?.matches('.tk-card') &&
+      (!lower.dataset.tkFrom || upper.id === lower.dataset.tkFrom));
+    lower.classList.toggle('tk-linked', valid);
+    const state = valid ? 'connected' : 'standalone';
+    if (lower.dataset.tkConnectionState !== state) lower.dataset.tkConnectionState = state;
+  }
+  return cards.filter(e => e.classList.contains('tk-linked')).length;
+}
+function watchConnections(root) {
+  resolveConnections(root);
+  let queued = false, closed = false;
+  const observer = new MutationObserver(records => {
+    // Text/number animation spans cannot change the card topology.
+    const relevant = records.some(r => r.type === 'attributes' || r.target.matches?.(STACKS) ||
+      [...r.addedNodes, ...r.removedNodes].some(n => n.nodeType === 1 &&
+        (n.matches?.('.tk-card,[data-tk-stack]') || n.querySelector?.('[data-tk-connect]'))));
+    if (!relevant || queued) return;
+    queued = true;
+    queueMicrotask(() => { queued = false; if (!closed) resolveConnections(root); });
+  });
+  observer.observe(root, { childList: true, subtree: true, attributes: true,
+    attributeFilter: ['hidden', 'data-tk-connect', 'data-tk-from'] });
+  return () => { closed = true; observer.disconnect(); };
+}
+
+return {connectionSpec,declareConnection,resolveConnections,watchConnections};})();
 modules["tripfit-motion.js"]=(()=>{
 /**
  * Extracted/adapted from the original TripFit prototype's motion approach:
@@ -492,7 +562,7 @@ function rollDigits(element, value) {
       element.append(col);
     }
     // Force layout so the transform transition plays on first update.
-    void element.offsetWidth;
+    // No synchronous layout read here; newly created columns get a batched paint boundary.
   }
   chars.forEach((ch, i) => {
     if (!digits(ch)) {
@@ -500,8 +570,10 @@ function rollDigits(element, value) {
       return;
     }
     const stack = element.children[i].firstElementChild;
-    stack.style.transitionDelay = (chars.length - 1 - i) * 45 + "ms";
-    stack.style.transform = `translateY(${-Number(ch) * 10}%)`;
+    stack.style.transitionDelay = (chars.length - 1 - i) * 30 + "ms";
+    const target = `translateY(${-Number(ch) * 10}%)`;
+    if (reduced() || !element.isConnected) stack.style.transform = target;
+    else scheduleDigit(stack, target);
   });
   element.dataset.rollValue = str;
   for(const child of element.children)child.setAttribute("aria-hidden","true");
@@ -558,8 +630,18 @@ function createFeedbackIsland(screen) {
   return {root,show,hide,destroy(){hide();root.remove();}};
 }
 
+const digitQueue=new Map();let digitFrame=null;
+function scheduleDigit(stack,target){
+ digitQueue.set(stack,target);
+ if(digitFrame!==null)return;
+ digitFrame=requestAnimationFrame(()=>{digitFrame=requestAnimationFrame(()=>{
+  digitFrame=null;for(const [element,value]of digitQueue)if(element.isConnected)element.style.transform=value;digitQueue.clear();
+ });});
+}
+
 return {makeSpring,springs,springIn,rollDigits,revealHeadline,createFeedbackIsland};})();
 modules["flow.js"]=(()=>{
+const {declareConnection, watchConnections}=modules["connections.js"];
 const {springIn, rollDigits, revealHeadline, createFeedbackIsland}=modules["tripfit-motion.js"];
 /**
  * Reusable, dependency-free card flow runtime.
@@ -677,7 +759,7 @@ class CardFlow {
   renderCard(card) {
     const element = el("article", "tk-card tk-" + (card.color ?? "cream") +
       (card.type === "hero" ? " tk-hero" : ""));
-    if (card.shape) element.classList.add("tk-" + card.shape);
+    if (card.connect || card.shape === "tab") declareConnection(element, card.connect || card.align || "center");
     if (card.align && card.align !== "center") element.classList.add("tk-" + card.align);
     if (card.label) element.append(el("p", "tk-label", card.label));
     if (card.title) element.append(el(card.type === "hero" ? "h2" : "h3", "tk-title", card.title));
@@ -714,10 +796,13 @@ class CardFlow {
     return element;
   }
 
-  go(id) {
+  go(id, { animate = true } = {}) {
     this.reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.dataset.motion === "reduce";
     const step = this.steps.get(id);
     if (!step) throw new Error("Unknown step: " + id);
+    const sameStep = this.current === id;
+    const firstMount = this.current === null;
+    this._connectionsCleanup?.();
     const previousIdx = this.flow.steps.findIndex(s => s.id === this.current);
     const nextIdx = this.flow.steps.findIndex(s => s.id === id);
     const backward = previousIdx >= 0 && nextIdx < previousIdx;
@@ -732,13 +817,14 @@ class CardFlow {
     const previousPages = Array.from(this.viewport.querySelectorAll(".tk-page"));
     this.viewport.append(page);
     for (const old of previousPages) {
-      old.style.pointerEvents = "none";
-      if (this.reducedMotion || typeof old.animate !== "function") {
+      old.style.pointerEvents = "none"; old.inert = true;
+      old.getAnimations({subtree:true}).forEach(a => a.cancel());
+      if (sameStep || !animate || this.reducedMotion || typeof old.animate !== "function") {
         old.remove();
       } else {
         const animation = old.animate([
           { opacity: 1, transform: "none" },
-          { opacity: 0, transform: backward ? "translateX(22%)" : "translateX(-22%)" }
+          { opacity: 0, transform: backward ? "translateX(12px)" : "translateX(-12px)" }
         ], { duration: 220, easing: "ease-in", fill: "forwards" });
         animation.onfinish = () => old.remove();
         animation.oncancel = () => old.remove();
@@ -759,16 +845,17 @@ class CardFlow {
       dot.setAttribute("title", s.label ?? s.id);
       this.progress.append(dot);
     });
-    if (!this.reducedMotion) {
-      enter(page, backward ? "translateX(-15%)" : "translateX(15%)");
-      Array.from(page.querySelectorAll(".tk-card")).forEach((card, idx) =>
-        card.getBoundingClientRect().top < this.viewport.getBoundingClientRect().bottom && springIn(card, { from: "translateY(24px) scale(.98)", delay: Math.min(idx, 5) * 90 }));
+    this._connectionsCleanup = watchConnections(page);
+    // One compositor-friendly transition for the whole page. Linked cards stay together.
+    // Same-step updates (quantity/status/filter) must not replay navigation or all headlines.
+    if (!sameStep && animate && !this.reducedMotion) {
+      enter(page, firstMount ? "translateY(24px)" : backward ? "translateX(-18px)" : "translateX(18px)",
+        { duration: firstMount ? 360 : 240 });
     }
-    // Decorative motion works independently of the domain-specific content.
-    for (const title of page.querySelectorAll(".tk-title"))
-      revealHeadline(title, title.textContent, { delay: 90 });
-    for (const value of page.querySelectorAll(".tk-value"))
-      rollDigits(value, value.textContent);
+    // Character blur/reveal remains explicitly available in the motion gallery.
+    if (this.flow.motion?.headlines === "characters" && !sameStep && animate)
+      for (const title of page.querySelectorAll(".tk-title")) revealHeadline(title, title.textContent, { delay:90 });
+    for (const value of page.querySelectorAll(".tk-value")) rollDigits(value, value.textContent);
     if (step.feedback) this.feedback.show(step.feedback);
     else this.feedback.hide();
     page.scrollTop = 0;
@@ -876,8 +963,18 @@ function createAnimatedList(host,{key=item=>item.id,render,update}={}){
  return {set,dispose(){scope.dispose();ghosts.forEach(e=>e.remove());ghosts.clear();nodes.clear();}};
 }
 function fitNumbers(root){
- const fit=rafSchd(()=>{for(const el of root.querySelectorAll('.tk-readout')){const number=el.querySelector('.tk-value');if(!number||!el.clientWidth)continue;number.style.fontSize='';let size=parseFloat(getComputedStyle(number).fontSize);for(let i=0;i<4&&el.scrollWidth>el.clientWidth+1;i++){size*=Math.max(.5,(el.clientWidth-2)/el.scrollWidth);number.style.fontSize=size+'px';}}});
- const observer=new ResizeObserver(fit);observer.observe(root);window.addEventListener('resize',fit);let closed=false;document.fonts?.ready.then(()=>{if(!closed)fit();});fit();return ()=>{closed=true;observer.disconnect();window.removeEventListener('resize',fit);fit.cancel();};
+ let closed=false,lastWidth=-1;
+ const fit=rafSchd(()=>{
+  if(closed)return;
+  const rows=[...root.querySelectorAll('.tk-readout')].map(el=>({el,number:el.querySelector('.tk-value')})).filter(x=>x.number);
+  for(const {number}of rows)number.style.fontSize='';
+  // One read phase after one write phase, rather than a layout flush per number.
+  const changes=rows.map(({el,number})=>({number,available:el.clientWidth,actual:el.scrollWidth,size:parseFloat(getComputedStyle(number).fontSize)}));
+  for(const {number,available,actual,size}of changes)if(available>0&&actual>available+1)number.style.fontSize=Math.max(12,size*(available-3)/actual)+'px';
+ });
+ const observer=new ResizeObserver(entries=>{const width=entries[0]?.contentRect.width;if(width!==lastWidth){lastWidth=width;fit();}});observer.observe(root);
+ document.fonts?.ready.then(()=>{if(!closed)fit();});fit();
+ const cleanup=()=>{closed=true;observer.disconnect();fit.cancel();};cleanup.request=fit;return cleanup;
 }
 function bindHold(button,{duration=1000,onConfirm=()=>{},scope=new MotionScope(button)}={}){
  let started=null,done=false,timer=null,held=null;const cancel=()=>{started=null;held=null;clearTimeout(timer);timer=null;button.style.setProperty('--hold','0%');button.classList.remove('is-holding');};
@@ -1636,6 +1733,7 @@ const isFocusable = function (node, options) {
 
 return {tabbable:tabbable,focusable:focusable,isTabbable:isTabbable,isFocusable:isFocusable,getTabIndex:getTabIndex};})();
 modules["tripfit-sheet.js"]=(()=>{
+const {watchConnections}=modules["connections.js"];
 /** TripFit sheet geometry with focus-trap/tabbable. Nested layers, focus
  * restoration, draggable headers and visual viewport adjustment. */
 const {tabbable}=modules["vendor/tabbable.js"];
@@ -1648,7 +1746,7 @@ function openDetailSheet(screen,{title,body,detail,content,tone='mint',onClose,s
  const header=make('div','tk-card tk-'+tone+' tk-sheet-head'),grip=make('div','tk-sheet-grip');grip.setAttribute('aria-hidden','true');const closeButton=make('button','tk-sheet-close','×');closeButton.type='button';closeButton.setAttribute('aria-label','상세 창 닫기');
  const heading=make('h2','tk-sheet-title',title||'상세 정보');heading.id='tk-detail-'+(++serial);heading.tabIndex=-1;sheet.setAttribute('aria-labelledby',heading.id);header.append(grip,closeButton,heading);if(body)header.append(make('p','tk-sheet-body',body));sheet.append(header);if(detail)sheet.append(make('div','tk-card tk-cream',detail));
  if(content){const nodes=typeof content==='function'?content():content;for(const item of [nodes].flat(Infinity)){if(item instanceof doc.defaultView.Node)sheet.append(item);else if(item!=null)throw new TypeError('Sheet content must be DOM nodes');}}layer.append(dim,sheet);
- const siblings=[...screen.children].map(e=>[e,e.inert]);siblings.forEach(([e])=>e.inert=true);screen.append(layer);let closed=false,cleaned=false,pull=null;const cleanups=[];
+ const siblings=[...screen.children].map(e=>[e,e.inert]);siblings.forEach(([e])=>e.inert=true);screen.append(layer);let closed=false,cleaned=false,pull=null;const cleanups=[watchConnections(sheet)];
  const listen=(el,name,fn,opts)=>{el.addEventListener(name,fn,opts);cleanups.push(()=>el.removeEventListener(name,fn,opts));};const top=()=>entries.at(-1)===result;
  const cleanup=()=>{if(cleaned)return;cleaned=true;layer.remove();siblings.forEach(([e,state])=>{if(e.isConnected)e.inert=state;});const i=entries.indexOf(result);if(i>=0)entries.splice(i,1);screen._detailSheet=entries.at(-1)||null;if(before?.isConnected&&!before.closest('[inert]'))before.focus({preventScroll:true});onClose?.();};
  const close=(immediate=false)=>{if(closed){if(immediate)cleanup();return;}while(entries.length&&entries.at(-1)!==result)entries.at(-1).close(true);closed=true;cleanups.splice(0).reverse().forEach(fn=>fn());layer.classList.remove('is-open');if(immediate||motionReduced()||!sheet.animate)cleanup();else sheet.animate([{transform:sheet.style.transform||'none',opacity:1},{transform:'translateY(110%)',opacity:.5}],{duration:300,easing:'ease-in',fill:'forwards'}).finished.then(cleanup,cleanup);};
@@ -1664,6 +1762,64 @@ function openDetailSheet(screen,{title,body,detail,content,tone='mint',onClose,s
 }
 
 return {openDetailSheet};})();
+modules["press-feedback.js"]=(()=>{
+/** Small native press feedback. Motion's press lifecycle is a design reference:
+ * https://motion.dev/docs/press — no Motion source/dependency is copied.
+ * Visual only: never dispatches clicks, captures pointers, or blocks scrolling.
+ */
+const SELECTOR = 'button,a[href],[role="button"],summary';
+const instances = new WeakMap();
+function installPressFeedback(root) {
+  instances.get(root)?.();
+  let active = null, pointer = null, origin = null, keyboard = null;
+  const listeners = [];
+  const on = (target, type, fn, options = { passive: true, capture: true }) => {
+    target.addEventListener(type, fn, options);
+    listeners.push(() => target.removeEventListener(type, fn, options));
+  };
+  function release() {
+    active?.classList.remove('tk-press-active');
+    active = null; pointer = null; origin = null; keyboard = null;
+  }
+  function target(event) {
+    const start = event.target instanceof Element ? event.target : null;
+    if (!start || start.closest('input,textarea,select,[contenteditable="true"]')) return null;
+    const el = start.closest(SELECTOR);
+    if (!el || !root.contains(el) || el.matches(':disabled,[aria-disabled="true"]') ||
+        el.closest('[inert],[data-press="none"],.kg-hold')) return null;
+    return el;
+  }
+  function begin(el) {
+    release(); active = el;
+    el.classList.add('tk-pressable', 'tk-press-active');
+  }
+  on(root, 'pointerdown', e => {
+    if (active && pointer !== null) { release(); return; }
+    if (e.isPrimary === false || e.button !== 0) return;
+    const el = target(e); if (!el) return;
+    begin(el); pointer = e.pointerId; origin = { x: e.clientX, y: e.clientY };
+  });
+  on(window, 'pointermove', e => {
+    if (e.pointerId !== pointer || !origin) return;
+    if (Math.hypot(e.clientX - origin.x, e.clientY - origin.y) > 8) release();
+  });
+  for (const type of ['pointerup', 'pointercancel', 'lostpointercapture'])
+    on(window, type, e => { if (e.pointerId === pointer) release(); });
+  on(root, 'keydown', e => {
+    if (e.repeat || !['Enter', ' '].includes(e.key)) return;
+    const el = target(e); if (!el || (e.key === ' ' && el.matches('a[href]'))) return;
+    begin(el); keyboard = e.key;
+  });
+  on(window, 'keyup', e => { if (keyboard === e.key) release(); });
+  on(root, 'focusout', release);
+  on(root, 'scroll', release);
+  on(window, 'blur', release);
+  on(document, 'visibilitychange', () => { if (document.hidden) release(); });
+  const dispose = () => { release(); listeners.splice(0).forEach(fn => fn()); instances.delete(root); };
+  instances.set(root, dispose); return dispose;
+}
+
+return {installPressFeedback};})();
 modules["compose.js"]=(()=>{
 /** Free-form composition on top of the existing CardFlow runtime.
  * Domain content belongs in examples, not here. No original web/ app is loaded.
@@ -1673,6 +1829,8 @@ const {rollDigits, springs, springIn}=modules["tripfit-motion.js"];
 const {fitNumbers}=modules["effects.js"];
 const {rafSchd}=modules["vendor/raf-schd.js"];
 const {openDetailSheet}=modules["tripfit-sheet.js"];
+const {declareConnection}=modules["connections.js"];
+const {installPressFeedback}=modules["press-feedback.js"];
 function node(tag, attrs = {}, ...children) {
   const e = document.createElement(tag);
   for (const [key, value] of Object.entries(attrs)) {
@@ -1701,8 +1859,10 @@ function pill(text, opts = {}) { return node('span',{class:'tk-pill'+(opts.fill?
 function button(text, action, {secondary=false, id}={}) {
   return node('button',{class:secondary?'tk-secondary':'tk-primary',type:'button',id,onClick:action}, node('span',{},text), node('span',{class:'tk-go'},icon()));
 }
-function card({tone='cream',join='',side='',title,eyebrow,onClick,id,className='',hint}={},...children) {
-  const e=node('article',{class:`tk-card tk-${tone} ${join.split(' ').filter(Boolean).map(s=>'tk-'+s).join(' ')} ${side?'tk-'+side:''} ${className}`,id});
+function card({tone='cream',join='',side='',connect,badge,title,eyebrow,onClick,id,className='',hint}={},...children) {
+  const e=node('article',{class:`tk-card tk-${tone}  ${className}`,id});
+  declareConnection(e, connect ?? (join.split(' ').includes('tab') ? (side || 'center') : null));
+  if (badge) e.append(node('span',{class:'tk-card-badge'},badge));
   if (eyebrow) e.append(node('div',{class:'tk-label'},eyebrow));
   if (title) e.append(node('h2',{class:'tk-title'},title));
   e.append(...children.flat().filter(x=>x instanceof Node));
@@ -1717,7 +1877,7 @@ function progress(label, value, {tone='pink'}={}) {
   return node('div',{class:'tk-progress-row'},node('span',{},label),node('i',{role:'progressbar','aria-label':label,'aria-valuemin':0,'aria-valuemax':100,'aria-valuenow':value},node('b',{style:`width:${Math.max(0,Math.min(100,value))}%`})),node('em',{},value+'%'));
 }
 function split(...children){return node('div',{class:'tk-split'},children);}
-function stats(items){return card({tone:'pink',join:'tab',side:'left',className:'tk-stat-grid'},...items.map(x=>node('div',{},node('span',{class:'tk-lab'},x.label),metric(x.value,x.unit))));}
+function stats(items){return card({tone:'pink',connect:'left',className:'tk-stat-grid'},...items.map(x=>node('div',{},node('span',{class:'tk-lab'},x.label),metric(x.value,x.unit))));}
 function rowCard({title,subtitle,tone='cream',symbol='book',value,unit='',onClick,id}) {
   return card({tone,onClick,id,hint:title+' 열기',className:'tk-row-card'},node('span',{class:'tk-ico'},icon(symbol,21)),node('div',{class:'tk-row-copy'},node('h3',{},title),node('p',{},subtitle)),value!=null?metric(value,unit):icon());
 }
@@ -1744,17 +1904,17 @@ class ComposedFlow extends CardFlow {
     this.mountPoint.querySelector('.tk-kicker').textContent='TRIPFIT UI KIT / COMPOSED EXAMPLE';
     document.documentElement.style.setProperty('--tk-spring',springs.pop.easing);
     document.documentElement.style.setProperty('--tk-spring-ms',springs.pop.duration+'ms');
-    window.addEventListener('resize',this._resize);this._numberCleanup=fitNumbers(this.screen);this.fit();return this;
+    window.addEventListener('resize',this._resize);this._numberCleanup=fitNumbers(this.screen);this._pressCleanup=installPressFeedback(this.screen);this.fit();return this;
   }
-  go(id){
+  go(id, options={}){
     while(this.screen?._detailSheet)this.screen._detailSheet.close(true);this.activeSheet?.close(true);this.activeSheet=null;
     this._pageCleanups?.splice(0).reverse().forEach(fn=>fn());
-    const result=super.go(id);
+    const result=super.go(id, options);
     for(const b of this.footer.querySelectorAll('button')){
       const label=b.textContent;b.replaceChildren(node('span',{},label),node('span',{class:'tk-go'},icon()));
     }
     this.viewport.querySelectorAll('.tk-page').forEach(e=>e.inert=e!==this.viewport.lastElementChild);
-    this.flow.onStep?.(id,this);this.fit();return result;
+    this.flow.onStep?.(id,this);this._numberCleanup?.request?.();this.fit();return result;
   }
   sheet(options){this.activeSheet=openDetailSheet(this.screen||this.mountPoint.querySelector('.tk-screen'),options);return this.activeSheet;}
   notify(message){this.feedback.show(message);}
@@ -1764,7 +1924,7 @@ class ComposedFlow extends CardFlow {
     rig.style.transform=mobile?'':`scale(${Math.min(1,(innerHeight-32)/916,(innerWidth-48)/(innerWidth>=1100?791:417))})`;
   }
   onCleanup(fn){this._pageCleanups.push(fn);return fn;}
-  destroy(){this._pageCleanups.splice(0).reverse().forEach(fn=>fn());window.removeEventListener('resize',this._resize);this._resize.cancel();this._numberCleanup?.();this.activeSheet?.close(true);this.feedback.destroy?.();this.feedback.hide();this.mountPoint.replaceChildren();}
+  destroy(){this._pageCleanups.splice(0).reverse().forEach(fn=>fn());window.removeEventListener('resize',this._resize);this._resize.cancel();this._numberCleanup?.();this._pressCleanup?.();this._connectionsCleanup?.();this.activeSheet?.close(true);this.feedback.destroy?.();this.feedback.hide();this.mountPoint.replaceChildren();}
 }
 
 return {node,icon,pill,button,card,metric,setMetric,progress,split,stats,rowCard,slider,ComposedFlow};})();
@@ -2502,7 +2662,7 @@ const CATALOG=[
  ['sheet','상세 시트·중첩 시트','component','openDetailSheet','web/index.html:887–932','닫기·드래그·포커스 복원'],
  ['page','앞·뒤 화면 전환','motion','CardFlow.go','web/index.html:1993–2016','방향에 맞춘 전환과 정리'],
  ['logs','엔진 로그 패널','component','log + keyed list','web/index.html:647–665,2089–2101','새 로그 강조와 패널 열기'],
- ['cards','맞물림·알약·라벨','component','card / pill / flag','web/index.html:115–152','좌·중·우 맞물림과 경계 라벨'],
+ ['cards','맞물림·알약·라벨','component','card / connect / badge','web/index.html:115–152','아래 카드 한 곳에서 연결 · 태그는 별도'],
  ['switch','스위치·옵션 선택','component','switch / option','web/index.html:hid .sw; .slot','상태·키보드 동작 포함'],
  ['avatars','아바타·겹친 아바타','asset','avatar / avatarStack','web/index.html:.av, .av-stack','색·이니셜만 교체'],
  ['icons','원본 아이콘 23개','asset','originalAsset','web/index.html:IC; web/pay/app.js:icon','메인 15개 + 결제 8개'],
@@ -2528,7 +2688,7 @@ const tile=(label='TripFit',className='')=>node('div',{class:'kg-demo-tile '+cla
 function runDemo(id,host,scope,app){
  const add=(...nodes)=>{host.append(...nodes);return nodes[0];};const tip=text=>node('p',{class:'kg-demo-tip'},text);
  if(id==='cards'){
-  add(card({tone:'pink',join:'cut',side:'left',title:'모양은 그대로'},node('p',{class:'tk-body'},'위 카드의 홈과 아래 카드의 탭')),card({tone:'sky',join:'tab',side:'left',title:'내용은 자유롭게'},pill('같은 스타일')),node('span',{class:'tk-floating-flag'},'경계 위의 라벨'));
+  add(card({tone:'pink',title:'모양은 그대로'},node('p',{class:'tk-body'},'위 카드의 홈과 아래 카드의 탭')),card({tone:'sky',connect:'left',badge:'내용 연결',title:'내용은 자유롭게'},pill('같은 스타일')),node('span',{class:'tk-card-badge'},'태그는 연결 표시와 별개'));
  }else if(id==='springs'){
   for(const kind of ['snap','pop','soft']){const e=add(tile(kind));scope.play(e,{frames:[{transform:'translateX(-60px)',opacity:0},{transform:'none',opacity:1}],spring:kind},{delay:['snap','pop','soft'].indexOf(kind)*180});}
  }else if(id==='typing'){
@@ -2596,8 +2756,8 @@ function showEntry(app,entry){
  const sh=app.sheet({title:entry.title,body:entry.description,tone:tones[entry.group],content:[stage,control,meta],onClose:()=>{scope?.dispose();app.feedback.hide();}});const start=()=>{scope?.dispose();stage.replaceChildren();scope=new MotionScope(stage);runDemo(entry.id,stage,scope,app);};window.__currentDemo={id:entry.id,close:()=>sh.close(),replay:start};start();return sh;
 }
 function galleryPage(app){
- const root=node('div',{class:'kg-list'}),hero=card({tone:'lime',join:'cut',side:'right',className:'tk-top'},node('div',{class:'tk-row tk-between'},node('span',{class:'tk-label'},'TRIPFIT / UI LIBRARY'),pill('HIGH · 02')),node('h1',{class:'kg-hero-title'},'같은 감각,\n더 많은 장면.'),node('p',{class:'tk-body'},'예시에 없던 움직임까지.\n눌러 보고, 다시 조립하세요.'),node('div',{class:'kg-hero-stats'},node('div',{},node('strong',{},String(CATALOG.length)),node('small',{},'개 시연')),node('div',{},node('strong',{},'26'),node('small',{},'개 원본 아이콘'))),node('p',{class:'kg-hero-note'},'디자인은 유지하고, 내용과 화면은 자유롭게.'));
- const featured=card({tone:'pink',join:'tab',side:'right',className:'tk-row-card',onClick:()=>showEntry(app,CATALOG.find(e=>e.id==='chip')),hint:'문장에서 칩으로 미리보기'},node('span',{class:'tk-ico'},icon('spark')),node('div',{class:'tk-row-copy'},node('h3',{},'말이 조건으로 날아갑니다.'),node('p',{},'원본의 칩 비행을 직접 재생')),icon());
+ const root=node('div',{class:'kg-list'}),hero=card({tone:'lime',className:'tk-top'},node('div',{class:'tk-row tk-between'},node('span',{class:'tk-label'},'TRIPFIT / UI LIBRARY'),pill('HIGH · 02')),node('h1',{class:'kg-hero-title'},'같은 감각,\n더 많은 장면.'),node('p',{class:'tk-body'},'예시에 없던 움직임까지.\n눌러 보고, 다시 조립하세요.'),node('div',{class:'kg-hero-stats'},node('div',{},node('strong',{},String(CATALOG.length)),node('small',{},'개 시연')),node('div',{},node('strong',{},'26'),node('small',{},'개 원본 아이콘'))),node('p',{class:'kg-hero-note'},'디자인은 유지하고, 내용과 화면은 자유롭게.'));
+ const featured=card({tone:'pink',connect:'right',className:'tk-row-card',onClick:()=>showEntry(app,CATALOG.find(e=>e.id==='chip')),hint:'문장에서 칩으로 미리보기'},node('span',{class:'tk-ico'},icon('spark')),node('div',{class:'tk-row-copy'},node('h3',{},'말이 조건으로 날아갑니다.'),node('p',{},'원본의 칩 비행을 직접 재생')),icon());
  const list=node('div',{class:'kg-list',id:'gallery-list'}),count=node('p',{class:'kg-count',role:'status'});let active='all',query='';
  const filter=()=>{const found=CATALOG.filter(e=>(active==='all'||e.group===active)&&(e.title+' '+e.api+' '+e.description).toLowerCase().includes(query.toLowerCase()));count.textContent=`${found.length}개 표시 · 카드를 눌러 동작 확인`;list.replaceChildren(...found.map(e=>node('button',{type:'button',class:`tk-card tk-${tones[e.group]} kg-item`,'data-demo':e.id,onClick:()=>showEntry(app,e)},node('span',{class:'kg-number'},String(CATALOG.indexOf(e)+1).padStart(2,'0')),node('div',{},node('h3',{},e.title),node('p',{},e.description),node('small',{class:'kg-source'},groupNames[e.group]+' / '+e.api)),node('span',{class:'kg-open'},icon('arrow',15)))));};
  const tabs=node('div',{class:'kg-tabs','aria-label':'종류별 필터'});for(const [id,label]of Object.entries({all:'전체',...groupNames})){const b=node('button',{class:'kg-tab',type:'button','aria-pressed':id==='all','data-filter':id,onClick:()=>{active=id;[...tabs.children].forEach(x=>x.setAttribute('aria-pressed',String(x===b)));filter();}},label);tabs.append(b);}

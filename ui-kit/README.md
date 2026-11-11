@@ -70,3 +70,7 @@ python ui-kit/tests/regenerated.spec.py --browser webkit
 원본 TripFit은 `harheem/tripfit`입니다. 이 포크에서 추출·변형한 원본 부품에 별도의 새로운 라이선스를 부여하지 않습니다. 외부 의존성의 MIT 라이선스가 원본 프로젝트 전체로 확대되지 않습니다. 다른 제품으로 재배포할 때에는 원본 권한을 별도로 확인해야 합니다.
 
 Chromium/WebKit과 여러 화면 크기를 자동 검사하지만, 실제 iPhone 실기기·VoiceOver 인증을 의미하지 않습니다. 예시의 점수·시간·결제 상태는 시연용이며 실제 학습 평가나 결제가 아닙니다.
+
+## 연결 규칙·탭 반응·화면 갱신 개선
+
+카드 연결은 아래 카드의 `connect` 한 곳에서만 선언합니다. 위 카드의 홈을 따로 그리지 않아 빈 상태나 동적 삭제 뒤에 홈이 남지 않습니다. 태그는 `badge`로 분리했습니다. 공통 탭 피드백, 같은 화면 갱신 시 모션 재생 방지, 설정의 JS 프레임 간격 측정도 추가했습니다. 상세 규칙과 검증 범위는 [INTERACTION_UPDATE.md](INTERACTION_UPDATE.md)를 참고하세요.

@@ -86,8 +86,18 @@ export function createAnimatedList(host,{key=item=>item.id,render,update}={}){
  return {set,dispose(){scope.dispose();ghosts.forEach(e=>e.remove());ghosts.clear();nodes.clear();}};
 }
 export function fitNumbers(root){
- const fit=rafSchd(()=>{for(const el of root.querySelectorAll('.tk-readout')){const number=el.querySelector('.tk-value');if(!number||!el.clientWidth)continue;number.style.fontSize='';let size=parseFloat(getComputedStyle(number).fontSize);for(let i=0;i<4&&el.scrollWidth>el.clientWidth+1;i++){size*=Math.max(.5,(el.clientWidth-2)/el.scrollWidth);number.style.fontSize=size+'px';}}});
- const observer=new ResizeObserver(fit);observer.observe(root);window.addEventListener('resize',fit);let closed=false;document.fonts?.ready.then(()=>{if(!closed)fit();});fit();return ()=>{closed=true;observer.disconnect();window.removeEventListener('resize',fit);fit.cancel();};
+ let closed=false,lastWidth=-1;
+ const fit=rafSchd(()=>{
+  if(closed)return;
+  const rows=[...root.querySelectorAll('.tk-readout')].map(el=>({el,number:el.querySelector('.tk-value')})).filter(x=>x.number);
+  for(const {number}of rows)number.style.fontSize='';
+  // One read phase after one write phase, rather than a layout flush per number.
+  const changes=rows.map(({el,number})=>({number,available:el.clientWidth,actual:el.scrollWidth,size:parseFloat(getComputedStyle(number).fontSize)}));
+  for(const {number,available,actual,size}of changes)if(available>0&&actual>available+1)number.style.fontSize=Math.max(12,size*(available-3)/actual)+'px';
+ });
+ const observer=new ResizeObserver(entries=>{const width=entries[0]?.contentRect.width;if(width!==lastWidth){lastWidth=width;fit();}});observer.observe(root);
+ document.fonts?.ready.then(()=>{if(!closed)fit();});fit();
+ const cleanup=()=>{closed=true;observer.disconnect();fit.cancel();};cleanup.request=fit;return cleanup;
 }
 export function bindHold(button,{duration=1000,onConfirm=()=>{},scope=new MotionScope(button)}={}){
  let started=null,done=false,timer=null,held=null;const cancel=()=>{started=null;held=null;clearTimeout(timer);timer=null;button.style.setProperty('--hold','0%');button.classList.remove('is-holding');};

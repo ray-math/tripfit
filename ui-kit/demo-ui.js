@@ -1,6 +1,7 @@
 /** Shared app building blocks. These extend the kit, not its original travel app. */
 import { ComposedFlow,node,card,button,icon,pill } from './compose.js';
 import { renderQR } from './assets.js';
+import { sampleCadence } from './performance-probe.js';
 export function money(value){return Number(value).toLocaleString('ko-KR')+'원';}
 export function store(key,initial,normalize){
   let available=true,state=structuredClone(initial);
@@ -65,18 +66,18 @@ export function confirmSheet(app,{title,body,confirm='확인',onConfirm,tone='pi
 }
 export function appSettings(app,storage,resetAction){
   const reduce=node('input',{type:'checkbox',checked:document.documentElement.dataset.motion==='reduce',onChange:e=>{document.documentElement.dataset.motion=e.target.checked?'reduce':'auto';document.dispatchEvent(new Event('tk:motionchange'));try{localStorage.setItem('tripfit-demo-motion',document.documentElement.dataset.motion);}catch{}}});
-  app.sheet({title:'데모 설정',body:'화면은 실제 키트로 구성했습니다. 외부 서비스에 주문·결제·발권을 요청하지 않아요.',tone:'lilac',content:[card({tone:'cream'},node('label',{class:'da-check'},reduce,'움직임 줄이기'),notice(storage.available?'선택 내용은 이 브라우저에만 저장됩니다.':'현재 브라우저에서 저장할 수 없어 이번 실행 동안만 유지됩니다.'),smallButton('이 예시의 저장 내용 초기화',()=>confirmSheet(app,{title:'이 예시를 초기화할까요?',body:'이 브라우저에 저장된 선택과 기록만 지워집니다. 다른 예시에는 영향을 주지 않아요.',confirm:'초기화',onConfirm:()=>{storage.reset();resetAction();app.notify('데모를 초기화했어요');}}))),card({tone:'mint',title:'다른 예시'},node('div',{class:'da-links'},node('a',{href:'cafe.html'},'카페 주문·픽업 ↗'),node('a',{href:'event.html'},'행사·시간표 ↗'),node('a',{href:'gallery.html'},'모션 갤러리 ↗'),node('a',{href:location.pathname.includes('/examples/')?'regenerated.html':'lesson.html'},'수학 수업 ↗')))]});
+  app.sheet({title:'데모 설정',body:'화면은 실제 키트로 구성했습니다. 외부 서비스에 주문·결제·발권을 요청하지 않아요.',tone:'lilac',content:[card({tone:'cream'},node('label',{class:'da-check'},reduce,'움직임 줄이기'),notice(storage.available?'선택 내용은 이 브라우저에만 저장됩니다.':'현재 브라우저에서 저장할 수 없어 이번 실행 동안만 유지됩니다.'),smallButton('화면 반응 점검',()=>motionDiagnostics(app),{id:'motion-diagnostics'}),smallButton('이 예시의 저장 내용 초기화',()=>confirmSheet(app,{title:'이 예시를 초기화할까요?',body:'이 브라우저에 저장된 선택과 기록만 지워집니다. 다른 예시에는 영향을 주지 않아요.',confirm:'초기화',onConfirm:()=>{storage.reset();resetAction();app.notify('데모를 초기화했어요');}}))),card({tone:'mint',title:'다른 예시'},node('div',{class:'da-links'},node('a',{href:'cafe.html'},'카페 주문·픽업 ↗'),node('a',{href:'event.html'},'행사·시간표 ↗'),node('a',{href:'gallery.html'},'모션 갤러리 ↗'),node('a',{href:location.pathname.includes('/examples/')?'regenerated.html':'lesson.html'},'수학 수업 ↗')))]});
 }
 export function footer(app,{primary,nav=[]}={}){
   app.footer.replaceChildren();
   if(primary){const b=button(primary.label,primary.run,{id:primary.id||'main-action'});b.disabled=!!primary.disabled;app.footer.append(b);}
   const root=node('div',{class:'da-nav',role:'navigation','aria-label':'화면 이동'});
-  for(const n of nav)root.append(smallButton(n.label,()=>app.go(n.id),{'aria-current':app.current===n.id?'page':null,'data-nav':n.id}));
+  for(const n of nav)root.append(smallButton(n.label,()=>{if(app.current!==n.id)app.go(n.id);},{'aria-current':app.current===n.id?'page':null,'data-nav':n.id}));
   app.footer.append(root);
 }
 export function refresh(app,{preserveScroll=true,focus}={}){
   const y=app.viewport.lastElementChild?.scrollTop||0;
-  app.go(app.current);
+  app.go(app.current,{animate:false});
   if(preserveScroll)app.viewport.lastElementChild.scrollTop=y;
   if(focus)app.viewport.lastElementChild.querySelector(focus)?.focus({preventScroll:true});
 }
@@ -85,4 +86,23 @@ export function startDemo(root,definition){
   const app=new ComposedFlow(root,definition).mount();root.querySelector('.tk-stage').classList.add('da-app');
   root.querySelector('.tk-kicker').textContent='TRIPFIT UI KIT / INTERACTIVE DEMO';
   window.__demo=app;return app;
+}
+
+/** Measures only JS callback cadence, not physical refresh rate or compositor frames. */
+export function motionDiagnostics(app){
+ const result=node('p',{class:'tk-perf-result',role:'status'},'3초 동안 이 브라우저의 JS 프레임 간격을 측정합니다.');
+ const marker=node('i',{class:'tk-perf-marker'}),track=node('div',{class:'tk-perf-track'},marker);
+ let controller=null,animation=null;
+ const stop=()=>{controller?.abort();controller=null;animation?.cancel();animation=null;};
+ const run=async()=>{
+  stop();controller=new AbortController();const signal=controller.signal;
+  start.disabled=true;result.textContent='측정 중… 화면을 유지해 주세요.';
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches||document.documentElement.dataset.motion==='reduce';
+  if(!reduced)animation=marker.animate([{transform:'translateX(0px)'},{transform:`translateX(${Math.max(0,track.clientWidth-40)}px)`}],{duration:1000,direction:'alternate',iterations:Infinity,easing:'ease-in-out'});
+  try{const m=await sampleCadence({signal});result.textContent=`JS 콜백 평균 ${m.callbackRate.toFixed(1)}회/초\n중앙 간격 ${m.medianMs.toFixed(2)}ms · 95% 간격 ${m.p95Ms.toFixed(2)}ms\n측정 간격 ${m.samples}개 · 기준의 1.5배 초과 ${m.overBudget}개`;}
+  catch(e){if(e.name!=='AbortError')result.textContent='측정하지 못했습니다. 다시 시도해 주세요.';else result.textContent='측정을 취소했습니다.';}
+  finally{animation?.cancel();animation=null;start.disabled=false;}
+ };
+ const start=smallButton('3초 측정 시작',run,{id:'start-frame-probe'});
+ app.sheet({title:'화면 반응 점검',body:'120Hz 강제 설정이 아니라 현재 환경의 관측 도구입니다.',tone:'mint',stack:true,onClose:stop,content:[card({tone:'cream'},track,result,start),card({tone:'sky',title:'숫자를 읽는 방법'},node('p',{class:'da-note'},'약 8.3ms는 120회/초, 약 16.7ms는 60회/초에 해당합니다.\nJS 콜백이 60회여도 CSS 애니메이션의 합성 프레임은 다를 수 있어요. 이 측정으로 화면 주사율이나 GPU 프레임을 판정하지 않습니다.')),card({tone:'pink'},node('p',{class:'da-note'},'앱 내 브라우저와 Safari, 전원 모드에 따라 결과가 달라질 수 있습니다. 측정은 기기 안에서만 처리하고 전송하지 않습니다.'))]});
 }

@@ -48,7 +48,7 @@ function balance(app,d){
   const p=d.profiles[app.state.balance];
   const head=node('div',{class:'tk-row tk-between'},node('span',{class:'tk-label'},'학습 균형'),node('button',{class:'tk-plain',type:'button',id:'kit-info',onClick:()=>showKit(app)},'키트로 만든 예시 ↗'));
   const labels=node('div',{class:'tk-pair-labels'},node('span',{},node('i',{class:'tk-dot-person',style:'--person:var(--tk-rose)'}),'개념 이해'),node('span',{},'문제 적용 ',node('i',{class:'tk-dot-person',style:'--person:var(--tk-blue)'})));
-  return card({tone:'lime',join:'cut',side:'right',className:'tk-top',id:'balance-card'},head,node('h1',{class:'tk-title tk-balance-title'},d.title),node('div',{class:'tk-pair'},metric(p.concept,'%',{id:'concept-value',large:true}),node('span',{class:'tk-colon'},':'),metric(p.practice,'%',{id:'practice-value',large:true})),labels,node('div',{class:'tk-balance-note'},node('b',{id:'profile-label'},p.label),node('span',{},'슬라이더로 바꿔 보는 예시 점수')),slider({value:app.state.balance,labels:['개념 쪽','균형','문제 쪽'],onInput:i=>{
+  return card({tone:'lime',className:'tk-top',id:'balance-card'},head,node('h1',{class:'tk-title tk-balance-title'},d.title),node('div',{class:'tk-pair'},metric(p.concept,'%',{id:'concept-value',large:true}),node('span',{class:'tk-colon'},':'),metric(p.practice,'%',{id:'practice-value',large:true})),labels,node('div',{class:'tk-balance-note'},node('b',{id:'profile-label'},p.label),node('span',{},'슬라이더로 바꿔 보는 예시 점수')),slider({value:app.state.balance,labels:['개념 쪽','균형','문제 쪽'],onInput:i=>{
     app.state.balance=i;const profile=d.profiles[i];
     setMetric(document.getElementById('concept-value'),profile.concept,'%');setMetric(document.getElementById('practice-value'),profile.practice,'%');
     document.getElementById('profile-label').textContent=profile.label;
@@ -57,12 +57,12 @@ function balance(app,d){
     app.notify(profile.label+' · 카드와 숫자가 함께 바뀌어요');
   }}));
 }
-function checklists(app,d){const p=d.profiles[app.state.balance];return split(...[0,1].map(i=>card({tone:i?'sky':'pink',join:i?'tab':'',side:i?'right':'',onClick:()=>i?app.go('quiz'):showConcept(app,d),id:i?'practice-list':'concept-list',hint:i?'문제 적용 카드 열기':'개념 이해 카드 열기'},node('div',{class:'tk-mini-head'},node('span',{},i?'문제 적용':'개념 이해'),node('b',{class:'tk-mini-score'},(i?p.practice:p.concept)+'%')),...(i?d.practiceLabels:d.conceptLabels).map((label,k)=>progress(label,(i?p.right:p.left)[k])),node('span',{class:'tk-tap-note'},i?'눌러서 문제 풀기 ↗':'눌러서 개념 보기 ↗'))));}
+function checklists(app,d){const p=d.profiles[app.state.balance];return split(...[0,1].map(i=>card({tone:i?'sky':'pink',connect:null,onClick:()=>i?app.go('quiz'):showConcept(app,d),id:i?'practice-list':'concept-list',hint:i?'문제 적용 카드 열기':'개념 이해 카드 열기'},node('div',{class:'tk-mini-head'},node('span',{},i?'문제 적용':'개념 이해'),node('b',{class:'tk-mini-score'},(i?p.practice:p.concept)+'%')),...(i?d.practiceLabels:d.conceptLabels).map((label,k)=>progress(label,(i?p.right:p.left)[k])),node('span',{class:'tk-tap-note'},i?'눌러서 문제 풀기 ↗':'눌러서 개념 보기 ↗'))));}
 function question(app,d){
   const options=node('div',{class:'tk-choice-list'}),feedback=node('p',{class:'tk-result',role:'status',id:'answer-feedback'});
   const choose=i=>{app.state.answer=i;options.querySelectorAll('button').forEach((b,j)=>{b.classList.toggle('is-correct',j===d.answer);b.classList.toggle('is-wrong',j===i&&i!==d.answer);b.setAttribute('aria-pressed',String(j===i));});feedback.textContent=i===d.answer?'맞았어요. 꼭짓점은 (2, −1)입니다.':'괄호 안의 부호를 다시 확인해 보세요. 정답은 (2, −1)이에요.';app.footer.querySelector('button').disabled=false;app.notify(i===d.answer?'정답 · 개념이 문제로 연결됐어요':'다시 확인 · x − 2 = 0을 생각해 보세요');};
   d.options.forEach((text,i)=>options.append(node('button',{class:'tk-choice',type:'button','data-option':i,'aria-pressed':'false',onClick:()=>choose(i)},node('i',{},String(i+1).padStart(2,'0')),text)));
-  const block=card({tone:'cream',join:'tab',side:'left'},node('span',{class:'tk-label'},'한 번 선택해 보세요'),options,feedback);
+  const block=card({tone:'cream',connect:'left'},node('span',{class:'tk-label'},'한 번 선택해 보세요'),options,feedback);
   if(app.state.answer!=null){const i=app.state.answer;options.querySelectorAll('button').forEach((b,j)=>{b.classList.toggle('is-correct',j===d.answer);b.classList.toggle('is-wrong',j===i&&i!==d.answer);b.setAttribute('aria-pressed',String(j===i));});feedback.textContent=i===d.answer?'맞았어요. 꼭짓점은 (2, −1)입니다.':'정답은 (2, −1)이에요. 풀이에서 이유를 확인하세요.';}
   return block;
 }
@@ -73,22 +73,22 @@ export function createLessonFlow(d=lesson){return {
     {id:'learn',label:d.topic+' 학습 화면',cards:[
       {type:'text',render:app=>balance(app,d)},
       {type:'text',render:app=>checklists(app,d)},
-      {type:'text',render:app=>card({tone:'mint',join:'cut',className:'tk-chart-card',id:'graph-card',onClick:()=>showGraph(app,d),hint:'그래프 탐구 열기'},node('div',{class:'tk-chart-top'},pill(d.topic+' · 그래프 탐구'),icon('arrow',18)),graph(...d.vertex))},
-      {type:'text',render:app=>card({tone:'lilac',join:'tab cut',side:'left',className:'tk-row-card',onClick:()=>showConcept(app,d),id:'concept-card',hint:'핵심 개념 한 장 열기'},node('span',{class:'tk-ico'},icon('spark')),node('div',{class:'tk-row-copy'},node('h3',{},'핵심 개념 한 장'),node('p',{},'읽기 · 조작 · 문제, 각자 다른 상세 화면')),icon())},
+      {type:'text',render:app=>card({tone:'mint',className:'tk-chart-card',id:'graph-card',onClick:()=>showGraph(app,d),hint:'그래프 탐구 열기'},node('div',{class:'tk-chart-top'},pill(d.topic+' · 그래프 탐구'),icon('arrow',18)),graph(...d.vertex))},
+      {type:'text',render:app=>card({tone:'lilac',connect:'left',className:'tk-row-card',onClick:()=>showConcept(app,d),id:'concept-card',hint:'핵심 개념 한 장 열기'},node('span',{class:'tk-ico'},icon('spark')),node('div',{class:'tk-row-copy'},node('h3',{},'핵심 개념 한 장'),node('p',{},'읽기 · 조작 · 문제, 각자 다른 상세 화면')),icon())},
       {type:'text',render:()=>stats([{label:'학습 카드',value:'03',unit:'개'},{label:'예상 시간',value:'12',unit:'min'},{label:'확인 문제',value:'01',unit:'개'}])},
       {type:'text',render:app=>node('div',{class:'tk-card-list'},node('div',{class:'tk-section-label'},'오늘의 순서 · '+d.topic),...d.steps.map((s,i)=>rowCard({...s,id:'lesson-row-'+i,onClick:()=>s.action==='concept'?showConcept(app,d):s.action==='graph'?showGraph(app,d):app.go('quiz')})))},
       {type:'text',render:()=>node('p',{class:'tk-code-note'},'Ray class · TripFit UI kit로 조립한 새 예시\n점수와 시간은 화면 동작을 위한 예시입니다.')}
     ],actions:[{label:'문제로 확인하기',next:'quiz'}]},
     {id:'quiz',label:'꼭짓점 확인 문제',cards:[
-      {type:'text',render:app=>card({tone:'lime',join:'cut',side:'left',className:'tk-top'},node('div',{class:'tk-row tk-between'},node('span',{class:'tk-label'},'02 / 확인 문제'),node('button',{class:'tk-plain',type:'button',onClick:()=>app.go('learn')},'← 학습 화면')),node('h1',{class:'tk-title'},d.question),node('p',{class:'tk-formula'},d.formula))},
+      {type:'text',render:app=>card({tone:'lime',className:'tk-top'},node('div',{class:'tk-row tk-between'},node('span',{class:'tk-label'},'02 / 확인 문제'),node('button',{class:'tk-plain',type:'button',onClick:()=>app.go('learn')},'← 학습 화면')),node('h1',{class:'tk-title'},d.question),node('p',{class:'tk-formula'},d.formula))},
       {type:'text',render:app=>question(app,d)},
       {type:'text',render:app=>card({tone:'mint',className:'tk-chart-card',onClick:()=>showGraph(app,d),hint:'그래프 다시 보기'},node('div',{class:'tk-chart-top'},pill('그래프로 다시 확인'),icon()),graph(...d.vertex))},
       {type:'text',render:app=>rowCard({tone:'pink',title:'힌트가 필요하다면',subtitle:'괄호 안의 식을 0으로 만들어 보세요',symbol:'spark',onClick:()=>showConcept(app,d),id:'hint-card'})}
     ],actions:[{label:'풀이와 결과 보기',next:'result'}]},
     {id:'result',label:'문제 풀이와 결과',cards:[
-      {type:'text',render:app=>card({tone:'lime',join:'cut',className:'tk-top'},node('span',{class:'tk-label'},'03 / 학습 확인'),node('h1',{class:'tk-title'},app.state.answer===d.answer?'개념이 문제로,\n연결됐어요.':'한 번 더 보면,\n분명해져요.'),node('div',{style:'margin-top:22px'},metric(app.state.answer===d.answer?'100':'0','%',{large:true,id:'result-score'})),node('p',{class:'tk-body',style:'margin-top:14px'},'이번 확인 문제 · 선택 결과'))},
-      {type:'text',render:()=>card({tone:'cream',join:'tab cut',side:'left',title:'정답은 (2, −1)'},node('p',{class:'tk-formula'},'p = 2, q = −1'),node('p',{class:'tk-body'},d.explanation))},
-      {type:'text',render:app=>card({tone:'sky',join:'tab',side:'left',title:'이제 직접 설명해 보세요.'},node('p',{class:'tk-body'},'왜 x 좌표는 −2가 아니라 2일까요?\n왜 y 좌표는 −1일까요?'),button('다시 풀어보기',()=>{app.state.answer=null;app.go('quiz');},{secondary:true,id:'retry-question'}))},
+      {type:'text',render:app=>card({tone:'lime',className:'tk-top'},node('span',{class:'tk-label'},'03 / 학습 확인'),node('h1',{class:'tk-title'},app.state.answer===d.answer?'개념이 문제로,\n연결됐어요.':'한 번 더 보면,\n분명해져요.'),node('div',{style:'margin-top:22px'},metric(app.state.answer===d.answer?'100':'0','%',{large:true,id:'result-score'})),node('p',{class:'tk-body',style:'margin-top:14px'},'이번 확인 문제 · 선택 결과'))},
+      {type:'text',render:()=>card({tone:'cream',connect:'left',title:'정답은 (2, −1)'},node('p',{class:'tk-formula'},'p = 2, q = −1'),node('p',{class:'tk-body'},d.explanation))},
+      {type:'text',render:app=>card({tone:'sky',connect:'left',title:'이제 직접 설명해 보세요.'},node('p',{class:'tk-body'},'왜 x 좌표는 −2가 아니라 2일까요?\n왜 y 좌표는 −1일까요?'),button('다시 풀어보기',()=>{app.state.answer=null;app.go('quiz');},{secondary:true,id:'retry-question'}))},
       {type:'text',render:app=>rowCard({tone:'lilac',title:'이 예시는 어떻게 만들었나요?',subtitle:'원본이 아닌 키트 기반 재생성',symbol:'code',onClick:()=>showKit(app),id:'kit-proof'})}
     ],actions:[{label:'학습 화면으로 돌아가기',next:'learn'}]}
   ]

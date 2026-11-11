@@ -1,3 +1,4 @@
+import { declareConnection, watchConnections } from './connections.js';
 import { springIn, rollDigits, revealHeadline, createFeedbackIsland } from "./tripfit-motion.js";
 
 /**
@@ -116,7 +117,7 @@ export class CardFlow {
   renderCard(card) {
     const element = el("article", "tk-card tk-" + (card.color ?? "cream") +
       (card.type === "hero" ? " tk-hero" : ""));
-    if (card.shape) element.classList.add("tk-" + card.shape);
+    if (card.connect || card.shape === "tab") declareConnection(element, card.connect || card.align || "center");
     if (card.align && card.align !== "center") element.classList.add("tk-" + card.align);
     if (card.label) element.append(el("p", "tk-label", card.label));
     if (card.title) element.append(el(card.type === "hero" ? "h2" : "h3", "tk-title", card.title));
@@ -153,10 +154,13 @@ export class CardFlow {
     return element;
   }
 
-  go(id) {
+  go(id, { animate = true } = {}) {
     this.reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.dataset.motion === "reduce";
     const step = this.steps.get(id);
     if (!step) throw new Error("Unknown step: " + id);
+    const sameStep = this.current === id;
+    const firstMount = this.current === null;
+    this._connectionsCleanup?.();
     const previousIdx = this.flow.steps.findIndex(s => s.id === this.current);
     const nextIdx = this.flow.steps.findIndex(s => s.id === id);
     const backward = previousIdx >= 0 && nextIdx < previousIdx;
@@ -171,13 +175,14 @@ export class CardFlow {
     const previousPages = Array.from(this.viewport.querySelectorAll(".tk-page"));
     this.viewport.append(page);
     for (const old of previousPages) {
-      old.style.pointerEvents = "none";
-      if (this.reducedMotion || typeof old.animate !== "function") {
+      old.style.pointerEvents = "none"; old.inert = true;
+      old.getAnimations({subtree:true}).forEach(a => a.cancel());
+      if (sameStep || !animate || this.reducedMotion || typeof old.animate !== "function") {
         old.remove();
       } else {
         const animation = old.animate([
           { opacity: 1, transform: "none" },
-          { opacity: 0, transform: backward ? "translateX(22%)" : "translateX(-22%)" }
+          { opacity: 0, transform: backward ? "translateX(12px)" : "translateX(-12px)" }
         ], { duration: 220, easing: "ease-in", fill: "forwards" });
         animation.onfinish = () => old.remove();
         animation.oncancel = () => old.remove();
@@ -198,16 +203,17 @@ export class CardFlow {
       dot.setAttribute("title", s.label ?? s.id);
       this.progress.append(dot);
     });
-    if (!this.reducedMotion) {
-      enter(page, backward ? "translateX(-15%)" : "translateX(15%)");
-      Array.from(page.querySelectorAll(".tk-card")).forEach((card, idx) =>
-        card.getBoundingClientRect().top < this.viewport.getBoundingClientRect().bottom && springIn(card, { from: "translateY(24px) scale(.98)", delay: Math.min(idx, 5) * 90 }));
+    this._connectionsCleanup = watchConnections(page);
+    // One compositor-friendly transition for the whole page. Linked cards stay together.
+    // Same-step updates (quantity/status/filter) must not replay navigation or all headlines.
+    if (!sameStep && animate && !this.reducedMotion) {
+      enter(page, firstMount ? "translateY(24px)" : backward ? "translateX(-18px)" : "translateX(18px)",
+        { duration: firstMount ? 360 : 240 });
     }
-    // Decorative motion works independently of the domain-specific content.
-    for (const title of page.querySelectorAll(".tk-title"))
-      revealHeadline(title, title.textContent, { delay: 90 });
-    for (const value of page.querySelectorAll(".tk-value"))
-      rollDigits(value, value.textContent);
+    // Character blur/reveal remains explicitly available in the motion gallery.
+    if (this.flow.motion?.headlines === "characters" && !sameStep && animate)
+      for (const title of page.querySelectorAll(".tk-title")) revealHeadline(title, title.textContent, { delay:90 });
+    for (const value of page.querySelectorAll(".tk-value")) rollDigits(value, value.textContent);
     if (step.feedback) this.feedback.show(step.feedback);
     else this.feedback.hide();
     page.scrollTop = 0;

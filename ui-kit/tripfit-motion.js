@@ -83,7 +83,7 @@ export function rollDigits(element, value) {
       element.append(col);
     }
     // Force layout so the transform transition plays on first update.
-    void element.offsetWidth;
+    // No synchronous layout read here; newly created columns get a batched paint boundary.
   }
   chars.forEach((ch, i) => {
     if (!digits(ch)) {
@@ -91,8 +91,10 @@ export function rollDigits(element, value) {
       return;
     }
     const stack = element.children[i].firstElementChild;
-    stack.style.transitionDelay = (chars.length - 1 - i) * 45 + "ms";
-    stack.style.transform = `translateY(${-Number(ch) * 10}%)`;
+    stack.style.transitionDelay = (chars.length - 1 - i) * 30 + "ms";
+    const target = `translateY(${-Number(ch) * 10}%)`;
+    if (reduced() || !element.isConnected) stack.style.transform = target;
+    else scheduleDigit(stack, target);
   });
   element.dataset.rollValue = str;
   for(const child of element.children)child.setAttribute("aria-hidden","true");
@@ -147,4 +149,13 @@ export function createFeedbackIsland(screen) {
     const timeout=data.hold??hold;if(timeout>0)timer=setTimeout(hide,timeout);
   };
   return {root,show,hide,destroy(){hide();root.remove();}};
+}
+
+const digitQueue=new Map();let digitFrame=null;
+function scheduleDigit(stack,target){
+ digitQueue.set(stack,target);
+ if(digitFrame!==null)return;
+ digitFrame=requestAnimationFrame(()=>{digitFrame=requestAnimationFrame(()=>{
+  digitFrame=null;for(const [element,value]of digitQueue)if(element.isConnected)element.style.transform=value;digitQueue.clear();
+ });});
 }

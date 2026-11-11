@@ -6,6 +6,8 @@ import { rollDigits, springs, springIn } from './tripfit-motion.js';
 import { fitNumbers } from './effects.js';
 import { rafSchd } from './vendor/raf-schd.js';
 import { openDetailSheet } from './tripfit-sheet.js';
+import { declareConnection } from './connections.js';
+import { installPressFeedback } from './press-feedback.js';
 
 export function node(tag, attrs = {}, ...children) {
   const e = document.createElement(tag);
@@ -35,8 +37,10 @@ export function pill(text, opts = {}) { return node('span',{class:'tk-pill'+(opt
 export function button(text, action, {secondary=false, id}={}) {
   return node('button',{class:secondary?'tk-secondary':'tk-primary',type:'button',id,onClick:action}, node('span',{},text), node('span',{class:'tk-go'},icon()));
 }
-export function card({tone='cream',join='',side='',title,eyebrow,onClick,id,className='',hint}={},...children) {
-  const e=node('article',{class:`tk-card tk-${tone} ${join.split(' ').filter(Boolean).map(s=>'tk-'+s).join(' ')} ${side?'tk-'+side:''} ${className}`,id});
+export function card({tone='cream',join='',side='',connect,badge,title,eyebrow,onClick,id,className='',hint}={},...children) {
+  const e=node('article',{class:`tk-card tk-${tone}  ${className}`,id});
+  declareConnection(e, connect ?? (join.split(' ').includes('tab') ? (side || 'center') : null));
+  if (badge) e.append(node('span',{class:'tk-card-badge'},badge));
   if (eyebrow) e.append(node('div',{class:'tk-label'},eyebrow));
   if (title) e.append(node('h2',{class:'tk-title'},title));
   e.append(...children.flat().filter(x=>x instanceof Node));
@@ -51,7 +55,7 @@ export function progress(label, value, {tone='pink'}={}) {
   return node('div',{class:'tk-progress-row'},node('span',{},label),node('i',{role:'progressbar','aria-label':label,'aria-valuemin':0,'aria-valuemax':100,'aria-valuenow':value},node('b',{style:`width:${Math.max(0,Math.min(100,value))}%`})),node('em',{},value+'%'));
 }
 export function split(...children){return node('div',{class:'tk-split'},children);}
-export function stats(items){return card({tone:'pink',join:'tab',side:'left',className:'tk-stat-grid'},...items.map(x=>node('div',{},node('span',{class:'tk-lab'},x.label),metric(x.value,x.unit))));}
+export function stats(items){return card({tone:'pink',connect:'left',className:'tk-stat-grid'},...items.map(x=>node('div',{},node('span',{class:'tk-lab'},x.label),metric(x.value,x.unit))));}
 export function rowCard({title,subtitle,tone='cream',symbol='book',value,unit='',onClick,id}) {
   return card({tone,onClick,id,hint:title+' 열기',className:'tk-row-card'},node('span',{class:'tk-ico'},icon(symbol,21)),node('div',{class:'tk-row-copy'},node('h3',{},title),node('p',{},subtitle)),value!=null?metric(value,unit):icon());
 }
@@ -78,17 +82,17 @@ export class ComposedFlow extends CardFlow {
     this.mountPoint.querySelector('.tk-kicker').textContent='TRIPFIT UI KIT / COMPOSED EXAMPLE';
     document.documentElement.style.setProperty('--tk-spring',springs.pop.easing);
     document.documentElement.style.setProperty('--tk-spring-ms',springs.pop.duration+'ms');
-    window.addEventListener('resize',this._resize);this._numberCleanup=fitNumbers(this.screen);this.fit();return this;
+    window.addEventListener('resize',this._resize);this._numberCleanup=fitNumbers(this.screen);this._pressCleanup=installPressFeedback(this.screen);this.fit();return this;
   }
-  go(id){
+  go(id, options={}){
     while(this.screen?._detailSheet)this.screen._detailSheet.close(true);this.activeSheet?.close(true);this.activeSheet=null;
     this._pageCleanups?.splice(0).reverse().forEach(fn=>fn());
-    const result=super.go(id);
+    const result=super.go(id, options);
     for(const b of this.footer.querySelectorAll('button')){
       const label=b.textContent;b.replaceChildren(node('span',{},label),node('span',{class:'tk-go'},icon()));
     }
     this.viewport.querySelectorAll('.tk-page').forEach(e=>e.inert=e!==this.viewport.lastElementChild);
-    this.flow.onStep?.(id,this);this.fit();return result;
+    this.flow.onStep?.(id,this);this._numberCleanup?.request?.();this.fit();return result;
   }
   sheet(options){this.activeSheet=openDetailSheet(this.screen||this.mountPoint.querySelector('.tk-screen'),options);return this.activeSheet;}
   notify(message){this.feedback.show(message);}
@@ -98,5 +102,5 @@ export class ComposedFlow extends CardFlow {
     rig.style.transform=mobile?'':`scale(${Math.min(1,(innerHeight-32)/916,(innerWidth-48)/(innerWidth>=1100?791:417))})`;
   }
   onCleanup(fn){this._pageCleanups.push(fn);return fn;}
-  destroy(){this._pageCleanups.splice(0).reverse().forEach(fn=>fn());window.removeEventListener('resize',this._resize);this._resize.cancel();this._numberCleanup?.();this.activeSheet?.close(true);this.feedback.destroy?.();this.feedback.hide();this.mountPoint.replaceChildren();}
+  destroy(){this._pageCleanups.splice(0).reverse().forEach(fn=>fn());window.removeEventListener('resize',this._resize);this._resize.cancel();this._numberCleanup?.();this._pressCleanup?.();this._connectionsCleanup?.();this.activeSheet?.close(true);this.feedback.destroy?.();this.feedback.hide();this.mountPoint.replaceChildren();}
 }

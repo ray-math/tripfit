@@ -25,8 +25,8 @@ test('gentler pop still finishes precisely at its target', () => {
   assert.equal(curve[0],0);assert.equal(curve.at(-1),1);
   assert.ok(curve.every(Number.isFinite));
 });
-test('both composable flow and rise preset use the shorter vertical travel', () => {
-  for (const name of ['tripfit-motion.js','flow.js','effects.js']) {
+test('explicit spring presets retain their shorter vertical travel', () => {
+  for (const name of ['tripfit-motion.js','effects.js']) {
     const source=fs.readFileSync(new URL('../'+name,import.meta.url),'utf8');
     assert.ok(source.includes('translateY(24px) scale(.98)'));
   }
@@ -37,4 +37,10 @@ test('frame and collapsed feedback share the island dimension tokens', () => {
   assert.ok(frame.includes('--tk-island-width:88px'));
   assert.ok(frame.includes('--tk-island-height:32px'));
   assert.ok(detail.includes('var(--tk-island-width, 88px)'));
+});
+
+test('page entry is short and same-step refresh skips navigation',()=>{
+ const source=fs.readFileSync(new URL('../flow.js',import.meta.url),'utf8');
+ assert.ok(source.includes('translateY(24px)'));
+ assert.ok(source.includes('!sameStep && animate'));
 });

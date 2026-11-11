@@ -26,7 +26,7 @@ export const CATALOG=[
  ['sheet','상세 시트·중첩 시트','component','openDetailSheet','web/index.html:887–932','닫기·드래그·포커스 복원'],
  ['page','앞·뒤 화면 전환','motion','CardFlow.go','web/index.html:1993–2016','방향에 맞춘 전환과 정리'],
  ['logs','엔진 로그 패널','component','log + keyed list','web/index.html:647–665,2089–2101','새 로그 강조와 패널 열기'],
- ['cards','맞물림·알약·라벨','component','card / pill / flag','web/index.html:115–152','좌·중·우 맞물림과 경계 라벨'],
+ ['cards','맞물림·알약·라벨','component','card / connect / badge','web/index.html:115–152','아래 카드 한 곳에서 연결 · 태그는 별도'],
  ['switch','스위치·옵션 선택','component','switch / option','web/index.html:hid .sw; .slot','상태·키보드 동작 포함'],
  ['avatars','아바타·겹친 아바타','asset','avatar / avatarStack','web/index.html:.av, .av-stack','색·이니셜만 교체'],
  ['icons','원본 아이콘 23개','asset','originalAsset','web/index.html:IC; web/pay/app.js:icon','메인 15개 + 결제 8개'],

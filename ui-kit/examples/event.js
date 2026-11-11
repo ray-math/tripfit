@@ -15,7 +15,7 @@ const state=()=>saved.value,save=values=>saved.save({...state(),...values});
 const trackNames={design:'DESIGN',tech:'TECH',make:'MAKE'};
 function tools(){return smallButton('···',()=>appSettings(app,saved,()=>app.go('discover')),{class:'da-small da-round','aria-label':'데모 설정'});}
 function top(kicker,title,body,tone='lime'){
- return card({tone,className:'tk-top',join:'cut',side:'left'},node('div',{class:'da-topline'},node('span',{class:'tk-label'},kicker),tools()),node('h1',{class:'tk-title da-title'},title),node('p',{class:'da-subtitle'},body));
+ return card({tone,className:'tk-top'},node('div',{class:'da-topline'},node('span',{class:'tk-label'},kicker),tools()),node('h1',{class:'tk-title da-title'},title),node('p',{class:'da-subtitle'},body));
 }
 function timeLabel(s){return `DAY ${s.day+1} · ${s.start}—${s.end}`;}
 function closeAll(){while(app.screen?._detailSheet)app.screen._detailSheet.close(true);}
@@ -48,7 +48,7 @@ function sessionCard(s){
  );
 }
 function discoverPage(){
- const hero=card({tone:'lime',className:'tk-top',join:'cut',side:'right'},
+ const hero=card({tone:'lime',className:'tk-top'},
    node('div',{class:'da-topline'},node('span',{class:'tk-label'},'FIELD NOTES / 2026'),tools()),
    node('div',{class:'da-event-hero'},node('h1',{class:'tk-title da-title'},'작은 생각,\n큰 연결.'),orbitArt()),
    node('p',{class:'da-subtitle'},'12.12—13 · 서울 시간 · 가상의 디자인 컨퍼런스'),
@@ -61,7 +61,7 @@ function discoverPage(){
    node('input',{class:'da-input da-search',type:'search',placeholder:'세션·연사·키워드 검색','aria-label':'세션 검색',value:query,onInput:e=>{query=e.target.value;render();}}),
    node('label',{class:'da-check'},node('input',{type:'checkbox',checked:favoritesOnly,onChange:e=>{favoritesOnly=e.target.checked;render();}}),'북마크만 보기')
  );
- const filters=card({tone:'pink',join:'tab',side:'right'},heading('PROGRAM','나의 관심을 따라'),
+ const filters=card({tone:'pink',connect:'right'},heading('PROGRAM','나의 관심을 따라'),
    tabs([['0','12.12 SAT'],['1','12.13 SUN']],String(day),v=>{day=Number(v);render();},{label:'행사 날짜'}),
    node('div',{style:'height:8px'}),
    tabs([['all','전체'],['design','디자인'],['tech','기술'],['make','만들기']],track,v=>{track=v;render();},{label:'세션 분야'}),extra
@@ -117,11 +117,11 @@ function exportTicket(){
 }
 function passPage(){
  const t=state().ticket;
- if(!t)return stack(top('YOUR DEMO PASS','이틀을 여는\n작은 패스.', '디자인을 체험하는 가상의 입장권'),card({tone:'pink',join:'tab',side:'left',className:'da-ticket'},node('span',{class:'da-badge'},'FIELD NOTES 2026'),orbitArt(),node('h2',{class:'da-pass-name'},'YOUR NAME'),node('p',{class:'da-note'},'12.12—13 · 2 DAYS\n가상 행사 · 실제 입장 불가'),node('span',{class:'da-ticket-warning'},'NOT VALID FOR ENTRY')),card({tone:'cream',title:'이 패스로 할 수 있는 것'},node('p',{class:'da-note'},'QR 표시, 입장 처리 시연, 패스 이미지 저장.\n실제 결제나 인증 서버는 사용하지 않습니다.')));
- const pass=card({tone:'pink',join:'tab',side:'left',className:'da-ticket'},node('span',{class:'da-badge'},t.checked?'DEMO CHECKED IN':'DEMO PASS'),node('h2',{class:'da-pass-name'},t.name),node('p',{class:'da-note'},'FIELD NOTES 2026\n12.12—13 · 2 DAYS · KST'),qrBlock('TRIPFIT-DEMO-NOT-VALID-FOR-ENTRY|'+t.id,'데모 입장권 QR · 실제 입장 불가'),node('div',{class:'da-pass-id'},t.id),node('span',{class:'da-ticket-warning'},'NOT VALID FOR ENTRY'));
+ if(!t)return stack(top('YOUR DEMO PASS','이틀을 여는\n작은 패스.', '디자인을 체험하는 가상의 입장권'),card({tone:'pink',connect:'left',className:'da-ticket'},node('span',{class:'da-badge'},'FIELD NOTES 2026'),orbitArt(),node('h2',{class:'da-pass-name'},'YOUR NAME'),node('p',{class:'da-note'},'12.12—13 · 2 DAYS\n가상 행사 · 실제 입장 불가'),node('span',{class:'da-ticket-warning'},'NOT VALID FOR ENTRY')),card({tone:'cream',title:'이 패스로 할 수 있는 것'},node('p',{class:'da-note'},'QR 표시, 입장 처리 시연, 패스 이미지 저장.\n실제 결제나 인증 서버는 사용하지 않습니다.')));
+ const pass=card({tone:'pink',connect:'left',className:'da-ticket'},node('span',{class:'da-badge'},t.checked?'DEMO CHECKED IN':'DEMO PASS'),node('h2',{class:'da-pass-name'},t.name),node('p',{class:'da-note'},'FIELD NOTES 2026\n12.12—13 · 2 DAYS · KST'),qrBlock('TRIPFIT-DEMO-NOT-VALID-FOR-ENTRY|'+t.id,'데모 입장권 QR · 실제 입장 불가'),node('div',{class:'da-pass-id'},t.id),node('span',{class:'da-ticket-warning'},'NOT VALID FOR ENTRY'));
  return stack(top('FIELD NOTES / PASS',t.checked?'반가워요,\n다음 장면으로.':'나만의 패스,\n준비됐어요.',t.checked?'이 브라우저에서 체크인을 시연한 상태입니다.':'입장 처리 버튼도 로컬 데모입니다.'),pass,card({tone:'cream'},heading('MY SCHEDULE',state().plan.length+'개 세션 선택'),node('p',{class:'da-note'},'패스는 실제 좌석을 예약하지 않습니다. 시간표는 별도로 자유롭게 편집할 수 있어요.'),node('div',{class:'da-actions'},smallButton('패스 이미지 저장',exportTicket,{id:'pass-export'}),smallButton('공간 보기',()=>venue()),smallButton('시간표 보기',()=>app.go('plan')))),card({tone:'mint'},textButton('새 데모 패스로 교체',()=>confirmSheet(app,{title:'패스를 다시 만들까요?',body:'기존 데모 패스의 체크인 상태만 초기화합니다.',confirm:'다시 만들기',onConfirm:()=>{save({ticket:null});refresh(app);}}))));
 }
-function infoPage(){return stack(top('BEFORE YOU GO','잘 고르고,\n편하게 둘러보기.', '실제 행사가 아닌, 재사용 UI 키트 예시입니다.'),card({tone:'mint',join:'tab',side:'left',title:'행사장 배치도'},node('p',{class:'da-note'},'세션 상세창 위에 중첩해서 열어도 돌아올 위치를 유지합니다.'),smallButton('가상 배치도 열기',()=>venue())),card({tone:'pink',title:'시간이 겹치면?'},node('p',{class:'da-note'},'다른 날짜의 세션은 함께 선택할 수 있어요. 같은 날짜에서 시간이 겹치면 교체할지 먼저 묻습니다. 한 세션의 끝과 다른 세션의 시작이 같으면 선택 가능합니다.')),card({tone:'sky',title:'일정 저장과 알림'},node('p',{class:'da-note'},'개인 시간표는 ICS 파일로 저장합니다. 모든 제목에 [데모]가 표시됩니다. 10분 전 알림은 가져온 캘린더 앱이 처리하며, 이 사이트는 푸시 알림을 보내지 않아요.')),card({tone:'cream',title:'기록이 남는 곳'},node('p',{class:'da-note'},'선택·북마크·메모·데모 패스는 이 브라우저에만 저장됩니다. 설정에서 지울 수 있으며 다른 기기와 동기화되지 않습니다.'),smallButton('설정과 초기화',()=>appSettings(app,saved,()=>app.go('discover')))),card({tone:'lilac',title:'같은 키트의 다른 장면'},node('div',{class:'da-links'},node('a',{href:'cafe.html'},'카페 주문·픽업 ↗'),node('a',{href:'gallery.html'},'35개 모션·부품 갤러리 ↗'))));}
+function infoPage(){return stack(top('BEFORE YOU GO','잘 고르고,\n편하게 둘러보기.', '실제 행사가 아닌, 재사용 UI 키트 예시입니다.'),card({tone:'mint',connect:'left',title:'행사장 배치도'},node('p',{class:'da-note'},'세션 상세창 위에 중첩해서 열어도 돌아올 위치를 유지합니다.'),smallButton('가상 배치도 열기',()=>venue())),card({tone:'pink',title:'시간이 겹치면?'},node('p',{class:'da-note'},'다른 날짜의 세션은 함께 선택할 수 있어요. 같은 날짜에서 시간이 겹치면 교체할지 먼저 묻습니다. 한 세션의 끝과 다른 세션의 시작이 같으면 선택 가능합니다.')),card({tone:'sky',title:'일정 저장과 알림'},node('p',{class:'da-note'},'개인 시간표는 ICS 파일로 저장합니다. 모든 제목에 [데모]가 표시됩니다. 10분 전 알림은 가져온 캘린더 앱이 처리하며, 이 사이트는 푸시 알림을 보내지 않아요.')),card({tone:'cream',title:'기록이 남는 곳'},node('p',{class:'da-note'},'선택·북마크·메모·데모 패스는 이 브라우저에만 저장됩니다. 설정에서 지울 수 있으며 다른 기기와 동기화되지 않습니다.'),smallButton('설정과 초기화',()=>appSettings(app,saved,()=>app.go('discover')))),card({tone:'lilac',title:'같은 키트의 다른 장면'},node('div',{class:'da-links'},node('a',{href:'cafe.html'},'카페 주문·픽업 ↗'),node('a',{href:'gallery.html'},'35개 모션·부품 갤러리 ↗'))));}
 const nav=[{id:'discover',label:'세션'},{id:'plan',label:'내 시간표'},{id:'pass',label:'내 패스'},{id:'info',label:'안내'}];
 const definition={title:'당신의 관심이\n만나는 이틀.',brand:'FIELD NOTES',description:'서로 다른 세션과 상세창, 충돌 없는 개인 시간표, 데모 패스. 같은 TripFit 키트를 조립한 두 번째 서비스 예시입니다.',steps:[['discover',discoverPage],['plan',planPage],['pass',passPage],['info',infoPage]].map(([id,render])=>({id,label:id,cards:[{type:'text',render}]})),onStep(id,a){let primary;if(id==='discover')primary={label:state().plan.length?`${state().plan.length}개 세션 · 내 시간표 보기`:'나에게 맞는 시간표 추천',run:()=>state().plan.length?a.go('plan'):recommend()};if(id==='plan')primary={label:state().plan.length?'캘린더 파일로 저장 · 데모':'겹치지 않는 시간표 만들기',run:()=>state().plan.length?exportCalendar():recommend()};if(id==='pass')primary=state().ticket?{label:state().ticket.checked?'내 시간표 둘러보기':'체크인 시연 · 실제 입장 불가',run:()=>{if(state().ticket.checked)a.go('plan');else{save({ticket:{...state().ticket,checked:true}});refresh(a);a.notify('체크인 시연 완료 · 실제 입장권이 아닙니다');}},id:'check-in'}:{label:'데모 패스 만들기 · 결제 없음',run:makeTicket};footer(a,{primary,nav:nav.map(n=>n.id==='plan'?{...n,label:`내 시간표${state().plan.length?' '+state().plan.length:''}`}:n)});}};
 app=startDemo(document.getElementById('app'),definition);

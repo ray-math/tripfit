@@ -69,3 +69,9 @@ python ui-kit/tests/regenerated.spec.py --browser webkit
 ```
 
 `dist/gallery.html` and `dist/lesson.html` are generated from the actual modules. Their manifests contain input and output hashes. Runtime dependency sources are vendored; fonts are optional CSS links. Screenshots and reports are CI artifacts, not production app assets.
+
+## Connection/feedback revision (takes precedence over old cut/tab examples)
+
+Use `card({connect:'left'})` only on a lower card that continues the adjacent card. For a required specific predecessor use `connect:{side:'left',from:'stable-id'}`. Never author a separate upper `cut`. `badge` is an independent text label inside the card; grids and empty states are normally standalone. See [INTERACTION_UPDATE.md](INTERACTION_UPDATE.md).
+
+The default screen animation is intentionally light. Do not put every nested card and heading letter on its own animation. Same-step `go`/`refresh` skips entrance animation; explicit gallery demonstrations keep their full motion APIs. Press feedback is installed once per screen; do not add extra click handlers or gesture libraries just to duplicate it. The settings cadence sampler measures JS rAF only and must not be called a 120Hz display detector.

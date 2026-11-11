@@ -1,26 +1,30 @@
 {
   "entry": "examples/event.js",
   "modules": {
-    "tripfit-motion.js": "8af7683288cc7c1222e947ae0d8771aa8f5e6d419ce960e26ae99409275c85b9",
-    "flow.js": "be1849c9912546135f17eea6b0657035b55b49f5138ee7592299a57ad9f9b41c",
+    "connections.js": "1fcd96cb5fbe1f16c69924d4260d9bbcccba56ad0148cd0be7d7cc658898584c",
+    "tripfit-motion.js": "d4d29ab88097a7c4049af49b36d4dc68c3ea2cb1e67344466d48e1a9e60e4361",
+    "flow.js": "3261eb1d2b04f0edbe2c0b4c1dbbf6946fd73b306ea695f2f0f37d8c3dfd8e33",
     "vendor/raf-schd.js": "a058df1ff3e2f91c432bfea24dd867642d2135b53324baa2b63e11cee78d9a87",
-    "effects.js": "0f9f6cb8fbf99d7d98d3f081de6c036ea98e683d8ee093959cbcccb167ed0f1f",
+    "effects.js": "e705a74b59d643db360ccf7920b77f8ead8f8ba7c738c1cf33cb8ade6c921c40",
     "vendor/tabbable.js": "f07558c48ef48b148910fc5ee287b72f296558a2517980c34555181514f94902",
-    "tripfit-sheet.js": "89ba406bc8c6026dd398824c8337848a976485ff5b7164b113ed5a563ba553ae",
-    "compose.js": "d04bc4561b37efe412aac98a49e8516951e59d37074f75e6b456004a07a74be9",
+    "tripfit-sheet.js": "0d7cea84b4bea2c07604978300a311ee67272403a4578820d2d86a730bdd73e2",
+    "press-feedback.js": "6354c70585000135368a95da3209b5ddb7f1c673ea94844b15645504e78f8b63",
+    "compose.js": "0651dfb216875057705cd1233899d8527ffc7ed95a0302187754ccb894533cab",
     "demo-models.js": "79496480d6f3257deeb4ffe36c2bb3b8e6d6ef1401bb827f43a1023347a45cdd",
     "original-assets.js": "c3f6f4e8e1f92cc7664f1b65c1e17d8742b1b9feafacf846ac12edf3761dc40c",
     "vendor/qrcode.js": "6875f9cfe95ed40effae5eba913135eaca782cf2a687ccd27f2c79bff8d88a90",
     "assets.js": "f3633d36a4aae3f2af6f753edeab528159fab7f89d3b3e482ab80bfcb6c40383",
-    "demo-ui.js": "39472169fcb9ef9ecab9eaaca608e16a23367a270139f2f27b5c21ed0386e775",
-    "examples/event.js": "c8919ba76990a8a8af2e9723799b5c3301c387626b511dffe1dcc58d61f7e2fd"
+    "performance-probe.js": "b2cd2f12e501eb4adc9970094302723c851ea2a7efb6d0dacbc5cf6bc76af91e",
+    "demo-ui.js": "69fa8f0af3ff8f479c9e6c58bce6ba29ec32da738ba91f7b6977e0e31bd223fb",
+    "examples/event.js": "acf18437803f54f85bbfbf381b57b19563b95b078971ee725b559598c19cfad6"
   },
   "styles": {
     "theme.css": "ff268268995261c558b8b0224f762a0c2d9741d03f9cc6b5951429f0ebea21a5",
-    "tripfit-details.css": "eab230c2504cef7ec1853e30901aa46792590215b04dda7fab9daf696c443fd8",
+    "tripfit-details.css": "236dbc26298384c9af5c0497920989516eaa6151ae0183c6200965da25b03d6e",
     "presentation.css": "3f918a5933399c6f7eff7ca154a219bfb7cda669f3f45cb69e849bfa1ac8ed03",
     "gallery.css": "20368c019677e716b07c9c04271359866d2e6c1b72865b9b92878c1aaf9ab778",
-    "demo-apps.css": "0e1984687e47b5cde456fbf25cc6361b5bfb7a6608d5cd7ccefb9a49d32fa9da"
+    "demo-apps.css": "0e1984687e47b5cde456fbf25cc6361b5bfb7a6608d5cd7ccefb9a49d32fa9da",
+    "interaction.css": "a6e36e53e92caad2c30e2b038538e3f974b7871a7715feba7ba6751dcaea5418"
   },
-  "output_sha256": "53d4146ea61bb0c00c9834605411dbfa6b20ae8cd8d4606dcf1e566d6fef863f"
+  "output_sha256": "9c8557948a03a8f3737c4abb80fabf2a65984dfe753e6953f069df646c570808"
 }

@@ -4,7 +4,7 @@ Not a general JS parser. Fonts stay external CSS links; no font bytes copied.
 from pathlib import Path
 import hashlib,json,re
 ROOT=Path(__file__).resolve().parent
-STYLES=['theme.css','tripfit-details.css','presentation.css','gallery.css','demo-apps.css']
+STYLES=['theme.css','tripfit-details.css','presentation.css','gallery.css','demo-apps.css','interaction.css']
 IMPORT=re.compile(r'^import\s*\{([^}]+)\}\s*from\s*[\'\"]([^\'\"]+)[\'\"];?\s*$',re.M)
 def build(entry,template,output):
  modules=[];seen=set();visiting=set()

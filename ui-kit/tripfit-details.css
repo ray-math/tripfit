@@ -5,34 +5,7 @@
  * the upstream author's reuse permission is clarified.
  */
 .tk-page .tk-card { position: relative; }
-.tk-page .tk-card.tk-cut::after {
-  content: "";
-  position: absolute;
-  bottom: 0; left: 50%;
-  width: 104px; height: 14px; margin-left: -52px;
-  background: var(--tk-ink);
-  border-radius: 10px 10px 0 0;
-}
-.tk-page .tk-card.tk-cut.tk-right::after {
-  left: auto; right: 40px; margin: 0;
-}
-.tk-page .tk-card.tk-cut.tk-left::after {
-  left: 40px; margin: 0;
-}
-.tk-page .tk-card.tk-tab::before {
-  content: "";
-  position: absolute; z-index: 1;
-  top: -14px; left: 50%;
-  width: 96px; height: 18px; margin-left: -48px;
-  background: var(--tk-surface);
-  border-radius: 10px 10px 0 0;
-}
-.tk-page .tk-card.tk-tab.tk-right::before {
-  left: auto; right: 44px; margin: 0;
-}
-.tk-page .tk-card.tk-tab.tk-left::before {
-  left: 44px; margin: 0;
-}
+/* Connection geometry lives in interaction.css; no independently painted upper cutout. */
 .tk-floating-flag {
   position: relative; z-index: 3;
   display: inline-flex; align-items: center;
