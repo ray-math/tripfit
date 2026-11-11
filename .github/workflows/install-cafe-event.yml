@@ -1,0 +1,133 @@
+name: Install and verify cafe + event demos
+on:
+  push:
+    branches: [high]
+    paths:
+      - '.github/payloads/cafe-event-2026.xz.b64'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: install-demo-apps-high
+  cancel-in-progress: false
+jobs:
+  install:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Expand reviewed source snapshot into ui-kit only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64, json, lzma, hashlib
+          p=Path('.github/payloads/cafe-event-2026.xz.b64')
+          if not p.is_file(): raise RuntimeError('Missing application source payload')
+          data=lzma.decompress(base64.b64decode(p.read_text().strip()))
+          changes=json.loads(data)
+          expected={
+            'ui-kit/APP_DEMOS.md','ui-kit/README.md','ui-kit/build_preview.py',
+            'ui-kit/demo-apps.css','ui-kit/demo-models.js','ui-kit/demo-ui.js',
+            'ui-kit/examples/apps.html','ui-kit/examples/apps.js',
+            'ui-kit/examples/cafe.html','ui-kit/examples/cafe.js',
+            'ui-kit/examples/event.html','ui-kit/examples/event.js',
+            'ui-kit/examples/gallery.js','ui-kit/tests/apps.spec.py',
+            'ui-kit/tests/demo-models.test.mjs'
+          }
+          if set(changes)!=expected: raise RuntimeError('Unexpected files in payload')
+          for path,content in changes.items():
+            if not isinstance(content,str): raise TypeError(path)
+            dest=Path(path);dest.parent.mkdir(parents=True,exist_ok=True)
+            dest.write_text(content,encoding='utf-8')
+          print('Installed',len(changes),'reviewed source files, SHA256',hashlib.sha256(data).hexdigest())
+          p.unlink()
+          PY
+      - name: Restore audited vendor assets and confirm original app untouched
+        run: |
+          python ui-kit/scripts/vendor_sources.py
+          python ui-kit/scripts/extract_assets.py
+          git diff --exit-code -- web/
+          node --test ui-kit/tests/*.test.mjs
+      - name: Install browser tests
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium webkit
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Build and run every browser regression suite
+        env:
+          CI: 'true'
+        run: |
+          python ui-kit/build_preview.py
+          python ui-kit/tests/apps.spec.py --browser chromium
+          python ui-kit/tests/apps.spec.py --browser webkit
+          python ui-kit/tests/regenerated.spec.py --browser chromium
+          python ui-kit/tests/regenerated.spec.py --browser webkit
+          python ui-kit/tests/catalog.spec.py --browser chromium
+          python ui-kit/tests/catalog.spec.py --browser webkit
+      - name: Publish verified source code on high
+        id: source
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- ui-kit .github/payloads
+          git diff --cached --exit-code -- web/
+          git commit -m 'feat(ui-kit): ship interactive cafe and event examples [skip ci]'
+          git push origin HEAD:high
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Publish standalone examples to gh-pages
+        id: pages
+        env:
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
+        run: |
+          git fetch origin gh-pages
+          git worktree add -B demo-pages "$RUNNER_TEMP/kit-pages" origin/gh-pages
+          for file in apps.html cafe.html event.html gallery.html lesson.html; do
+            cp "ui-kit/dist/$file" "$RUNNER_TEMP/kit-pages/$file"
+          done
+          cp ui-kit/dist/gallery.html "$RUNNER_TEMP/kit-pages/index.html"
+          cp ui-kit/dist/lesson.html "$RUNNER_TEMP/kit-pages/regenerated.html"
+          for file in apps-manifest.json cafe-manifest.json event-manifest.json gallery-manifest.json lesson-manifest.json; do
+            cp "ui-kit/dist/$file" "$RUNNER_TEMP/kit-pages/$file"
+          done
+          cp ui-kit/dist/lesson-manifest.json "$RUNNER_TEMP/kit-pages/manifest.json"
+          python - <<'PY'
+          import json, os, pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'kit-pages'/'deployment.json'
+          p.write_text(json.dumps({
+            'source_branch':'high','source_commit':os.environ['SOURCE_SHA'],
+            'site_branch':'gh-pages','examples':['apps','cafe','event','gallery','lesson'],
+            'transactions_real':False,'ticket_valid':False
+          },indent=2))
+          PY
+          git -C "$RUNNER_TEMP/kit-pages" config user.name 'github-actions[bot]'
+          git -C "$RUNNER_TEMP/kit-pages" config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C "$RUNNER_TEMP/kit-pages" add -- index.html gallery.html lesson.html regenerated.html apps.html cafe.html event.html deployment.json *.json
+          git -C "$RUNNER_TEMP/kit-pages" commit -m 'deploy(pages): cafe ordering and event timetable demos [skip ci]'
+          git -C "$RUNNER_TEMP/kit-pages" push origin HEAD:gh-pages
+          echo "sha=$(git -C "$RUNNER_TEMP/kit-pages" rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo 'Cafe: https://ray-math.github.io/tripfit/cafe.html' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Event: https://ray-math.github.io/tripfit/event.html' >> "$GITHUB_STEP_SUMMARY"
+          echo 'App hub: https://ray-math.github.io/tripfit/apps.html' >> "$GITHUB_STEP_SUMMARY"
+      - name: Validate deployed file pointers and create artifact
+        if: always()
+        run: |
+          test -f ui-kit/dist/cafe.html
+          test -f ui-kit/dist/event.html
+          test -f ui-kit/verification/chromium-apps-report.json
+          test -f ui-kit/verification/webkit-apps-report.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cafe-event-demo-tests
+          path: |
+            ui-kit/verification/
+            ui-kit/dist/
+          retention-days: 7
