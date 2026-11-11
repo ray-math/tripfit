@@ -2,8 +2,7 @@ name: Verify live cafe and event GitHub Pages
 on:
   push:
     branches: [gh-pages]
-    paths:
-      - '.github/workflows/verify-cafe-event-pages.yml'
+    paths: ['.github/workflows/verify-cafe-event-pages.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -12,50 +11,31 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 6
     steps:
-      - name: Check live pages, manifest hashes, and source provenance
+      - uses: actions/checkout@v4
+      - name: Verify app routes against this deployment
         run: |
           python3 - <<'PY'
-          import urllib.request, hashlib, json, time
+          from pathlib import Path
+          import urllib.request,hashlib,json,time
           base='https://ray-math.github.io/tripfit/'
-          deadline=time.monotonic()+210
-          cases={
-              'index.html':'gallery', 'gallery.html':'gallery',
-              'lesson.html':'lesson', 'regenerated.html':'lesson',
-              'apps.html':'apps','cafe.html':'cafe','event.html':'event'
-          }
-          latest_error=''
+          source=json.loads(Path('deployment.json').read_text())['source_commit']
+          cases={'apps.html':'apps','cafe.html':'cafe','event.html':'event'}
+          expected={name:json.loads(Path(name+'-manifest.json').read_text())['output_sha256'] for name in cases.values()}
+          deadline=time.monotonic()+230;last=''
           while time.monotonic()<deadline:
               try:
                   def get(path):
-                      request=urllib.request.Request(base+path,headers={
-                          'User-Agent':'TripFit-Example-Verification',
-                          'Cache-Control':'no-cache'
-                      })
-                      with urllib.request.urlopen(request,timeout=20) as response:
-                          assert response.status==200,(path,response.status)
-                          return response.read(),response.headers.get('Content-Type','')
-                  deploy,_=get('deployment.json')
-                  provenance=json.loads(deploy)
-                  assert provenance['source_commit']=='d1b306deacc4f68c69f8e779dd2a2256b897a0c9'
-                  manifest={}
-                  for value in set(cases.values()):
-                      data,_=get(value+'-manifest.json')
-                      manifest[value]=json.loads(data)['output_sha256']
-                  for path,value in cases.items():
-                      data,kind=get(path)
-                      assert 'text/html' in kind,(path,kind)
-                      assert hashlib.sha256(data).hexdigest()==manifest[value],path+' output mismatch'
-                      if path=='cafe.html':assert b'__cafe' in data
-                      if path=='event.html':assert b'__event' in data
-                      if path=='apps.html':assert b'cafe.html' in data and b'event.html' in data
-                  print(json.dumps({
-                      'verified':True,'source_commit':provenance['source_commit'],
-                      'routes':[base+p for p in cases]
-                  },indent=2))
-                  break
-              except Exception as ex:
-                  latest_error=str(ex)
-                  print('Waiting for Pages deployment:',latest_error,flush=True)
-                  time.sleep(10)
-          else:raise RuntimeError('GitHub Pages could not be verified: '+latest_error)
+                      req=urllib.request.Request(base+path+'?v='+source[:12],headers={'Cache-Control':'no-cache','User-Agent':'TripFit-App-Verification/2.0'})
+                      with urllib.request.urlopen(req,timeout=15) as r:
+                          assert r.status==200
+                          return r.read(),r.headers.get('Content-Type','')
+                  payload,_=get('deployment.json');assert json.loads(payload)['source_commit']==source
+                  for path,name in cases.items():
+                      data,kind=get(path);assert 'text/html' in kind
+                      assert hashlib.sha256(data).hexdigest()==expected[name],path
+                      assert b'installPressFeedback' in data
+                  print(json.dumps({'verified':True,'source_commit':source,'routes':[base+p for p in cases]},indent=2));break
+              except Exception as exc:
+                  last=str(exc);print('Waiting for Pages:',last,flush=True);time.sleep(8)
+          else:raise RuntimeError(last)
           PY

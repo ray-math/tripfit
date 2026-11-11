@@ -1,11 +1,11 @@
-# TripFit UI kit · GitHub Pages
+# Published TripFit UI kit
 
-Published static preview of the reusable UI kit on `high`.
+This branch contains only verified static site outputs. Edit the reusable kit on `high`, not these generated HTML files. Original `main` and `web/` are unchanged.
 
 - Gallery: https://ray-math.github.io/tripfit/
-- Lesson example: https://ray-math.github.io/tripfit/lesson.html
+- Examples: https://ray-math.github.io/tripfit/apps.html
+- Cafe: https://ray-math.github.io/tripfit/cafe.html
+- Event timetable: https://ray-math.github.io/tripfit/event.html
+- Lesson: https://ray-math.github.io/tripfit/lesson.html
 
-Source: `ray-math/tripfit`, branch `high`, commit `101bfe03b5f9d1900a85b392386b0b0ccea6509e`.
-The two standalone HTML outputs are the verified build artifacts, with all included third-party notices preserved. `regenerated.html` is an alias used by the gallery's existing lesson link.
-
-This branch only contains publishable static files. Do not merge it into `main` or `high`. Original source and documentation remain on `high`.
+`deployment.json` identifies the verified source commit. Each `*-manifest.json` records its exact build inputs and output SHA-256. The live-site workflow checks HTML bytes, all route aliases, shared modules and provenance after deployment.

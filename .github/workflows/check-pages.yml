@@ -12,45 +12,46 @@ concurrency:
 jobs:
   verify-live-site:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 6
     steps:
       - uses: actions/checkout@v4
-      - name: Confirm live HTML and aliases match this verified build
+      - name: Verify all live routes against the reviewed source build
         run: |
           python3 - <<'PY'
-          import hashlib, json, os, time, urllib.request
+          import hashlib,json,os,time,urllib.request
           from pathlib import Path
-          base = 'https://ray-math.github.io/tripfit/'
-          expected_source = json.loads(Path('deployment.json').read_text())['source_commit']
-          gallery_hash = json.loads(Path('gallery-manifest.json').read_text())['output_sha256']
-          lesson_hash = json.loads(Path('lesson-manifest.json').read_text())['output_sha256']
-          paths = ['', 'gallery.html', 'lesson.html', 'regenerated.html', 'deployment.json']
-          deadline = time.monotonic() + 200
-          last_error = ''
-          while time.monotonic() < deadline:
+          base='https://ray-math.github.io/tripfit/'
+          source=json.loads(Path('deployment.json').read_text())['source_commit']
+          routes={'':'gallery','index.html':'gallery','gallery.html':'gallery','lesson.html':'lesson','regenerated.html':'lesson','apps.html':'apps','cafe.html':'cafe','event.html':'event'}
+          manifests={name:json.loads(Path(name+'-manifest.json').read_text()) for name in set(routes.values())}
+          for manifest in manifests.values():
+              assert 'connections.js' in manifest['modules'] and 'press-feedback.js' in manifest['modules']
+          deadline=time.monotonic()+240;last=''
+          while time.monotonic()<deadline:
               try:
-                  results = {}
-                  for path in paths:
-                      request = urllib.request.Request(base + path + '?v=' + expected_source[:12], headers={'User-Agent':'TripFit-Pages-Verification/1.1', 'Cache-Control':'no-cache'})
-                      with urllib.request.urlopen(request, timeout=15) as response:
-                          assert response.status == 200, (path, response.status)
-                          if path != 'deployment.json':
-                              assert 'text/html' in response.headers.get('Content-Type',''), path
-                          results[path] = response.read()
-                  for path, expected_hash in [('',gallery_hash), ('gallery.html',gallery_hash), ('lesson.html',lesson_hash), ('regenerated.html',lesson_hash)]:
-                      assert hashlib.sha256(results[path]).hexdigest() == expected_hash, 'Published bytes mismatch: ' + path
-                  assert json.loads(results['deployment.json'])['source_commit'] == expected_source
-                  assert b'__gallery' in results[''] and b'startLesson' in results['lesson.html']
-                  assert b'--tk-island-width:88px' in results['lesson.html']
-                  assert b'pop: makeSpring(320, 24' in results['lesson.html']
-                  print(json.dumps({'verified':True,'source_commit':expected_source,'routes':[base+p for p in paths]}, indent=2))
-                  with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
-                      summary.write('## Live GitHub Pages verified\n\nGallery: '+base+'\n\nLesson: '+base+'lesson.html\n\nCompact island and gentler spring build verified by exact SHA-256.\n')
+                  def get(path):
+                      req=urllib.request.Request(base+path+'?v='+source[:12],headers={'User-Agent':'TripFit-Pages-Verification/2.0','Cache-Control':'no-cache'})
+                      with urllib.request.urlopen(req,timeout=15) as response:
+                          assert response.status==200,(path,response.status)
+                          return response.read(),response.headers.get('Content-Type','')
+                  provenance,_=get('deployment.json')
+                  assert json.loads(provenance)['source_commit']==source,'Waiting for new provenance'
+                  for path,name in routes.items():
+                      data,kind=get(path)
+                      assert 'text/html' in kind,(path,kind)
+                      assert hashlib.sha256(data).hexdigest()==manifests[name]['output_sha256'],path+' output mismatch'
+                      assert b'installPressFeedback' in data and b'declareConnection' in data
+                      if name=='cafe': assert b'__cafe' in data and b'motion-diagnostics' in data
+                      if name=='event': assert b'__event' in data and b'motion-diagnostics' in data
+                  for name,expected in manifests.items():
+                      payload,_=get(name+'-manifest.json')
+                      assert json.loads(payload)['output_sha256']==expected['output_sha256']
+                  result={'verified':True,'source_commit':source,'routes':[base+p for p in routes],'checks':'HTTP 200, HTML MIME, exact output SHA-256, shared connection/press modules, diagnostics'}
+                  print(json.dumps(result,indent=2))
+                  with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
+                      f.write('## Live UI kit verified\n\n'+json.dumps(result,indent=2)+'\n')
                   break
               except Exception as exc:
-                  last_error = str(exc)
-                  print('Waiting for Pages propagation:',last_error)
-                  time.sleep(8)
-          else:
-              raise RuntimeError('Live GitHub Pages verification failed: '+last_error)
+                  last=str(exc);print('Waiting for Pages:',last,flush=True);time.sleep(8)
+          else:raise RuntimeError('Live verification failed: '+last)
           PY

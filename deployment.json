@@ -1,14 +1,8 @@
 {
   "source_branch": "high",
-  "source_commit": "d1b306deacc4f68c69f8e779dd2a2256b897a0c9",
-  "site_branch": "gh-pages",
-  "examples": [
-    "apps",
-    "cafe",
-    "event",
-    "gallery",
-    "lesson"
-  ],
-  "transactions_real": false,
-  "ticket_valid": false
+  "source_commit": "ecaa6e28a7daf0715add3193920f2f3142211097",
+  "verification_run": "https://github.com/ray-math/tripfit/actions/runs/43122137889",
+  "entry": "gallery.html",
+  "routes": ["index.html", "gallery.html", "lesson.html", "regenerated.html", "apps.html", "cafe.html", "event.html"],
+  "changes": ["lower-owned card connections", "restrained press feedback", "lighter page transitions", "on-demand callback cadence diagnostics"]
 }
