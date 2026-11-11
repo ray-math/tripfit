@@ -11,7 +11,7 @@
 | ID | 표현 | 원본 근거 | 처리 |
 |---|---|---|---|
 | rise | 카드 등장·분담 블록 | index.html:532,1139,1812 | API 이식 |
-| springs | snap/pop/soft | index.html:516–532 | 원본 매개변수 유지 |
+| springs | snap/pop/soft | index.html:516–532 | snap·soft 유지, pop 감쇠 15→24로 조정 |
 | typing | 입력 중 점·대화 등장 | index.html:164–169,1121 | API·예시 조합 |
 | spinner | 계산 중 회전 | index.html:70–71 | API 이식 |
 | island | 펼쳐지는 상태 알림 | index.html:626–645 | 아이콘·부제·상태 API |

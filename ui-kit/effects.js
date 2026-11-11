@@ -4,7 +4,7 @@ import { springs } from './tripfit-motion.js';
 import { rafSchd } from './vendor/raf-schd.js';
 const ease='cubic-bezier(.2,.8,.2,1)',out='cubic-bezier(.5,0,.75,0)';
 export const PRESETS={
- rise:{frames:[{opacity:0,transform:'translateY(36px) scale(.96)'},{opacity:1,transform:'none'}],spring:'pop'},
+ rise:{frames:[{opacity:0,transform:'translateY(24px) scale(.98)'},{opacity:1,transform:'none'}],spring:'pop'},
  chat:{frames:[{opacity:0,transform:'translateY(40px) scale(.94)'},{opacity:1,transform:'none'}],spring:'pop'},
  enterRight:{frames:[{opacity:0,transform:'translateX(50px) scale(.92)'},{opacity:1,transform:'none'}],spring:'pop'},
  exitLeft:{frames:[{opacity:1,transform:'none'},{opacity:1,transform:'rotate(-2deg) scale(.98)',offset:.3},{opacity:0,transform:'translateX(-80px) rotate(-8deg) scale(.8)'}],duration:620,easing:out},

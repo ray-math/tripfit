@@ -10,7 +10,7 @@ const canLinear = typeof CSS !== "undefined" &&
   typeof CSS.supports === "function" &&
   CSS.supports("transition-timing-function", "linear(0, 1)");
 
-export function makeSpring(k, c) {
+export function makeSpring(k, c, fallback = fallbackEase) {
   if(!Number.isFinite(k)||!Number.isFinite(c)||k<=0||c<=0) throw new RangeError('Spring stiffness and damping must be positive finite numbers');
   const w0 = Math.sqrt(k);
   const z = c / (2 * Math.sqrt(k));
@@ -25,13 +25,14 @@ export function makeSpring(k, c) {
   for (let i = 0; i <= 48; i++) pts.push(+x(T * i / 48).toFixed(4));
   pts[48] = 1;
   return {
-    easing: canLinear ? `linear(${pts.join(",")})` : fallbackEase,
+    easing: canLinear ? `linear(${pts.join(",")})` : fallback,
     duration: Math.round(T * 1000)
   };
 }
 export const springs = {
   snap: makeSpring(420, 34),
-  pop: makeSpring(320, 15),
+  // Keep a small rebound; the original damping=15 overshot by ~23%.
+  pop: makeSpring(320, 24, "cubic-bezier(.22,1.08,.36,1)"),
   soft: makeSpring(170, 20)
 };
 
@@ -40,7 +41,7 @@ function reduced() {
     (matchMedia("(prefers-reduced-motion: reduce)").matches || (typeof document !== "undefined" && document.documentElement.dataset.motion === "reduce"));
 }
 export function springIn(element, {
-  from = "translateY(36px) scale(.96)", delay = 0, kind = "pop"
+  from = "translateY(24px) scale(.98)", delay = 0, kind = "pop"
 } = {}) {
   if (reduced() || !element?.animate) return;
   const spring = springs[kind] ?? springs.pop;

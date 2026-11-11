@@ -41,6 +41,7 @@ with sync_playwright() as p:
     palette=page.locator('#balance-card').evaluate('(e)=>({bg:getComputedStyle(e).backgroundColor,r:getComputedStyle(e).borderRadius,device:getComputedStyle(document.querySelector(".tk-device")).width})')
     check('original lime color and 30px mobile corners',palette['bg']=='rgb(214, 242, 59)' and palette['r']=='30px')
     check('mobile uses browser width without phone frame',palette['device']=='393px')
+    check('mobile does not add a second hardware island',page.locator('.tk-screen').evaluate('(e)=>getComputedStyle(e,"::after").display')=='none')
     page.screenshot(path=str(OUT/f'{args.browser}-mobile-home.png'))
     page.locator('#balance').fill('2');page.wait_for_timeout(1200)
     check('rolling numbers update from content data',page.locator('#concept-value').get_attribute('data-roll-value')=='59' and page.locator('#practice-value').get_attribute('data-roll-value')=='89')
@@ -79,7 +80,21 @@ with sync_playwright() as p:
     if not os.environ.get('CI'): desktop.route('https://**/*',lambda r:r.abort())
     load(desktop);desktop.wait_for_timeout(1200)
     check('desktop has original 417px phone frame',desktop.locator('.tk-device').evaluate('(e)=>getComputedStyle(e).width')=='417px')
+    notch=desktop.locator('.tk-screen').evaluate('(e)=>{const s=getComputedStyle(e,"::after");return {w:s.width,h:s.height,r:s.borderRadius}}')
+    check('compact island is 88x32 CSS pixels',notch=={'w':'88px','h':'32px','r':'16px'})
     desktop.screenshot(path=str(OUT/f'{args.browser}-desktop-home.png'))
+    desktop.bring_to_front()
+    desktop.evaluate("window.__kitDemo.feedback.show({title:'상세 문구는 충분히 읽을 수 있게 유지해요',hold:0})")
+    try:
+        desktop.wait_for_function("document.querySelector('.tk-island').offsetWidth >= 360", timeout=6000)
+    except Exception:
+        print('ISLAND DIAGNOSTIC', desktop.locator('.tk-island').evaluate("e=>({width:e.offsetWidth,height:e.offsetHeight,classes:e.className,css:getComputedStyle(e).cssText,transition:getComputedStyle(e).transition,easing:getComputedStyle(e).transitionTimingFunction,visibility:document.visibilityState,screen:document.querySelector('.tk-screen').offsetWidth})"))
+        desktop.screenshot(path=str(OUT/f'{args.browser}-island-failure.png'))
+        raise
+    check('expanded feedback island keeps its readable size',desktop.locator('.tk-island').evaluate('(e)=>e.offsetWidth')>=360)
+    desktop.evaluate('window.__kitDemo.feedback.hide()')
+    desktop.wait_for_function("document.querySelector('.tk-island').offsetWidth === 88 && document.querySelector('.tk-island').offsetHeight === 32", timeout=6000)
+    check('feedback island collapses to matching compact geometry',desktop.locator('.tk-island').evaluate('(e)=>({w:e.offsetWidth,h:e.offsetHeight})')=={'w':88,'h':32})
     if not args.url:
         if offline:
             desktop.evaluate("""()=>{const {startLesson}=window.__kitModules['examples/lesson-demo.js'];const {lesson}=window.__kitModules['examples/lesson-data.js'];window.__kitDemo.destroy();startLesson(document.querySelector('#app'),{...lesson,title:'내용만 바꾼 두 번째 예시',topic:'새 수업'});} """)

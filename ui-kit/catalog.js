@@ -1,7 +1,7 @@
 /** Reusable visual families, not all repository functions. Explicit source provenance. */
 export const CATALOG=[
  ['rise','아래에서 올라오는 카드','motion','rise · chat · split','web/index.html:532,1139,1812','pop 스프링과 순차 등장'],
- ['springs','세 가지 스프링','motion','snap / pop / soft','web/index.html:516–532','원본 강성·감쇠 값 비교'],
+ ['springs','세 가지 스프링','motion','snap / pop / soft','web/index.html:516–532','pop 반동은 줄이고 snap·soft는 유지'],
  ['typing','대화 입력 표시','motion','typing + chat','web/index.html:164–169,1121','세 점에서 대화 카드로'],
  ['spinner','계산 중 스피너','motion','spin','web/index.html:70–71','0.7초 회전, 줄이기 설정 대응'],
  ['island','상태 알림 아일랜드','component','createFeedbackIsland','web/index.html:626–645','아이콘·보조문구·대기·완료'],

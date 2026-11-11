@@ -1,10 +1,10 @@
 {
   "entry": "examples/lesson-demo.js",
   "modules": {
-    "tripfit-motion.js": "5a9d1024228ba1ef172b188fe096f2281d2e4a79ed2c121a5ed36041d7f117cc",
-    "flow.js": "7f78c1b8a5c8aea31f2b7227b3f8c363c55ccee5ed7f28bc835308954de81c0f",
+    "tripfit-motion.js": "8af7683288cc7c1222e947ae0d8771aa8f5e6d419ce960e26ae99409275c85b9",
+    "flow.js": "be1849c9912546135f17eea6b0657035b55b49f5138ee7592299a57ad9f9b41c",
     "vendor/raf-schd.js": "a058df1ff3e2f91c432bfea24dd867642d2135b53324baa2b63e11cee78d9a87",
-    "effects.js": "6416a2f3efff4b5774f4a06c3c29437d21e7cc76f508cf655c912b5344282d1b",
+    "effects.js": "0f9f6cb8fbf99d7d98d3f081de6c036ea98e683d8ee093959cbcccb167ed0f1f",
     "vendor/tabbable.js": "f07558c48ef48b148910fc5ee287b72f296558a2517980c34555181514f94902",
     "tripfit-sheet.js": "89ba406bc8c6026dd398824c8337848a976485ff5b7164b113ed5a563ba553ae",
     "compose.js": "d04bc4561b37efe412aac98a49e8516951e59d37074f75e6b456004a07a74be9",
@@ -13,9 +13,9 @@
   },
   "styles": {
     "theme.css": "ff268268995261c558b8b0224f762a0c2d9741d03f9cc6b5951429f0ebea21a5",
-    "tripfit-details.css": "5af7b606d6ed66f48122a30611f1950d32d5fa1c16e9b908b256d4bfff8f41b8",
-    "presentation.css": "b287c18e44eaf9187fe31573942343e8adf70dc9d0ca2bf13804166c6e691913",
+    "tripfit-details.css": "eab230c2504cef7ec1853e30901aa46792590215b04dda7fab9daf696c443fd8",
+    "presentation.css": "3f918a5933399c6f7eff7ca154a219bfb7cda669f3f45cb69e849bfa1ac8ed03",
     "gallery.css": "20368c019677e716b07c9c04271359866d2e6c1b72865b9b92878c1aaf9ab778"
   },
-  "output_sha256": "059141e2cb221572287aee4c87aee8099a51d8c3c2b447281c32397ef751bbde"
+  "output_sha256": "05745f9f1b4e01cabdc452c82129d7cdcccd2fe7d6ba7825a5b400cef7be3790"
 }

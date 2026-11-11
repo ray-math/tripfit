@@ -57,7 +57,7 @@
 .tk-title-char { display: inline-block; }
 .tk-odometer { display: inline-flex; line-height: 1; white-space: nowrap; }
 .tk-od-column { display: inline-block; overflow: hidden; height: 1em; width: .65em; }
-.tk-od-stack { display: flex; flex-direction: column; transition: transform 700ms cubic-bezier(.34,1.4,.64,1); }
+.tk-od-stack { display: flex; flex-direction: column; transition: transform var(--tk-spring-ms, 600ms) var(--tk-spring, cubic-bezier(.22,1.08,.36,1)); }
 .tk-od-stack > span { height: 1em; min-height: 1em; line-height: 1em; text-align: center; }
 .tk-od-static { display: inline-block; }
 .tk-island {
@@ -65,15 +65,15 @@
   top: 11px; left: 50%;
   transform: translateX(-50%);
   background: #050607; color: #fff;
-  border-radius: 20px;
-  width: 126px; height: 37px;
+  border-radius: var(--tk-island-radius, 16px);
+  width: var(--tk-island-width, 88px); height: var(--tk-island-height, 32px);
   padding: 0 15px;
   display: flex; align-items: center;
   justify-content: center;
   opacity: 0; visibility: hidden;
   overflow: hidden;
-  transition: width 480ms cubic-bezier(.34,1.4,.64,1),
-              height 480ms cubic-bezier(.34,1.4,.64,1),
+  transition: width 480ms var(--tk-spring, cubic-bezier(.22,1.08,.36,1)),
+              height 480ms var(--tk-spring, cubic-bezier(.22,1.08,.36,1)),
               opacity 200ms, border-radius 480ms;
   pointer-events: none;
 }

@@ -201,7 +201,7 @@ export class CardFlow {
     if (!this.reducedMotion) {
       enter(page, backward ? "translateX(-15%)" : "translateX(15%)");
       Array.from(page.querySelectorAll(".tk-card")).forEach((card, idx) =>
-        card.getBoundingClientRect().top < this.viewport.getBoundingClientRect().bottom && springIn(card, { from: "translateY(36px) scale(.96)", delay: Math.min(idx, 5) * 90 }));
+        card.getBoundingClientRect().top < this.viewport.getBoundingClientRect().bottom && springIn(card, { from: "translateY(24px) scale(.98)", delay: Math.min(idx, 5) * 90 }));
     }
     // Decorative motion works independently of the domain-specific content.
     for (const title of page.querySelectorAll(".tk-title"))

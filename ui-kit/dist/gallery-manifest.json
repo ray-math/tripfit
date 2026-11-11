@@ -1,24 +1,24 @@
 {
   "entry": "examples/gallery.js",
   "modules": {
-    "tripfit-motion.js": "5a9d1024228ba1ef172b188fe096f2281d2e4a79ed2c121a5ed36041d7f117cc",
-    "flow.js": "7f78c1b8a5c8aea31f2b7227b3f8c363c55ccee5ed7f28bc835308954de81c0f",
+    "tripfit-motion.js": "8af7683288cc7c1222e947ae0d8771aa8f5e6d419ce960e26ae99409275c85b9",
+    "flow.js": "be1849c9912546135f17eea6b0657035b55b49f5138ee7592299a57ad9f9b41c",
     "vendor/raf-schd.js": "a058df1ff3e2f91c432bfea24dd867642d2135b53324baa2b63e11cee78d9a87",
-    "effects.js": "6416a2f3efff4b5774f4a06c3c29437d21e7cc76f508cf655c912b5344282d1b",
+    "effects.js": "0f9f6cb8fbf99d7d98d3f081de6c036ea98e683d8ee093959cbcccb167ed0f1f",
     "vendor/tabbable.js": "f07558c48ef48b148910fc5ee287b72f296558a2517980c34555181514f94902",
     "tripfit-sheet.js": "89ba406bc8c6026dd398824c8337848a976485ff5b7164b113ed5a563ba553ae",
     "compose.js": "d04bc4561b37efe412aac98a49e8516951e59d37074f75e6b456004a07a74be9",
     "original-assets.js": "c3f6f4e8e1f92cc7664f1b65c1e17d8742b1b9feafacf846ac12edf3761dc40c",
     "vendor/qrcode.js": "6875f9cfe95ed40effae5eba913135eaca782cf2a687ccd27f2c79bff8d88a90",
     "assets.js": "f3633d36a4aae3f2af6f753edeab528159fab7f89d3b3e482ab80bfcb6c40383",
-    "catalog.js": "fe6f1f6b448ceba1f6ed9992855fe7200419d5be05ee1c2c08f271d094b95000",
+    "catalog.js": "7ce3941d5800974008090e9327a87dbca44bd3c51ac9a4eeed9b4e7fc1da0612",
     "examples/gallery.js": "813a155021badebdcbcc3efaa3d38e5956bfd06dd70aef43df522e835867ab40"
   },
   "styles": {
     "theme.css": "ff268268995261c558b8b0224f762a0c2d9741d03f9cc6b5951429f0ebea21a5",
-    "tripfit-details.css": "5af7b606d6ed66f48122a30611f1950d32d5fa1c16e9b908b256d4bfff8f41b8",
-    "presentation.css": "b287c18e44eaf9187fe31573942343e8adf70dc9d0ca2bf13804166c6e691913",
+    "tripfit-details.css": "eab230c2504cef7ec1853e30901aa46792590215b04dda7fab9daf696c443fd8",
+    "presentation.css": "3f918a5933399c6f7eff7ca154a219bfb7cda669f3f45cb69e849bfa1ac8ed03",
     "gallery.css": "20368c019677e716b07c9c04271359866d2e6c1b72865b9b92878c1aaf9ab778"
   },
-  "output_sha256": "1dd182cfd0b17233cccd1623bdfdd61532dbf017ebd8322aad2ee8fcd3d445e1"
+  "output_sha256": "b8e1d1f5f3c38377f00bef05a025bb255bf6a446e5594b195eaf1c8b5a833e09"
 }

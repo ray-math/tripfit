@@ -1,6 +1,7 @@
 /* Fidelity layer for the extracted TripFit primitives, not a new visual theme.
-   Geometry/color/motion follow the source project; data and layouts stay free. */
-:root{--tk-grotesk:"Inter Tight","Helvetica Neue",Arial,var(--tk-font);--tk-violet:#7b5cff;--tk-red:#ff5b4a}
+   Geometry/colors follow the source project; motion and the compact island are tuned.
+   The island is an iPhone 18 Pro-inspired visual approximation, not a device specification. */
+:root{--tk-grotesk:"Inter Tight","Helvetica Neue",Arial,var(--tk-font);--tk-violet:#7b5cff;--tk-red:#ff5b4a;--tk-island-width:88px;--tk-island-height:32px;--tk-island-radius:16px}
 html,body{margin:0;height:100%;background:var(--tk-ink)}
 .tk-stage{height:100dvh;min-height:0;padding:0;overflow:hidden;-webkit-font-smoothing:antialiased;word-break:keep-all}
 .tk-rig{width:auto;max-width:none;gap:44px;transform-origin:center;flex:none}
@@ -9,7 +10,7 @@ html,body{margin:0;height:100%;background:var(--tk-ink)}
 .tk-aside-subtitle{font-weight:400;line-height:1.6}
 .tk-device{width:417px;height:876px;padding:12px;border-radius:68px;background:#0a0d10;box-shadow:0 0 0 1.5px #4d5560,0 0 0 3.5px #9aa2ac,0 0 0 5px #39404a,0 50px 90px -40px #0e2a3a80}
 .tk-screen{width:393px;height:852px;border-radius:56px;isolation:isolate;display:block}
-.tk-screen:after{content:'';position:absolute;top:11px;left:50%;transform:translateX(-50%);width:126px;height:37px;border-radius:19px;background:#000;pointer-events:none;z-index:60}
+.tk-screen:after{content:'';position:absolute;top:11px;left:50%;transform:translateX(-50%);width:var(--tk-island-width);height:var(--tk-island-height);border-radius:var(--tk-island-radius);background:#000;pointer-events:none;z-index:60}
 .tk-status{position:absolute;inset:0 0 auto;height:54px;padding:6px 34px 0 35px;color:var(--tk-ink);z-index:40;pointer-events:none;font-size:12px;letter-spacing:0;font-weight:600}
 .tk-viewport{position:absolute;inset:0}
 .tk-page{display:flex;gap:4px;padding:4px 4px 150px;overscroll-behavior:contain}
