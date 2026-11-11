@@ -1,15 +1,15 @@
 /* Reusable independent card UI — no dependency on TripFit's application CSS */
 :root {
-  --tk-ink: #102b39;
-  --tk-deep: #193d4b;
-  --tk-paper: #f4f3eb;
-  --tk-lemon: #d9f33c;
-  --tk-rose: #ffcee1;
-  --tk-blue: #99cef2;
-  --tk-mint: #b8e9d5;
-  --tk-lilac: #d2c4fa;
-  --tk-peach: #f6d8c6;
-  --tk-backdrop: #e8f0e9;
+  --tk-ink: #0e2a3a;
+  --tk-deep: #173a4c;
+  --tk-paper: #f3f1ea;
+  --tk-lemon: #d6f23b;
+  --tk-rose: #ffcce5;
+  --tk-blue: #8ec5ee;
+  --tk-mint: #bdefdb;
+  --tk-lilac: #cbbdff;
+  --tk-peach: #f8d5bc;
+  --tk-backdrop: #e7f1ec;
   --tk-font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", system-ui, sans-serif;
 }
 .tk-stage *, .tk-stage *::before, .tk-stage *::after { box-sizing: border-box; }
@@ -73,7 +73,7 @@
   position: absolute; inset: 0;
   overflow-y: auto; overflow-x: hidden;
   display: flex; flex-direction: column;
-  gap: 5px; padding: 5px 5px 18px;
+  gap: 4px; padding: 5px 5px 18px;
   scrollbar-width: none;
 }
 .tk-page::-webkit-scrollbar { display: none; }
