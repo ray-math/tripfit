@@ -2,51 +2,55 @@ name: Verify live GitHub Pages
 on:
   push:
     branches: [gh-pages]
-    paths: ['.github/workflows/check-pages.yml']
+    paths: ['*.html', '*-manifest.json', 'deployment.json', '.github/workflows/check-pages.yml']
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: verify-live-kit-pages
+  cancel-in-progress: true
 jobs:
   verify-live-site:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - name: Confirm live HTML and route aliases match verified build outputs
+      - uses: actions/checkout@v4
+      - name: Confirm live HTML and aliases match this verified build
         run: |
           python3 - <<'PY'
           import hashlib, json, os, time, urllib.request
+          from pathlib import Path
           base = 'https://ray-math.github.io/tripfit/'
-          expected_source = '101bfe03b5f9d1900a85b392386b0b0ccea6509e'
-          paths = ['', 'gallery.html', 'lesson.html', 'regenerated.html', 'gallery-manifest.json', 'lesson-manifest.json', 'deployment.json']
-          deadline = time.monotonic() + 180
+          expected_source = json.loads(Path('deployment.json').read_text())['source_commit']
+          gallery_hash = json.loads(Path('gallery-manifest.json').read_text())['output_sha256']
+          lesson_hash = json.loads(Path('lesson-manifest.json').read_text())['output_sha256']
+          paths = ['', 'gallery.html', 'lesson.html', 'regenerated.html', 'deployment.json']
+          deadline = time.monotonic() + 200
           last_error = ''
           while time.monotonic() < deadline:
               try:
                   results = {}
                   for path in paths:
-                      request = urllib.request.Request(base + path, headers={'User-Agent':'TripFit-Pages-Verification/1.0', 'Cache-Control':'no-cache'})
+                      request = urllib.request.Request(base + path + '?v=' + expected_source[:12], headers={'User-Agent':'TripFit-Pages-Verification/1.1', 'Cache-Control':'no-cache'})
                       with urllib.request.urlopen(request, timeout=15) as response:
                           assert response.status == 200, (path, response.status)
-                          data = response.read()
-                          if path in ['', 'gallery.html', 'lesson.html', 'regenerated.html']:
+                          if path != 'deployment.json':
                               assert 'text/html' in response.headers.get('Content-Type',''), path
-                          results[path] = data
-                  gallery = json.loads(results['gallery-manifest.json'])['output_sha256']
-                  lesson = json.loads(results['lesson-manifest.json'])['output_sha256']
-                  for path, expected_hash in [('',gallery), ('gallery.html',gallery), ('lesson.html',lesson), ('regenerated.html',lesson)]:
+                          results[path] = response.read()
+                  for path, expected_hash in [('',gallery_hash), ('gallery.html',gallery_hash), ('lesson.html',lesson_hash), ('regenerated.html',lesson_hash)]:
                       assert hashlib.sha256(results[path]).hexdigest() == expected_hash, 'Published bytes mismatch: ' + path
                   assert json.loads(results['deployment.json'])['source_commit'] == expected_source
                   assert b'__gallery' in results[''] and b'startLesson' in results['lesson.html']
+                  assert b'--tk-island-width:88px' in results['lesson.html']
+                  assert b'pop: makeSpring(320, 24' in results['lesson.html']
                   print(json.dumps({'verified':True,'source_commit':expected_source,'routes':[base+p for p in paths]}, indent=2))
                   with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
-                      summary.write('## Live GitHub Pages verified\n\n')
-                      summary.write('Gallery: ' + base + '\n\nLesson: ' + base + 'lesson.html\n\n')
-                      summary.write('HTTP 200 and exact build SHA-256 matches for gallery, lesson and aliases.\n')
+                      summary.write('## Live GitHub Pages verified\n\nGallery: '+base+'\n\nLesson: '+base+'lesson.html\n\nCompact island and gentler spring build verified by exact SHA-256.\n')
                   break
               except Exception as exc:
                   last_error = str(exc)
-                  print('Waiting for Pages propagation:', last_error)
+                  print('Waiting for Pages propagation:',last_error)
                   time.sleep(8)
           else:
-              raise RuntimeError('Live GitHub Pages verification failed: ' + last_error)
+              raise RuntimeError('Live GitHub Pages verification failed: '+last_error)
           PY

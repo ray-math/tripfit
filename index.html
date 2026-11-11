@@ -224,7 +224,7 @@
 .tk-title-char { display: inline-block; }
 .tk-odometer { display: inline-flex; line-height: 1; white-space: nowrap; }
 .tk-od-column { display: inline-block; overflow: hidden; height: 1em; width: .65em; }
-.tk-od-stack { display: flex; flex-direction: column; transition: transform 700ms cubic-bezier(.34,1.4,.64,1); }
+.tk-od-stack { display: flex; flex-direction: column; transition: transform var(--tk-spring-ms, 600ms) var(--tk-spring, cubic-bezier(.22,1.08,.36,1)); }
 .tk-od-stack > span { height: 1em; min-height: 1em; line-height: 1em; text-align: center; }
 .tk-od-static { display: inline-block; }
 .tk-island {
@@ -232,15 +232,15 @@
   top: 11px; left: 50%;
   transform: translateX(-50%);
   background: #050607; color: #fff;
-  border-radius: 20px;
-  width: 126px; height: 37px;
+  border-radius: var(--tk-island-radius, 16px);
+  width: var(--tk-island-width, 88px); height: var(--tk-island-height, 32px);
   padding: 0 15px;
   display: flex; align-items: center;
   justify-content: center;
   opacity: 0; visibility: hidden;
   overflow: hidden;
-  transition: width 480ms cubic-bezier(.34,1.4,.64,1),
-              height 480ms cubic-bezier(.34,1.4,.64,1),
+  transition: width 480ms var(--tk-spring, cubic-bezier(.22,1.08,.36,1)),
+              height 480ms var(--tk-spring, cubic-bezier(.22,1.08,.36,1)),
               opacity 200ms, border-radius 480ms;
   pointer-events: none;
 }
@@ -265,8 +265,9 @@
 </style>
 <style data-kit-source="presentation.css">
 /* Fidelity layer for the extracted TripFit primitives, not a new visual theme.
-   Geometry/color/motion follow the source project; data and layouts stay free. */
-:root{--tk-grotesk:"Inter Tight","Helvetica Neue",Arial,var(--tk-font);--tk-violet:#7b5cff;--tk-red:#ff5b4a}
+   Geometry/colors follow the source project; motion and the compact island are tuned.
+   The island is an iPhone 18 Pro-inspired visual approximation, not a device specification. */
+:root{--tk-grotesk:"Inter Tight","Helvetica Neue",Arial,var(--tk-font);--tk-violet:#7b5cff;--tk-red:#ff5b4a;--tk-island-width:88px;--tk-island-height:32px;--tk-island-radius:16px}
 html,body{margin:0;height:100%;background:var(--tk-ink)}
 .tk-stage{height:100dvh;min-height:0;padding:0;overflow:hidden;-webkit-font-smoothing:antialiased;word-break:keep-all}
 .tk-rig{width:auto;max-width:none;gap:44px;transform-origin:center;flex:none}
@@ -275,7 +276,7 @@ html,body{margin:0;height:100%;background:var(--tk-ink)}
 .tk-aside-subtitle{font-weight:400;line-height:1.6}
 .tk-device{width:417px;height:876px;padding:12px;border-radius:68px;background:#0a0d10;box-shadow:0 0 0 1.5px #4d5560,0 0 0 3.5px #9aa2ac,0 0 0 5px #39404a,0 50px 90px -40px #0e2a3a80}
 .tk-screen{width:393px;height:852px;border-radius:56px;isolation:isolate;display:block}
-.tk-screen:after{content:'';position:absolute;top:11px;left:50%;transform:translateX(-50%);width:126px;height:37px;border-radius:19px;background:#000;pointer-events:none;z-index:60}
+.tk-screen:after{content:'';position:absolute;top:11px;left:50%;transform:translateX(-50%);width:var(--tk-island-width);height:var(--tk-island-height);border-radius:var(--tk-island-radius);background:#000;pointer-events:none;z-index:60}
 .tk-status{position:absolute;inset:0 0 auto;height:54px;padding:6px 34px 0 35px;color:var(--tk-ink);z-index:40;pointer-events:none;font-size:12px;letter-spacing:0;font-weight:600}
 .tk-viewport{position:absolute;inset:0}
 .tk-page{display:flex;gap:4px;padding:4px 4px 150px;overscroll-behavior:contain}
@@ -418,7 +419,7 @@ const canLinear = typeof CSS !== "undefined" &&
   typeof CSS.supports === "function" &&
   CSS.supports("transition-timing-function", "linear(0, 1)");
 
-function makeSpring(k, c) {
+function makeSpring(k, c, fallback = fallbackEase) {
   if(!Number.isFinite(k)||!Number.isFinite(c)||k<=0||c<=0) throw new RangeError('Spring stiffness and damping must be positive finite numbers');
   const w0 = Math.sqrt(k);
   const z = c / (2 * Math.sqrt(k));
@@ -433,13 +434,14 @@ function makeSpring(k, c) {
   for (let i = 0; i <= 48; i++) pts.push(+x(T * i / 48).toFixed(4));
   pts[48] = 1;
   return {
-    easing: canLinear ? `linear(${pts.join(",")})` : fallbackEase,
+    easing: canLinear ? `linear(${pts.join(",")})` : fallback,
     duration: Math.round(T * 1000)
   };
 }
 const springs = {
   snap: makeSpring(420, 34),
-  pop: makeSpring(320, 15),
+  // Keep a small rebound; the original damping=15 overshot by ~23%.
+  pop: makeSpring(320, 24, "cubic-bezier(.22,1.08,.36,1)"),
   soft: makeSpring(170, 20)
 };
 
@@ -448,7 +450,7 @@ function reduced() {
     (matchMedia("(prefers-reduced-motion: reduce)").matches || (typeof document !== "undefined" && document.documentElement.dataset.motion === "reduce"));
 }
 function springIn(element, {
-  from = "translateY(36px) scale(.96)", delay = 0, kind = "pop"
+  from = "translateY(24px) scale(.98)", delay = 0, kind = "pop"
 } = {}) {
   if (reduced() || !element?.animate) return;
   const spring = springs[kind] ?? springs.pop;
@@ -760,7 +762,7 @@ class CardFlow {
     if (!this.reducedMotion) {
       enter(page, backward ? "translateX(-15%)" : "translateX(15%)");
       Array.from(page.querySelectorAll(".tk-card")).forEach((card, idx) =>
-        card.getBoundingClientRect().top < this.viewport.getBoundingClientRect().bottom && springIn(card, { from: "translateY(36px) scale(.96)", delay: Math.min(idx, 5) * 90 }));
+        card.getBoundingClientRect().top < this.viewport.getBoundingClientRect().bottom && springIn(card, { from: "translateY(24px) scale(.98)", delay: Math.min(idx, 5) * 90 }));
     }
     // Decorative motion works independently of the domain-specific content.
     for (const title of page.querySelectorAll(".tk-title"))
@@ -792,7 +794,7 @@ const {springs}=modules["tripfit-motion.js"];
 const {rafSchd}=modules["vendor/raf-schd.js"];
 const ease='cubic-bezier(.2,.8,.2,1)',out='cubic-bezier(.5,0,.75,0)';
 const PRESETS={
- rise:{frames:[{opacity:0,transform:'translateY(36px) scale(.96)'},{opacity:1,transform:'none'}],spring:'pop'},
+ rise:{frames:[{opacity:0,transform:'translateY(24px) scale(.98)'},{opacity:1,transform:'none'}],spring:'pop'},
  chat:{frames:[{opacity:0,transform:'translateY(40px) scale(.94)'},{opacity:1,transform:'none'}],spring:'pop'},
  enterRight:{frames:[{opacity:0,transform:'translateX(50px) scale(.92)'},{opacity:1,transform:'none'}],spring:'pop'},
  exitLeft:{frames:[{opacity:1,transform:'none'},{opacity:1,transform:'rotate(-2deg) scale(.98)',offset:.3},{opacity:0,transform:'translateX(-80px) rotate(-8deg) scale(.8)'}],duration:620,easing:out},
@@ -2475,7 +2477,7 @@ modules["catalog.js"]=(()=>{
 /** Reusable visual families, not all repository functions. Explicit source provenance. */
 const CATALOG=[
  ['rise','아래에서 올라오는 카드','motion','rise · chat · split','web/index.html:532,1139,1812','pop 스프링과 순차 등장'],
- ['springs','세 가지 스프링','motion','snap / pop / soft','web/index.html:516–532','원본 강성·감쇠 값 비교'],
+ ['springs','세 가지 스프링','motion','snap / pop / soft','web/index.html:516–532','pop 반동은 줄이고 snap·soft는 유지'],
  ['typing','대화 입력 표시','motion','typing + chat','web/index.html:164–169,1121','세 점에서 대화 카드로'],
  ['spinner','계산 중 스피너','motion','spin','web/index.html:70–71','0.7초 회전, 줄이기 설정 대응'],
  ['island','상태 알림 아일랜드','component','createFeedbackIsland','web/index.html:626–645','아이콘·보조문구·대기·완료'],

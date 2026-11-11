@@ -1,8 +1,9 @@
 {
-  "repository": "ray-math/tripfit",
   "source_branch": "high",
-  "source_commit": "101bfe03b5f9d1900a85b392386b0b0ccea6509e",
-  "entry": "gallery.html",
-  "routes": {"/": "gallery.html", "lesson.html": "lesson.html", "regenerated.html": "lesson.html"},
-  "build_workflow_run": "43000670735"
+  "source_commit": "6c8f4c8e2848e282d88fd839dedf1c8e68e120b5",
+  "source_workflow_run": 43017171069,
+  "gallery": "gallery.html",
+  "lesson": "lesson.html",
+  "aliases": {"index.html": "gallery.html", "regenerated.html": "lesson.html"},
+  "refinement": "Compact 88x32 CSS-pixel mock island; gentler pop spring; original snap and soft preserved."
 }
